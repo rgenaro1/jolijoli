@@ -502,6 +502,8 @@ function renderModelo(data) {
 //  RENDER: ESTADO GENERAL DE MODELO
 // ═══════════════════════════════════════════════
 function renderEstadoModelo(data) {
+  const hoy = new Date(); hoy.setHours(0,0,0,0);
+
   const filasResumen = data.resumenPorColor.map(d => `
     <tr>
       <td><b>${d.color}</b></td>
@@ -516,6 +518,43 @@ function renderEstadoModelo(data) {
         <span style="font-size:11px">${d.porcentajeTerminado}% terminado</span>
       </td>
     </tr>`).join("");
+
+  // Secciones de detalle por color (una tabla de OPs por cada color)
+  const seccionesColores = data.resumenPorColor.map(d => {
+    const filasOps = (d.ops || []).map(item => {
+      let clase = "normal";
+      if (item.terminado) {
+        clase = "terminado";
+      } else if (item.fechaArmado) {
+        const [dd, mm, yy] = item.fechaArmado.split("/").map(Number);
+        const f = new Date(yy, mm - 1, dd);
+        const diff = Math.floor((f - hoy) / 86400000);
+        clase = diff < 0 ? "vencido" : diff <= 3 ? "proximo" : "normal";
+      }
+      const t = item.tallas;
+      return `
+        <tr class="${clase}">
+          <td>${item.op}</td><td>${item.estado}</td><td>${item.fechaArmado || ""}</td>
+          <td>${t.t35}</td><td>${t.t36}</td><td>${t.t37}</td><td>${t.t38}</td><td>${t.t39}</td><td>${t.t40}</td>
+          <td><b>${item.total}</b></td>
+        </tr>`;
+    }).join("");
+
+    return `
+      <div class="card">
+        <h3 style="margin-bottom:10px;color:#1565c0;">
+          🎨 ${d.color}
+          <span style="font-size:12px;font-weight:normal;color:#777;margin-left:10px;">
+            ${d.pendientes} pendiente(s) · ${d.terminados} terminado(s) · ${d.totalPares} pares
+          </span>
+        </h3>
+        <table>
+          <tr><th>OP</th><th>Estado</th><th>Armado</th>
+          <th>35</th><th>36</th><th>37</th><th>38</th><th>39</th><th>40</th><th>Total</th></tr>
+          ${filasOps}
+        </table>
+      </div>`;
+  }).join("");
 
   document.getElementById("result").innerHTML = `
     <div class="card">
@@ -534,6 +573,7 @@ function renderEstadoModelo(data) {
         ${filasResumen}
       </table>
     </div>
+    ${seccionesColores}
   `;
 }
 
