@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reportes de Producción — JOLI JOLI</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: Arial, sans-serif;
+    background: #f4f6f9;
+    color: #1a1d23;
+  }
+
+  /* ── CONFIG BANNER (solo primera vez) ── */
+  .config-banner {
+    background: #fff8e1;
+    border-bottom: 1px solid #f0c674;
+    padding: 10px 20px;
+    font-size: 12px;
+    color: #7a5c00;
+    display: none;
+  }
+
+  .config-banner.show { display: block; }
+  .config-banner code {
+    background: #fff;
+    padding: 2px 6px;
+    border-radius: 4px;
+    border: 1px solid #f0c674;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: #14213d;
+    color: white;
+    padding: 16px 24px;
+  }
+
+  .header-title {
+    font-size: 17px;
+    font-weight: bold;
+  }
+
+  .header-sub {
+    font-size: 11px;
+    color: #9aa5c4;
+    margin-top: 3px;
+  }
+
+  /* ── NAV TABS ── */
+  .tabs {
+    background: white;
+    border-bottom: 1px solid #e0e3ea;
+    display: flex;
+    padding: 0 24px;
+    overflow-x: auto;
+  }
+
+  .tab {
+    padding: 13px 18px;
+    font-size: 13px;
+    color: #777;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    white-space: nowrap;
+    transition: color .15s, border-color .15s;
+  }
+
+  .tab:hover { color: #1565c0; }
+  .tab.active { color: #1565c0; font-weight: bold; border-bottom-color: #1565c0; }
+
+  /* ── CONTENT ── */
+  .content { max-width: 1300px; margin: 0 auto; padding: 24px; }
+
+  .form-bar {
+    background: white;
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-bottom: 20px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    box-shadow: 0 1px 4px rgba(0,0,0,.06);
+  }
+
+  .form-group { display: flex; flex-direction: column; gap: 5px; }
+  .form-group label { font-size: 11px; font-weight: bold; color: #555; }
+
+  .form-group input {
+    padding: 9px 12px;
+    border: 1px solid #d0d4dc;
+    border-radius: 7px;
+    font-size: 13px;
+    min-width: 150px;
+  }
+
+  .form-group input:focus { outline: none; border-color: #1565c0; }
+
+  .btn-buscar {
+    background: #1565c0;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 7px;
+    font-size: 13px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+
+  .btn-buscar:hover { background: #0d47a1; }
+  .btn-buscar:disabled { background: #aab; cursor: not-allowed; }
+
+  /* ── CARDS (reutilizados del panel) ── */
+  .card {
+    background: white;
+    border-radius: 12px;
+    padding: 18px;
+    margin-bottom: 16px;
+    box-shadow: 0 1px 4px rgba(0,0,0,.06);
+  }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { background: #1565c0; color: white; padding: 8px; text-align: center; }
+  td { padding: 7px; border-bottom: 1px solid #eee; text-align: center; }
+
+  .vencido   { background: #ffebee; }
+  .proximo   { background: #fff8e1; }
+  .normal    { background: #e8f5e9; }
+  .terminado { background: #ede7f6; color: #4527a0; }
+
+  .titulo { font-size: 22px; font-weight: bold; }
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+  .kpi {
+    background: #f8f9fb;
+    border: 1px solid #e0e3ea;
+    border-radius: 8px;
+    padding: 12px 14px;
+  }
+  .kpi-lbl {
+    font-size: 10px; letter-spacing: .08em; text-transform: uppercase;
+    color: #888; margin-bottom: 5px;
+  }
+  .kpi-val { font-size: 26px; font-weight: bold; color: #1565c0; line-height: 1; }
+  .kpi-sub { font-size: 11px; color: #888; margin-top: 3px; }
+
+  /* ── ESTADOS ── */
+  .estado-msg {
+    text-align: center;
+    padding: 50px 20px;
+    color: #888;
+  }
+
+  .estado-msg.error { color: #c62828; }
+
+  .spinner {
+    width: 30px; height: 30px;
+    border: 3px solid #e0e3ea;
+    border-top-color: #1565c0;
+    border-radius: 50%;
+    animation: spin .8s linear infinite;
+    margin: 0 auto 12px;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── BARRAS ── */
+  .chart-area {
+    display: flex; gap: 8px; align-items: flex-end; padding: 8px 0;
+  }
+  .bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; min-width: 44px; }
+  .bar-total-label { font-size: 11px; font-weight: bold; margin-bottom: 4px; }
+  .bar-stack {
+    width: 36px; height: 120px;
+    display: flex; flex-direction: column-reverse;
+    border-radius: 4px; overflow: hidden; border: 1px solid #ddd;
+  }
+  .bar-seg { width: 100%; }
+  .bar-date { font-size: 10px; color: #666; margin-top: 4px; white-space: nowrap; }
+  .leyenda { display: flex; flex-wrap: wrap; gap: 14px; margin-bottom: 12px; }
+  .leyenda-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: #555; }
+  .dot { width: 9px; height: 9px; border-radius: 2px; display: inline-block; }
+
+  footer {
+    text-align: center;
+    padding: 20px;
+    font-size: 11px;
+    color: #999;
+  }
+</style>
+</head>
+<body>
+
+<!-- Banner de configuración (se oculta automáticamente al configurar la URL) -->
+<div class="config-banner" id="config-banner">
+  ⚠️ Configura tu URL de Apps Script en la variable <code>API_URL</code> dentro de <code>index.html</code> antes de usar este sitio.
+</div>
+
+<div class="header">
+  <div class="header-title">📦 Reportes de Producción — JOLI JOLI</div>
+  <div class="header-sub">Grupo V.G. SAC · PCP — datos en vivo desde Google Sheets</div>
+</div>
+
+<div class="tabs" id="tabs">
+  <div class="tab active" data-view="semanal">📊 Reporte Semanal</div>
+  <div class="tab" data-view="modelo">👟 Consultar Modelo</div>
+  <div class="tab" data-view="estadoModelo">🎨 Estado por Modelo</div>
+  <div class="tab" data-view="plan">📅 Plan de Armado</div>
+</div>
+
+<div class="content">
+  <div class="form-bar" id="form-bar"></div>
+  <div id="result"></div>
+</div>
+
+<footer>Última actualización al consultar · Datos desde hoja PRODUCCIÓN</footer>
+
+<script>
+// ═══════════════════════════════════════════════
+//  CONFIGURACIÓN — REEMPLAZA CON TU URL DE WEB APP
+// ═══════════════════════════════════════════════
+const API_URL = "https://script.google.com/macros/s/AKfycbytKtv838e0hdQb8VfV-xtX5O81bYlQWyCTwmwzMKP9MDqJq__NRExiaPAxZaZQ6MXUog/exec
+";
+
+if (!API_URL || API_URL.includes("PEGA_AQUI")) {
+  document.getElementById("config-banner").classList.add("show");
+}
+
+const COLORES_ETAPA = {
+  corte: "#4a7c59", habilitado: "#3a6ea8", perfilado: "#e09b2d",
+  armado: "#9b5de5", alistado: "#2ec4b6"
+};
+
+let currentView = "semanal";
+
+// ═══════════════════════════════════════════════
+//  DEFINICIÓN DE VISTAS
+// ═══════════════════════════════════════════════
+const VIEWS = {
+  semanal: {
+    fields: [
+      { id: "fechaIni", label: "Fecha inicial", placeholder: "dd/MM/yyyy", type: "text" },
+      { id: "fechaFin", label: "Fecha final",   placeholder: "dd/MM/yyyy", type: "text" }
+    ],
+    buildUrl: (v) => `${API_URL}?reporte=semanal&fechaIni=${encodeURIComponent(v.fechaIni)}&fechaFin=${encodeURIComponent(v.fechaFin)}`,
+    render: renderSemanal
+  },
+  modelo: {
+    fields: [
+      { id: "modelo", label: "Modelo", placeholder: "Ej: RENATA", type: "text" },
+      { id: "color",  label: "Color",  placeholder: "Ej: NEGRO",  type: "text" }
+    ],
+    buildUrl: (v) => `${API_URL}?reporte=modelo&modelo=${encodeURIComponent(v.modelo)}&color=${encodeURIComponent(v.color)}`,
+    render: renderModelo
+  },
+  estadoModelo: {
+    fields: [
+      { id: "modelo", label: "Modelo", placeholder: "Ej: DIANA", type: "text" }
+    ],
+    buildUrl: (v) => `${API_URL}?reporte=estadoModelo&modelo=${encodeURIComponent(v.modelo)}`,
+    render: renderEstadoModelo
+  },
+  plan: {
+    fields: [
+      { id: "fecha", label: "Fecha", placeholder: "dd/MM/yyyy", type: "text" }
+    ],
+    buildUrl: (v) => `${API_URL}?reporte=plan&fecha=${encodeURIComponent(v.fecha)}`,
+    render: renderPlan
+  }
+};
+
+// ═══════════════════════════════════════════════
+//  NAVEGACIÓN DE TABS
+// ═══════════════════════════════════════════════
+document.getElementById("tabs").addEventListener("click", (e) => {
+  const tab = e.target.closest(".tab");
+  if (!tab) return;
+  currentView = tab.dataset.view;
+  document.querySelectorAll(".tab").forEach(t => t.classList.toggle("active", t === tab));
+  renderFormBar();
+  document.getElementById("result").innerHTML = `
+    <div class="estado-msg">Completa los campos y presiona Buscar.</div>`;
+});
+
+function renderFormBar() {
+  const view = VIEWS[currentView];
+  const fieldsHtml = view.fields.map(f => `
+    <div class="form-group">
+      <label>${f.label}</label>
+      <input type="text" id="field-${f.id}" placeholder="${f.placeholder}"
+        onkeypress="if(event.key==='Enter') buscar()">
+    </div>
+  `).join("");
+
+  document.getElementById("form-bar").innerHTML = `
+    ${fieldsHtml}
+    <button class="btn-buscar" onclick="buscar()">🔍 Buscar</button>
+  `;
+}
+
+// ═══════════════════════════════════════════════
+//  BUSCAR (LLAMADA FETCH A LA WEB APP)
+// ═══════════════════════════════════════════════
+function buscar() {
+  const view = VIEWS[currentView];
+  const vals = {};
+  for (const f of view.fields) {
+    vals[f.id] = document.getElementById(`field-${f.id}`).value.trim();
+  }
+
+  // Validar campos vacíos
+  if (Object.values(vals).some(v => !v)) {
+    document.getElementById("result").innerHTML = `
+      <div class="estado-msg error">⚠️ Completa todos los campos.</div>`;
+    return;
+  }
+
+  document.getElementById("result").innerHTML = `
+    <div class="estado-msg"><div class="spinner"></div>Cargando datos...</div>`;
+
+  fetch(view.buildUrl(vals))
+    .then(r => r.json())
+    .then(data => {
+      if (data.error) {
+        document.getElementById("result").innerHTML = `
+          <div class="estado-msg error">⚠️ ${data.error}</div>`;
+        return;
+      }
+      view.render(data);
+    })
+    .catch(err => {
+      document.getElementById("result").innerHTML = `
+        <div class="estado-msg error">⚠️ Error de conexión: ${err.message}</div>`;
+    });
+}
+
+// ═══════════════════════════════════════════════
+//  RENDER: REPORTE SEMANAL
+// ═══════════════════════════════════════════════
+function renderSemanal(data) {
+  const leyenda = data.porEtapaYDia.map(e => `
+    <span class="leyenda-item">
+      <span class="dot" style="background:${COLORES_ETAPA[e.key]}"></span>${e.label}
+    </span>`).join("");
+
+  const filasEtapa = data.porEtapaYDia.map(e => `
+    <tr ${e.key === 'alistado' ? 'style="font-weight:bold;background:#f0faf8;"' : ''}>
+      <td style="text-align:left;padding-left:10px;">
+        <span class="dot" style="background:${COLORES_ETAPA[e.key]}"></span> ${e.label}
+      </td>
+      ${e.valores.map(v => `<td>${v > 0 ? v : "<span style='color:#bbb'>·</span>"}</td>`).join("")}
+      <td><b>${e.total}</b></td>
+    </tr>`).join("");
+
+  const maxDia = Math.max(...data.totalesPorDia, 1);
+  const barras = data.dias.map((d, i) => {
+    const segs = data.porEtapaYDia.map(e => {
+      const v = e.valores[i];
+      const pct = (v / maxDia * 100).toFixed(1);
+      return `<div class="bar-seg" style="height:${pct}%;background:${COLORES_ETAPA[e.key]}"></div>`;
+    }).reverse().join("");
+    return `
+      <div class="bar-col">
+        <div class="bar-total-label">${data.totalesPorDia[i]}</div>
+        <div class="bar-stack">${segs}</div>
+        <div class="bar-date">${d}</div>
+      </div>`;
+  }).join("");
+
+  const filasDetalle = (() => {
+    const grupos = {};
+    data.detalleModeloColor.forEach(d => {
+      if (!grupos[d.modelo]) grupos[d.modelo] = [];
+      grupos[d.modelo].push(d);
+    });
+    let html = "";
+    Object.entries(grupos).forEach(([modelo, filas]) => {
+      filas.forEach((d, ci) => {
+        html += `
+          <tr>
+            ${ci === 0 ? `<td rowspan="${filas.length}" style="font-weight:bold;text-align:left;padding-left:8px;vertical-align:middle;">${modelo}</td>` : ""}
+            <td style="text-align:left;padding-left:8px;">${d.color}</td>
+            <td>${d.corte || "<span style='color:#bbb'>·</span>"}</td>
+            <td>${d.habilitado || "<span style='color:#bbb'>·</span>"}</td>
+            <td>${d.perfilado || "<span style='color:#bbb'>·</span>"}</td>
+            <td>${d.armado || "<span style='color:#bbb'>·</span>"}</td>
+            <td>${d.alistado || "<span style='color:#bbb'>·</span>"}</td>
+            <td><b>${d.total}</b></td>
+          </tr>`;
+      });
+    });
+    return html;
+  })();
+
+  const sfpHtml = data.sinFechaPedido.length > 0 ? `
+    <div class="card" style="border-left:4px solid #f57c00;">
+      <b style="color:#e65100;">⚠️ Registros sin fecha de pedido (excluidos del detalle):</b>
+      <ul style="margin:8px 0 0 16px;font-size:12px;color:#555;">
+        ${data.sinFechaPedido.map(g => `<li><b>${g.modelo} · ${g.color}:</b> ${g.etapas.join(", ")}</li>`).join("")}
+      </ul>
+    </div>` : "";
+
+  document.getElementById("result").innerHTML = `
+    <div class="card">
+      <div class="titulo">📊 Reporte Semanal de Producción</div>
+      <div style="font-size:12px;color:#777;margin-top:4px;">
+        Periodo: ${data.periodo.inicio} — ${data.periodo.fin} · ${data.dias.length} día(s) con registro
+      </div>
+    </div>
+    <div class="card">
+      <div class="kpi-grid">
+        <div class="kpi"><div class="kpi-lbl">Producción terminada</div><div class="kpi-val">${data.kpis.produccionTerminada}</div><div class="kpi-sub">sale de Alistado</div></div>
+        <div class="kpi"><div class="kpi-lbl">Promedio diario</div><div class="kpi-val">${data.kpis.promedioDiario}</div><div class="kpi-sub">doc/día</div></div>
+        <div class="kpi"><div class="kpi-lbl">Mayor avance</div><div class="kpi-val" style="font-size:18px;">${data.kpis.etapaLider}</div><div class="kpi-sub">${data.kpis.etapaLiderTotal} doc</div></div>
+        <div class="kpi"><div class="kpi-lbl">Día más activo</div><div class="kpi-val" style="font-size:18px;">${data.kpis.mejorDia}</div><div class="kpi-sub">${data.kpis.mejorDiaTotal} doc</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <h3 style="margin-bottom:12px;">Producción por etapa y día</h3>
+      <table>
+        <tr><th style="text-align:left;padding-left:10px;">Etapa</th>${data.dias.map(d => `<th>${d}</th>`).join("")}<th>Total</th></tr>
+        ${filasEtapa}
+        <tr style="background:#e8eaf0;font-weight:bold;">
+          <td style="text-align:left;padding-left:10px;">Avance total etapas</td>
+          ${data.totalesPorDia.map(v => `<td>${v}</td>`).join("")}
+          <td><b>${data.granTotal}</b></td>
+        </tr>
+      </table>
+    </div>
+    <div class="card">
+      <h3 style="margin-bottom:6px;">Avance por etapa, por día</h3>
+      <div class="leyenda">${leyenda}</div>
+      <div class="chart-area">${barras}</div>
+    </div>
+    <div class="card">
+      <h3 style="margin-bottom:12px;">Detalle por modelo y color</h3>
+      <table>
+        <tr><th style="text-align:left;padding-left:8px;">Modelo</th><th style="text-align:left;padding-left:8px;">Color</th>
+        <th>Corte</th><th>Habilitado</th><th>Perfilado</th><th>Armado</th><th>Alistado</th><th>Total</th></tr>
+        ${filasDetalle}
+      </table>
+    </div>
+    ${sfpHtml}
+  `;
+}
+
+// ═══════════════════════════════════════════════
+//  RENDER: CONSULTAR MODELO
+// ═══════════════════════════════════════════════
+function renderModelo(data) {
+  const hoy = new Date(); hoy.setHours(0,0,0,0);
+
+  const filasEstados = Object.entries(data.resumenEstados)
+    .map(([est, cant]) => `<tr><td>${est}</td><td>${cant}</td></tr>`).join("");
+
+  const filasDetalle = data.detalle.map(item => {
+    let clase = "";
+    if (item.fechaArmado) {
+      const [dd, mm, yy] = item.fechaArmado.split("/").map(Number);
+      const f = new Date(yy, mm - 1, dd);
+      const diff = Math.floor((f - hoy) / 86400000);
+      clase = diff < 0 ? "vencido" : diff <= 3 ? "proximo" : "normal";
+    }
+    const t = item.tallas;
+    const total = t.t35+t.t36+t.t37+t.t38+t.t39+t.t40;
+    return `
+      <tr class="${clase}">
+        <td>${item.op}</td><td>${item.estado}</td><td>${item.fechaArmado || ""}</td>
+        <td>${t.t35}</td><td>${t.t36}</td><td>${t.t37}</td><td>${t.t38}</td><td>${t.t39}</td><td>${t.t40}</td>
+        <td><b>${total}</b></td>
+      </tr>`;
+  }).join("");
+
+  document.getElementById("result").innerHTML = `
+    <div class="card">
+      <div class="titulo">${data.modelo} — ${data.color}</div><br>
+      <div class="kpi-val" style="font-size:40px;">${data.pendientes}</div>
+      <b>OPs Pendientes</b><br><br>
+      <b>Producto Terminado:</b> ${data.terminados}
+    </div>
+    <div class="card">
+      <h3>📊 Resumen por Estado</h3>
+      <table><tr><th>Estado</th><th>Cantidad</th></tr>${filasEstados}</table>
+    </div>
+    <div class="card">
+      <h3>👟 Distribución por OP y Tallas</h3>
+      <table>
+        <tr><th>OP</th><th>Estado</th><th>Armado</th>
+        <th>35</th><th>36</th><th>37</th><th>38</th><th>39</th><th>40</th><th>Total</th></tr>
+        ${filasDetalle}
+      </table>
+    </div>
+  `;
+}
+
+// ═══════════════════════════════════════════════
+//  RENDER: ESTADO GENERAL DE MODELO
+// ═══════════════════════════════════════════════
+function renderEstadoModelo(data) {
+  const filasResumen = data.resumenPorColor.map(d => `
+    <tr>
+      <td><b>${d.color}</b></td>
+      <td>${d.pendientes + d.terminados}</td>
+      <td>${d.pendientes}</td>
+      <td style="color:#4527a0"><b>${d.terminados}</b></td>
+      <td>${d.totalPares}</td>
+      <td>
+        <div style="background:#e0e0e0;border-radius:6px;overflow:hidden;height:14px;min-width:80px;">
+          <div style="background:${d.porcentajeTerminado===100?'#388e3c':'#1565c0'};width:${d.porcentajeTerminado}%;height:100%;"></div>
+        </div>
+        <span style="font-size:11px">${d.porcentajeTerminado}% terminado</span>
+      </td>
+    </tr>`).join("");
+
+  document.getElementById("result").innerHTML = `
+    <div class="card">
+      <div class="titulo">👟 ${data.modelo}</div>
+      <div style="font-size:13px;color:#777;margin:4px 0 16px;">Estado general por color — ${data.totalColores} color(es)</div>
+      <div class="kpi-grid">
+        <div class="kpi"><div class="kpi-lbl">Total Pares</div><div class="kpi-val">${data.kpis.totalPares}</div></div>
+        <div class="kpi"><div class="kpi-lbl">OPs Pendientes</div><div class="kpi-val" style="color:#e53935">${data.kpis.totalPendientes}</div></div>
+        <div class="kpi"><div class="kpi-lbl">OPs Terminadas</div><div class="kpi-val" style="color:#4527a0">${data.kpis.totalTerminados}</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <h3 style="margin-bottom:10px;">📊 Resumen por Color</h3>
+      <table>
+        <tr><th>Color</th><th>Total OPs</th><th>Pendientes</th><th>Terminadas</th><th>Pares</th><th>Avance</th></tr>
+        ${filasResumen}
+      </table>
+    </div>
+  `;
+}
+
+// ═══════════════════════════════════════════════
+//  RENDER: PLAN DE ARMADO
+// ═══════════════════════════════════════════════
+function renderPlan(data) {
+  const filas = data.detalle.map(item => {
+    const t = item.tallas;
+    return `
+      <tr>
+        <td>${item.op}</td><td>${item.modelo}</td><td>${item.color}</td><td>${item.estado}</td>
+        <td>${t.t35}</td><td>${t.t36}</td><td>${t.t37}</td><td>${t.t38}</td><td>${t.t39}</td><td>${t.t40}</td>
+        <td><b>${item.total}</b></td>
+      </tr>`;
+  }).join("");
+
+  const sinResultados = data.detalle.length === 0
+    ? `<div class="card" style="color:#c62828;">⚠️ No hay OPs programadas para ${data.fecha}.</div>` : "";
+
+  document.getElementById("result").innerHTML = `
+    <div class="card">
+      <div class="titulo">Plan de Armado</div><br>
+      <b>Fecha:</b> ${data.fecha}<br><br>
+      <b>OPs Programadas:</b> ${data.opsProgramadas}<br>
+      <b>Total Pares:</b> ${data.totalPares}
+    </div>
+    ${sinResultados}
+    ${data.detalle.length > 0 ? `
+    <div class="card"><table>
+      <tr><th>OP</th><th>Modelo</th><th>Color</th><th>Estado</th>
+      <th>35</th><th>36</th><th>37</th><th>38</th><th>39</th><th>40</th><th>Total</th></tr>
+      ${filas}
+    </table></div>` : ""}
+  `;
+}
+
+// ═══════════════════════════════════════════════
+//  INICIO
+// ═══════════════════════════════════════════════
+renderFormBar();
+document.getElementById("result").innerHTML = `
+  <div class="estado-msg">Completa el periodo y presiona Buscar.</div>`;
+</script>
+
+</body>
+</html>
