@@ -5,221 +5,690 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Reportes de Producción — JOLI JOLI</title>
 <style>
+  @import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+  :root {
+    --navy:        #0e1b33;
+    --navy-light:  #16284a;
+    --navy-line:   #25395f;
+    --paper:       #f3f5f8;
+    --surface:     #ffffff;
+    --border:      #e1e5ee;
+    --ink:         #18223a;
+    --muted:       #6b7488;
+    --gold:        #b8915a;
+    --gold-light:  #e8d9bf;
+    --accent:      #1d4ed8;
+    --ok:          #2f7d5f;
+    --warn:        #b3781f;
+    --danger:      #b3402f;
+  }
+
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
-  body {
-    font-family: Arial, sans-serif;
-    background: #f4f6f9;
-    color: #1a1d23;
+  html, body {
+    height: 100%;
   }
 
-  /* ── CONFIG BANNER (solo primera vez) ── */
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  /* ═══════════════════════════════════════
+     CONFIG BANNER
+  ═══════════════════════════════════════ */
   .config-banner {
-    background: #fff8e1;
-    border-bottom: 1px solid #f0c674;
-    padding: 10px 20px;
+    background: #fdf3e2;
+    border-bottom: 1px solid var(--gold-light);
+    padding: 10px 24px;
     font-size: 12px;
-    color: #7a5c00;
+    color: #6b4e1f;
     display: none;
   }
-
   .config-banner.show { display: block; }
   .config-banner code {
     background: #fff;
-    padding: 2px 6px;
+    padding: 2px 7px;
     border-radius: 4px;
-    border: 1px solid #f0c674;
+    border: 1px solid var(--gold-light);
+    font-family: 'IBM Plex Mono', monospace;
   }
 
-  /* ── HEADER ── */
-  .header {
-    background: #14213d;
-    color: white;
-    padding: 16px 24px;
-  }
-
-  .header-title {
-    font-size: 17px;
-    font-weight: bold;
-  }
-
-  .header-sub {
-    font-size: 11px;
-    color: #9aa5c4;
-    margin-top: 3px;
-  }
-
-  /* ── NAV TABS ── */
-  .tabs {
-    background: white;
-    border-bottom: 1px solid #e0e3ea;
+  /* ═══════════════════════════════════════
+     LAYOUT
+  ═══════════════════════════════════════ */
+  .layout {
     display: flex;
-    padding: 0 24px;
-    overflow-x: auto;
+    min-height: 100vh;
   }
 
-  .tab {
-    padding: 13px 18px;
-    font-size: 13px;
-    color: #777;
+  /* ═══════════════════════════════════════
+     SIDEBAR
+  ═══════════════════════════════════════ */
+  .sidebar {
+    width: 256px;
+    background: var(--navy);
+    color: #c7d0e6;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+  }
+
+  .brand-block {
+    padding: 28px 24px 22px;
+    border-bottom: 1px solid var(--navy-line);
+  }
+
+  .brand-mark {
+    width: 38px;
+    height: 38px;
+    border: 1.5px solid var(--gold);
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Source Serif 4', serif;
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--gold);
+    margin-bottom: 14px;
+  }
+
+  .brand-name {
+    font-family: 'Source Serif 4', serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: #fff;
+    letter-spacing: .01em;
+  }
+
+  .brand-sub {
+    font-size: 10px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-top: 5px;
+  }
+
+  .brand-org {
+    font-size: 11px;
+    color: #7d88a3;
+    margin-top: 10px;
+    line-height: 1.5;
+  }
+
+  .nav {
+    flex: 1;
+    padding: 18px 14px;
+    overflow-y: auto;
+  }
+
+  .nav-eyebrow {
+    font-size: 10px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: #5b6584;
+    padding: 0 10px;
+    margin-bottom: 10px;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 11px 12px;
+    border-radius: 7px;
     cursor: pointer;
-    border-bottom: 3px solid transparent;
-    white-space: nowrap;
-    transition: color .15s, border-color .15s;
+    font-size: 13px;
+    color: #aab4cc;
+    margin-bottom: 3px;
+    transition: background .15s, color .15s;
+    position: relative;
   }
 
-  .tab:hover { color: #1565c0; }
-  .tab.active { color: #1565c0; font-weight: bold; border-bottom-color: #1565c0; }
+  .nav-item:hover {
+    background: rgba(255,255,255,.04);
+    color: #fff;
+  }
 
-  /* ── CONTENT ── */
-  .content { max-width: 1300px; margin: 0 auto; padding: 24px; }
+  .nav-item.active {
+    background: var(--navy-light);
+    color: #fff;
+  }
+
+  .nav-item.active::before {
+    content: "";
+    position: absolute;
+    left: -14px;
+    top: 8px;
+    bottom: 8px;
+    width: 3px;
+    background: var(--gold);
+    border-radius: 0 3px 3px 0;
+  }
+
+  .nav-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: #5b6584;
+    width: 16px;
+    flex-shrink: 0;
+  }
+
+  .nav-item.active .nav-num { color: var(--gold); }
+
+  .sidebar-footer {
+    padding: 16px 24px 20px;
+    border-top: 1px solid var(--navy-line);
+    font-size: 10.5px;
+    color: #5b6584;
+    line-height: 1.7;
+  }
+
+  .live-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #3dbd7d;
+    margin-right: 6px;
+    box-shadow: 0 0 0 3px rgba(61,189,125,.18);
+  }
+
+  /* ═══════════════════════════════════════
+     MAIN
+  ═══════════════════════════════════════ */
+  .main {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .topbar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 22px 32px 18px;
+  }
+
+  .topbar-eyebrow {
+    font-size: 10.5px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+
+  .topbar-title {
+    font-family: 'Source Serif 4', serif;
+    font-size: 25px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .topbar-desc {
+    font-size: 12.5px;
+    color: var(--muted);
+    margin-top: 5px;
+    max-width: 620px;
+  }
+
+  /* ═══════════════════════════════════════
+     FORM BAR
+  ═══════════════════════════════════════ */
+  .content { max-width: 1280px; width: 100%; margin: 0 auto; padding: 24px 32px 48px; }
 
   .form-bar {
-    background: white;
+    background: var(--surface);
+    border: 1px solid var(--border);
     border-radius: 10px;
-    padding: 16px 20px;
-    margin-bottom: 20px;
+    padding: 18px 20px;
+    margin-bottom: 22px;
     display: flex;
-    gap: 12px;
+    gap: 14px;
     align-items: flex-end;
     flex-wrap: wrap;
-    box-shadow: 0 1px 4px rgba(0,0,0,.06);
   }
 
-  .form-group { display: flex; flex-direction: column; gap: 5px; }
-  .form-group label { font-size: 11px; font-weight: bold; color: #555; }
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+
+  .form-group label {
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
 
   .form-group input {
-    padding: 9px 12px;
-    border: 1px solid #d0d4dc;
+    padding: 10px 13px;
+    border: 1px solid var(--border);
     border-radius: 7px;
     font-size: 13px;
-    min-width: 150px;
+    min-width: 160px;
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--ink);
+    background: var(--paper);
+    transition: border-color .15s, background .15s;
   }
 
-  .form-group input:focus { outline: none; border-color: #1565c0; }
+  .form-group input:focus {
+    outline: none;
+    border-color: var(--accent);
+    background: #fff;
+  }
 
   .btn-buscar {
-    background: #1565c0;
+    background: var(--navy);
     color: white;
     border: none;
-    padding: 10px 20px;
+    padding: 11px 22px;
     border-radius: 7px;
     font-size: 13px;
-    font-weight: bold;
+    font-weight: 600;
     cursor: pointer;
+    transition: background .15s;
+    letter-spacing: .01em;
   }
 
-  .btn-buscar:hover { background: #0d47a1; }
+  .btn-buscar:hover { background: var(--navy-light); }
   .btn-buscar:disabled { background: #aab; cursor: not-allowed; }
 
-  /* ── CARDS (reutilizados del panel) ── */
+  /* ═══════════════════════════════════════
+     CARDS / TABLES (usados por el JS)
+  ═══════════════════════════════════════ */
   .card {
-    background: white;
+    background: var(--surface);
+    border: 1px solid var(--border);
     border-radius: 12px;
-    padding: 18px;
+    padding: 20px 22px;
     margin-bottom: 16px;
-    box-shadow: 0 1px 4px rgba(0,0,0,.06);
   }
 
-  table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  th { background: #1565c0; color: white; padding: 8px; text-align: center; }
-  td { padding: 7px; border-bottom: 1px solid #eee; text-align: center; }
+  .card h3 {
+    font-family: 'Source Serif 4', serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ink);
+  }
 
-  .vencido   { background: #ffebee; }
-  .proximo   { background: #fff8e1; }
-  .normal    { background: #e8f5e9; }
-  .terminado { background: #ede7f6; color: #4527a0; }
+  table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
 
-  .titulo { font-size: 22px; font-weight: bold; }
+  th {
+    background: var(--navy);
+    color: #cfd7ea;
+    padding: 9px 10px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 10.5px;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+  }
+
+  td {
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--border);
+    text-align: center;
+    color: var(--ink);
+  }
+
+  tbody tr:hover td { background: #f8f9fc; }
+
+  .vencido   { background: #fbeae6; }
+  .proximo   { background: #fdf3e2; }
+  .normal    { background: #eaf3ee; }
+  .terminado { background: #ece8f7; color: #4d3f8c; }
+
+  .titulo {
+    font-family: 'Source Serif 4', serif;
+    font-size: 21px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+
   .kpi-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
+    gap: 0;
   }
-  .kpi {
-    background: #f8f9fb;
-    border: 1px solid #e0e3ea;
-    border-radius: 8px;
-    padding: 12px 14px;
-  }
-  .kpi-lbl {
-    font-size: 10px; letter-spacing: .08em; text-transform: uppercase;
-    color: #888; margin-bottom: 5px;
-  }
-  .kpi-val { font-size: 26px; font-weight: bold; color: #1565c0; line-height: 1; }
-  .kpi-sub { font-size: 11px; color: #888; margin-top: 3px; }
 
-  /* ── ESTADOS ── */
+  .kpi {
+    padding: 14px 18px;
+    border-right: 1px solid var(--border);
+  }
+  .kpi:last-child { border-right: none; }
+
+  .kpi-lbl {
+    font-size: 10px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+
+  .kpi-val {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 26px;
+    font-weight: 600;
+    color: var(--navy);
+    line-height: 1;
+  }
+
+  .kpi-sub { font-size: 11px; color: var(--muted); margin-top: 5px; }
+
+  /* ═══════════════════════════════════════
+     ESTADOS (loading / error / empty)
+  ═══════════════════════════════════════ */
   .estado-msg {
     text-align: center;
-    padding: 50px 20px;
-    color: #888;
+    padding: 70px 20px;
+    color: var(--muted);
+    font-size: 13px;
   }
 
-  .estado-msg.error { color: #c62828; }
+  .estado-msg.error { color: var(--danger); }
 
   .spinner {
     width: 30px; height: 30px;
-    border: 3px solid #e0e3ea;
-    border-top-color: #1565c0;
+    border: 3px solid var(--border);
+    border-top-color: var(--navy);
     border-radius: 50%;
     animation: spin .8s linear infinite;
-    margin: 0 auto 12px;
+    margin: 0 auto 14px;
   }
 
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  /* ── BARRAS ── */
+  /* ═══════════════════════════════════════
+     BARRAS
+  ═══════════════════════════════════════ */
   .chart-area {
-    display: flex; gap: 8px; align-items: flex-end; padding: 8px 0;
+    display: flex; gap: 10px; align-items: flex-end; padding: 10px 0 4px;
   }
   .bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; min-width: 44px; }
-  .bar-total-label { font-size: 11px; font-weight: bold; margin-bottom: 4px; }
+  .bar-total-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px; font-weight: 600; margin-bottom: 5px; color: var(--ink);
+  }
   .bar-stack {
-    width: 36px; height: 120px;
+    width: 34px; height: 120px;
     display: flex; flex-direction: column-reverse;
-    border-radius: 4px; overflow: hidden; border: 1px solid #ddd;
+    border-radius: 4px; overflow: hidden; border: 1px solid var(--border);
+    background: var(--paper);
   }
   .bar-seg { width: 100%; }
-  .bar-date { font-size: 10px; color: #666; margin-top: 4px; white-space: nowrap; }
-  .leyenda { display: flex; flex-wrap: wrap; gap: 14px; margin-bottom: 12px; }
-  .leyenda-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: #555; }
-  .dot { width: 9px; height: 9px; border-radius: 2px; display: inline-block; }
+  .bar-date {
+    font-size: 10px; color: var(--muted); margin-top: 6px; white-space: nowrap;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  .leyenda { display: flex; flex-wrap: wrap; gap: 16px; margin-bottom: 14px; }
+  .leyenda-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--muted); }
+  .dot { width: 8px; height: 8px; border-radius: 2px; display: inline-block; }
 
   footer {
     text-align: center;
+    padding: 18px;
+    font-size: 10.5px;
+    color: var(--muted);
+    border-top: 1px solid var(--border);
+  }
+
+  /* ═══════════════════════════════════════
+     DASHBOARD
+  ═══════════════════════════════════════ */
+  .dash-hero {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+    border-radius: 14px;
+    padding: 26px 28px;
+    margin-bottom: 18px;
+    color: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 18px;
+  }
+
+  .dash-hero-label {
+    font-size: 10.5px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--gold-light);
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  .dash-hero-date {
+    font-family: 'Source Serif 4', serif;
+    font-size: 24px;
+    font-weight: 600;
+  }
+
+  .dash-hero-stats {
+    display: flex;
+    gap: 32px;
+  }
+
+  .dash-hero-stat-val {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 32px;
+    font-weight: 600;
+    line-height: 1;
+  }
+
+  .dash-hero-stat-lbl {
+    font-size: 10.5px;
+    color: #aab4cc;
+    margin-top: 6px;
+    letter-spacing: .03em;
+  }
+
+  .dash-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .dash-kpi-row {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .dash-kpi-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    border-top: 3px solid var(--border);
+  }
+
+  .dash-kpi-card .etapa-val {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--ink);
+    line-height: 1;
+  }
+
+  .dash-kpi-card .etapa-lbl {
+    font-size: 10.5px;
+    color: var(--muted);
+    margin-top: 6px;
+    font-weight: 600;
+  }
+
+  .dash-section-title {
+    font-family: 'Source Serif 4', serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+
+  .dash-section-sub {
+    font-size: 11.5px;
+    color: var(--muted);
+    margin-bottom: 14px;
+  }
+
+  .trend-chart-wrap { width: 100%; overflow-x: auto; }
+
+  .dash-side-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
     padding: 20px;
-    font-size: 11px;
-    color: #999;
+    margin-bottom: 16px;
+  }
+
+  .etapa-bar-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .etapa-bar-label {
+    width: 76px;
+    font-size: 11.5px;
+    color: var(--ink);
+    flex-shrink: 0;
+  }
+
+  .etapa-bar-track {
+    flex: 1;
+    height: 8px;
+    background: var(--paper);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .etapa-bar-fill { height: 100%; border-radius: 4px; }
+
+  .etapa-bar-val {
+    width: 38px;
+    text-align: right;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11.5px;
+    color: var(--ink);
+    flex-shrink: 0;
+  }
+
+  .dash-nav-btn {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: var(--paper);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    font-size: 12.5px;
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    transition: border-color .15s, background .15s;
+  }
+
+  .dash-nav-btn:hover {
+    border-color: var(--gold);
+    background: #fff;
+  }
+
+  .dash-nav-btn .arrow { float: right; color: var(--muted); }
+
+  /* ═══════════════════════════════════════
+     RESPONSIVE
+  ═══════════════════════════════════════ */
+  @media (max-width: 880px) {
+    .layout { flex-direction: column; }
+    .sidebar { width: 100%; height: auto; position: relative; flex-direction: row; align-items: center; overflow-x: auto; }
+    .brand-block { border-bottom: none; border-right: 1px solid var(--navy-line); padding: 16px 18px; flex-shrink: 0; }
+    .nav { display: flex; padding: 10px; gap: 4px; }
+    .nav-eyebrow { display: none; }
+    .sidebar-footer { display: none; }
+    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+    .dash-grid { grid-template-columns: 1fr; }
+    .dash-kpi-row { grid-template-columns: repeat(2, 1fr); }
+    .dash-hero { flex-direction: column; align-items: flex-start; }
+    .kpi { border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); }
   }
 </style>
 </head>
 <body>
 
-<!-- Banner de configuración (se oculta automáticamente al configurar la URL) -->
 <div class="config-banner" id="config-banner">
   ⚠️ Configura tu URL de Apps Script en la variable <code>API_URL</code> dentro de <code>index.html</code> antes de usar este sitio.
 </div>
 
-<div class="header">
-  <div class="header-title">📦 Reportes de Producción — JOLI JOLI</div>
-  <div class="header-sub">Grupo V.G. SAC · PCP — datos en vivo desde Google Sheets</div>
-</div>
+<div class="layout">
 
-<div class="tabs" id="tabs">
-  <div class="tab active" data-view="semanal">📊 Reporte Semanal</div>
-  <div class="tab" data-view="modelo">👟 Consultar Modelo</div>
-  <div class="tab" data-view="estadoModelo">🎨 Estado por Modelo</div>
-  <div class="tab" data-view="plan">📅 Plan de Armado</div>
-</div>
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="brand-block">
+      <div class="brand-mark">VG</div>
+      <div class="brand-name">Joli Joli</div>
+      <div class="brand-sub">Reportes de Producción</div>
+      <div class="brand-org">Grupo V.G. SAC<br>Planeamiento y Control</div>
+    </div>
 
-<div class="content">
-  <div class="form-bar" id="form-bar"></div>
-  <div id="result"></div>
-</div>
+    <div class="nav" id="tabs">
+      <div class="nav-eyebrow">Panel</div>
+      <div class="nav-item active" data-view="dashboard">
+        <span class="nav-num">●</span> Inicio
+      </div>
+      <div class="nav-eyebrow" style="margin-top:14px;">Reportes</div>
+      <div class="nav-item" data-view="semanal">
+        <span class="nav-num">01</span> Reporte Semanal
+      </div>
+      <div class="nav-item" data-view="modelo">
+        <span class="nav-num">02</span> Consultar Modelo
+      </div>
+      <div class="nav-item" data-view="estadoModelo">
+        <span class="nav-num">03</span> Estado por Modelo
+      </div>
+      <div class="nav-item" data-view="plan">
+        <span class="nav-num">04</span> Plan de Armado
+      </div>
+    </div>
 
-<footer>Última actualización al consultar · Datos desde hoja PRODUCCIÓN</footer>
+    <div class="sidebar-footer">
+      <span class="live-dot"></span>Datos en vivo<br>
+      Fuente: hoja PRODUCCIÓN
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-eyebrow">PCP · Joli Joli</div>
+      <div class="topbar-title" id="topbar-title">Inicio</div>
+      <div class="topbar-desc" id="topbar-desc">
+        Resumen ejecutivo de producción: última jornada, semana actual y tendencia de 14 días.
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="form-bar" id="form-bar"></div>
+      <div id="result"></div>
+    </div>
+
+    <footer>Grupo V.G. SAC · PCP — Joli Joli · Datos consultados directamente desde Google Sheets</footer>
+  </div>
+
+</div>
 
 <script>
 // ═══════════════════════════════════════════════
@@ -236,13 +705,22 @@ const COLORES_ETAPA = {
   armado: "#9b5de5", alistado: "#2ec4b6"
 };
 
-let currentView = "semanal";
+let currentView = "dashboard";
 
 // ═══════════════════════════════════════════════
 //  DEFINICIÓN DE VISTAS
 // ═══════════════════════════════════════════════
 const VIEWS = {
+  dashboard: {
+    titulo: "Inicio",
+    descripcion: "Resumen ejecutivo de producción: última jornada, semana actual y tendencia de 14 días.",
+    fields: [],
+    buildUrl: () => `${API_URL}?reporte=dashboard`,
+    render: renderDashboard
+  },
   semanal: {
+    titulo: "Reporte Semanal",
+    descripcion: "Producción por etapa y día en un rango de fechas, con avance acumulado y detalle por modelo.",
     fields: [
       { id: "fechaIni", label: "Fecha inicial", placeholder: "dd/MM/yyyy", type: "text" },
       { id: "fechaFin", label: "Fecha final",   placeholder: "dd/MM/yyyy", type: "text" }
@@ -251,6 +729,8 @@ const VIEWS = {
     render: renderSemanal
   },
   modelo: {
+    titulo: "Consultar Modelo",
+    descripcion: "Estado de producción de un modelo y color específico, con detalle por orden de producción y tallas.",
     fields: [
       { id: "modelo", label: "Modelo", placeholder: "Ej: RENATA", type: "text" },
       { id: "color",  label: "Color",  placeholder: "Ej: NEGRO",  type: "text" }
@@ -259,6 +739,8 @@ const VIEWS = {
     render: renderModelo
   },
   estadoModelo: {
+    titulo: "Estado por Modelo",
+    descripcion: "Vista agregada de un modelo en todos sus colores: pendientes, terminados y avance por OP.",
     fields: [
       { id: "modelo", label: "Modelo", placeholder: "Ej: DIANA", type: "text" }
     ],
@@ -266,6 +748,8 @@ const VIEWS = {
     render: renderEstadoModelo
   },
   plan: {
+    titulo: "Plan de Armado",
+    descripcion: "Órdenes de producción programadas para armado en una fecha específica, con tallas y totales.",
     fields: [
       { id: "fecha", label: "Fecha", placeholder: "dd/MM/yyyy", type: "text" }
     ],
@@ -275,20 +759,43 @@ const VIEWS = {
 };
 
 // ═══════════════════════════════════════════════
-//  NAVEGACIÓN DE TABS
+//  NAVEGACIÓN (SIDEBAR)
 // ═══════════════════════════════════════════════
 document.getElementById("tabs").addEventListener("click", (e) => {
-  const tab = e.target.closest(".tab");
-  if (!tab) return;
-  currentView = tab.dataset.view;
-  document.querySelectorAll(".tab").forEach(t => t.classList.toggle("active", t === tab));
+  const item = e.target.closest(".nav-item");
+  if (!item) return;
+  currentView = item.dataset.view;
+
+  document.querySelectorAll(".nav-item").forEach(t => t.classList.toggle("active", t === item));
+
+  const view = VIEWS[currentView];
+  document.getElementById("topbar-title").textContent = view.titulo;
+  document.getElementById("topbar-desc").textContent = view.descripcion;
+
   renderFormBar();
-  document.getElementById("result").innerHTML = `
-    <div class="estado-msg">Completa los campos y presiona Buscar.</div>`;
+
+  if (currentView === "dashboard") {
+    cargarDashboard();
+  } else {
+    document.getElementById("result").innerHTML = `
+      <div class="estado-msg">Completa los campos y presiona Buscar.</div>`;
+  }
 });
 
 function renderFormBar() {
   const view = VIEWS[currentView];
+
+  if (view.fields.length === 0) {
+    // Vista sin formulario (dashboard): mostrar botón de refrescar
+    document.getElementById("form-bar").innerHTML = `
+      <div style="font-size:12px;color:var(--muted);flex:1;">
+        Datos calculados en tiempo real desde tu hoja de producción.
+      </div>
+      <button class="btn-buscar" onclick="cargarDashboard()">🔄 Actualizar</button>
+    `;
+    return;
+  }
+
   const fieldsHtml = view.fields.map(f => `
     <div class="form-group">
       <label>${f.label}</label>
@@ -337,6 +844,221 @@ function buscar() {
       document.getElementById("result").innerHTML = `
         <div class="estado-msg error">⚠️ Error de conexión: ${err.message}</div>`;
     });
+}
+
+// ═══════════════════════════════════════════════
+//  CARGAR DASHBOARD
+// ═══════════════════════════════════════════════
+function cargarDashboard() {
+  document.getElementById("result").innerHTML = `
+    <div class="estado-msg"><div class="spinner"></div>Calculando indicadores...</div>`;
+
+  fetch(VIEWS.dashboard.buildUrl())
+    .then(r => r.json())
+    .then(data => {
+      if (data.error) {
+        document.getElementById("result").innerHTML = `
+          <div class="estado-msg error">⚠️ ${data.error}</div>`;
+        return;
+      }
+      renderDashboard(data);
+    })
+    .catch(err => {
+      document.getElementById("result").innerHTML = `
+        <div class="estado-msg error">⚠️ Error de conexión: ${err.message}</div>`;
+    });
+}
+
+// ═══════════════════════════════════════════════
+//  RENDER: DASHBOARD (INICIO)
+// ═══════════════════════════════════════════════
+function renderDashboard(data) {
+  const ud  = data.ultimoDia;
+  const sa  = data.semanaActual;
+  const t14 = data.ultimos14Dias;
+
+  // ── HERO: última jornada trabajada ──
+  const heroHtml = `
+    <div class="dash-hero">
+      <div>
+        <div class="dash-hero-label">Última jornada trabajada</div>
+        <div class="dash-hero-date">${ud.fecha}</div>
+      </div>
+      <div class="dash-hero-stats">
+        <div>
+          <div class="dash-hero-stat-val">${ud.alistado}</div>
+          <div class="dash-hero-stat-lbl">DOCENAS TERMINADAS</div>
+        </div>
+        <div>
+          <div class="dash-hero-stat-val">${ud.totalEtapas}</div>
+          <div class="dash-hero-stat-lbl">MOVIMIENTOS TOTALES</div>
+        </div>
+        <div>
+          <div class="dash-hero-stat-val">${sa.promedioDiario}</div>
+          <div class="dash-hero-stat-lbl">PROM. DIARIO (SEMANA)</div>
+        </div>
+      </div>
+    </div>`;
+
+  // ── KPI ROW: 5 tarjetas, una por etapa del último día ──
+  const kpiRowHtml = `
+    <div class="dash-kpi-row">
+      ${ud.porEtapa.map(e => `
+        <div class="dash-kpi-card" style="border-top-color:${COLORES_ETAPA[e.key]}">
+          <div class="etapa-val">${e.valor}</div>
+          <div class="etapa-lbl">
+            <span class="dot" style="background:${COLORES_ETAPA[e.key]}"></span> ${e.label}
+          </div>
+        </div>`).join("")}
+    </div>`;
+
+  // ── GRÁFICA SVG: tendencia de los últimos N días con datos ──
+  const serie = t14.serie;
+  const W = 760, H = 200, PAD_L = 40, PAD_B = 26, PAD_T = 14, PAD_R = 14;
+  const plotW = W - PAD_L - PAD_R;
+  const plotH = H - PAD_T - PAD_B;
+  const maxVal = Math.max(...serie.map(d => d.totalEtapas), 1);
+  const stepX = serie.length > 1 ? plotW / (serie.length - 1) : 0;
+
+  const puntosTotal = serie.map((d, i) => ({
+    x: PAD_L + i * stepX,
+    y: PAD_T + plotH - (d.totalEtapas / maxVal * plotH),
+    d
+  }));
+  const puntosAlistado = serie.map((d, i) => ({
+    x: PAD_L + i * stepX,
+    y: PAD_T + plotH - (d.alistado / maxVal * plotH),
+    d
+  }));
+
+  const lineaTotal = puntosTotal.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join(" ");
+  const lineaAlistado = puntosAlistado.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join(" ");
+  const areaTotal = lineaTotal +
+    ` L ${puntosTotal[puntosTotal.length-1].x.toFixed(1)} ${(PAD_T + plotH).toFixed(1)}` +
+    ` L ${puntosTotal[0].x.toFixed(1)} ${(PAD_T + plotH).toFixed(1)} Z`;
+
+  const gridLines = [0, 0.25, 0.5, 0.75, 1].map(frac => {
+    const y = PAD_T + plotH - (frac * plotH);
+    const val = Math.round(maxVal * frac);
+    return `
+      <line x1="${PAD_L}" y1="${y}" x2="${W - PAD_R}" y2="${y}" stroke="#eef0f5" stroke-width="1"/>
+      <text x="${PAD_L - 8}" y="${y + 3}" text-anchor="end" font-size="9" fill="#9aa3b8" font-family="IBM Plex Mono, monospace">${val}</text>`;
+  }).join("");
+
+  const labelStep = Math.max(1, Math.ceil(serie.length / 7));
+  const xLabels = puntosTotal.filter((_, i) => i % labelStep === 0 || i === puntosTotal.length - 1).map(p => {
+    const corta = p.d.fecha.split("/").slice(0, 2).join("/");
+    return `<text x="${p.x.toFixed(1)}" y="${H - 8}" text-anchor="middle" font-size="9" fill="#9aa3b8" font-family="IBM Plex Mono, monospace">${corta}</text>`;
+  }).join("");
+
+  const circulosTotal = puntosTotal.map(p => `
+    <circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="3" fill="#1d4ed8">
+      <title>${p.d.fecha}: ${p.d.totalEtapas} doc (total etapas)</title>
+    </circle>`).join("");
+  const circulosAlistado = puntosAlistado.map(p => `
+    <circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="3" fill="#2ec4b6">
+      <title>${p.d.fecha}: ${p.d.alistado} doc (terminado)</title>
+    </circle>`).join("");
+
+  const graficaSvg = `
+    <div class="trend-chart-wrap">
+      <svg viewBox="0 0 ${W} ${H}" style="width:100%;min-width:480px;height:auto;display:block;">
+        <defs>
+          <linearGradient id="gradTotal" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#1d4ed8" stop-opacity="0.16"/>
+            <stop offset="100%" stop-color="#1d4ed8" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+        ${gridLines}
+        <path d="${areaTotal}" fill="url(#gradTotal)" stroke="none"/>
+        <path d="${lineaTotal}" fill="none" stroke="#1d4ed8" stroke-width="2"/>
+        <path d="${lineaAlistado}" fill="none" stroke="#2ec4b6" stroke-width="2" stroke-dasharray="4 3"/>
+        ${circulosTotal}
+        ${circulosAlistado}
+        ${xLabels}
+      </svg>
+    </div>`;
+
+  // ── Barras comparativas por etapa (14 días) ──
+  const maxEtapa14 = Math.max(...t14.totalesPorEtapa.map(e => e.total), 1);
+  const barrasEtapa14 = t14.totalesPorEtapa.map(e => `
+    <div class="etapa-bar-row">
+      <div class="etapa-bar-label">
+        <span class="dot" style="background:${COLORES_ETAPA[e.key]}"></span>${e.label}
+      </div>
+      <div class="etapa-bar-track">
+        <div class="etapa-bar-fill" style="width:${(e.total/maxEtapa14*100).toFixed(1)}%;background:${COLORES_ETAPA[e.key]}"></div>
+      </div>
+      <div class="etapa-bar-val">${e.total}</div>
+    </div>`).join("");
+
+  // ── Accesos rápidos a los otros reportes ──
+  const accesos = `
+    <button class="dash-nav-btn" onclick="irAVista('semanal')">
+      📊 Reporte Semanal <span class="arrow">→</span>
+    </button>
+    <button class="dash-nav-btn" onclick="irAVista('modelo')">
+      👟 Consultar Modelo <span class="arrow">→</span>
+    </button>
+    <button class="dash-nav-btn" onclick="irAVista('estadoModelo')">
+      🎨 Estado por Modelo <span class="arrow">→</span>
+    </button>
+    <button class="dash-nav-btn" onclick="irAVista('plan')">
+      📅 Plan de Armado <span class="arrow">→</span>
+    </button>`;
+
+  document.getElementById("result").innerHTML = `
+    ${heroHtml}
+    ${kpiRowHtml}
+
+    <div class="dash-grid">
+      <div>
+        <div class="card">
+          <div class="dash-section-title">Tendencia de producción</div>
+          <div class="dash-section-sub">Últimos ${serie.length} días con registro · línea sólida = total etapas, punteada = terminado</div>
+          ${graficaSvg}
+        </div>
+
+        <div class="card">
+          <div class="dash-section-title">Etapa líder del periodo</div>
+          <div class="dash-section-sub"><b style="color:var(--navy)">${t14.etapaLider}</b> concentra ${t14.etapaLiderTotal} movimientos en los últimos ${serie.length} días.</div>
+          ${barrasEtapa14}
+        </div>
+      </div>
+
+      <div>
+        <div class="dash-side-card">
+          <div class="dash-section-title">Semana actual</div>
+          <div class="dash-section-sub">${sa.lunes} — ${sa.hoy}</div>
+          <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);">
+            <span style="font-size:12px;color:var(--muted);">Terminado</span>
+            <span style="font-family:'IBM Plex Mono',monospace;font-weight:600;">${sa.alistado}</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);">
+            <span style="font-size:12px;color:var(--muted);">Total etapas</span>
+            <span style="font-family:'IBM Plex Mono',monospace;font-weight:600;">${sa.totalEtapas}</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:8px 0;">
+            <span style="font-size:12px;color:var(--muted);">Días con dato</span>
+            <span style="font-family:'IBM Plex Mono',monospace;font-weight:600;">${sa.diasConDato}</span>
+          </div>
+        </div>
+
+        <div class="dash-side-card">
+          <div class="dash-section-title">Accesos rápidos</div>
+          <div style="margin-top:10px;">${accesos}</div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+/**
+ * Navega a una vista desde un botón de acceso rápido del dashboard.
+ */
+function irAVista(viewKey) {
+  const item = document.querySelector(`.nav-item[data-view="${viewKey}"]`);
+  if (item) item.click();
 }
 
 // ═══════════════════════════════════════════════
@@ -612,11 +1334,10 @@ function renderPlan(data) {
 }
 
 // ═══════════════════════════════════════════════
-//  INICIO
+//  INICIO — CARGAR DASHBOARD AUTOMÁTICAMENTE
 // ═══════════════════════════════════════════════
 renderFormBar();
-document.getElementById("result").innerHTML = `
-  <div class="estado-msg">Completa el periodo y presiona Buscar.</div>`;
+cargarDashboard();
 </script>
 
 </body>
