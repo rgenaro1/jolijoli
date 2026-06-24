@@ -610,6 +610,169 @@
   .dash-nav-btn .arrow { float: right; color: var(--muted); }
 
   /* ═══════════════════════════════════════
+     CHAT
+  ═══════════════════════════════════════ */
+  .chat-wrap {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 220px);
+    min-height: 400px;
+  }
+
+  .chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 4px 0 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .chat-bubble {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    max-width: 85%;
+  }
+
+  .chat-bubble.user { align-self: flex-end; flex-direction: row-reverse; }
+  .chat-bubble.bot  { align-self: flex-start; }
+
+  .chat-avatar {
+    width: 30px; height: 30px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px;
+    flex-shrink: 0;
+  }
+
+  .chat-bubble.user .chat-avatar {
+    background: var(--accent);
+  }
+
+  .chat-bubble.bot .chat-avatar {
+    background: transparent;
+    overflow: hidden;
+    border: 2px solid var(--gold);
+    padding: 0;
+  }
+
+  .chat-bubble.bot .chat-avatar img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .chat-text {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 15px;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--ink);
+  }
+
+  .chat-bubble.user .chat-text {
+    background: var(--navy);
+    color: #e8edf8;
+    border-color: var(--navy-light);
+    border-radius: 12px 2px 12px 12px;
+  }
+
+  .chat-bubble.bot .chat-text {
+    border-radius: 2px 12px 12px 12px;
+  }
+
+  .chat-time {
+    font-size: 10px;
+    color: var(--muted);
+    margin-top: 4px;
+    text-align: right;
+  }
+
+  .chat-bubble.bot .chat-time { text-align: left; }
+
+  .chat-input-bar {
+    display: flex;
+    gap: 10px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+    margin-top: 8px;
+  }
+
+  .chat-input {
+    flex: 1;
+    padding: 11px 14px;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    font-size: 13px;
+    font-family: 'Inter', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    resize: none;
+    outline: none;
+    transition: border-color .15s;
+    min-height: 44px;
+    max-height: 120px;
+  }
+
+  .chat-input:focus { border-color: var(--accent); background: white; }
+
+  .chat-send {
+    background: var(--navy);
+    color: white;
+    border: none;
+    padding: 11px 18px;
+    border-radius: 9px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background .15s;
+    flex-shrink: 0;
+  }
+
+  .chat-send:hover { background: var(--navy-light); }
+  .chat-send:disabled { background: var(--muted); cursor: not-allowed; }
+
+  .chat-examples {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .chat-example {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 6px 13px;
+    font-size: 12px;
+    color: var(--muted);
+    cursor: pointer;
+    transition: border-color .15s, color .15s;
+  }
+
+  .chat-example:hover { border-color: var(--gold); color: var(--ink); }
+
+  .typing-dot {
+    display: inline-block;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--muted);
+    animation: typing .9s infinite;
+  }
+
+  .typing-dot:nth-child(2) { animation-delay: .2s; }
+  .typing-dot:nth-child(3) { animation-delay: .4s; }
+
+  @keyframes typing {
+    0%, 60%, 100% { transform: translateY(0); opacity:.4; }
+    30% { transform: translateY(-5px); opacity:1; }
+  }
+
+  /* ═══════════════════════════════════════
      RESPONSIVE
   ═══════════════════════════════════════ */
   @media (max-width: 880px) {
@@ -662,6 +825,11 @@
       <div class="nav-item" data-view="plan">
         <span class="nav-num">04</span> Plan de Armado
       </div>
+      <div class="nav-item" data-view="chat" style="margin-top:8px;border-top:1px solid var(--navy-line);padding-top:14px;">
+        <span class="nav-num" style="color:var(--gold)">✦</span>
+        <span>Consultar con IA</span>
+        <span style="font-size:9px;background:var(--gold);color:var(--navy);padding:1px 6px;border-radius:10px;margin-left:auto;font-weight:700;">BETA</span>
+      </div>
     </div>
 
     <div class="sidebar-footer">
@@ -694,11 +862,14 @@
 // ═══════════════════════════════════════════════
 //  CONFIGURACIÓN — REEMPLAZA CON TU URL DE WEB APP
 // ═══════════════════════════════════════════════
-const API_URL = "https://script.google.com/macros/s/AKfycbytKtv838e0hdQb8VfV-xtX5O81bYlQWyCTwmwzMKP9MDqJq__NRExiaPAxZaZQ6MXUog/exec";
+const API_URL = "PEGA_AQUI_TU_URL_DE_WEB_APP";
 
 if (!API_URL || API_URL.includes("PEGA_AQUI")) {
   document.getElementById("config-banner").classList.add("show");
 }
+
+// Avatar de Chato — Gerente de Producción
+const CHATO_IMG = "data:image/jpeg;base64,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";
 
 const COLORES_ETAPA = {
   corte: "#4a7c59", habilitado: "#3a6ea8", perfilado: "#e09b2d",
@@ -755,6 +926,13 @@ const VIEWS = {
     ],
     buildUrl: (v) => `${API_URL}?reporte=plan&fecha=${encodeURIComponent(v.fecha)}`,
     render: renderPlan
+  },
+  chat: {
+    titulo: "Consultar con IA",
+    descripcion: "Haz preguntas en lenguaje natural sobre el estado de tu producción. Impulsado por Gemini.",
+    fields: [],
+    buildUrl: () => null,
+    render: null
   }
 };
 
@@ -776,6 +954,8 @@ document.getElementById("tabs").addEventListener("click", (e) => {
 
   if (currentView === "dashboard") {
     cargarDashboard();
+  } else if (currentView === "chat") {
+    renderChat();
   } else {
     document.getElementById("result").innerHTML = `
       <div class="estado-msg">Completa los campos y presiona Buscar.</div>`;
@@ -1331,6 +1511,161 @@ function renderPlan(data) {
       ${filas}
     </table></div>` : ""}
   `;
+}
+
+// ═══════════════════════════════════════════════
+//  RENDER: CHAT CON IA
+// ═══════════════════════════════════════════════
+let chatHistory = []; // historial de burbujas en sesión
+
+const CHAT_EJEMPLOS = [
+  "¿Cuánto se produjo hoy?",
+  "¿Qué modelos tienen armado vencido?",
+  "¿Cuántas OPs están pendientes?",
+  "¿Cuál es el estado de DIANA?",
+  "¿Qué OPs tienen armado esta semana?"
+];
+
+function renderChat() {
+  document.getElementById("form-bar").innerHTML = ""; // sin formulario de búsqueda
+
+  document.getElementById("result").innerHTML = `
+    <div class="chat-wrap">
+      <div class="chat-messages" id="chat-messages">
+        <div class="chat-bubble bot">
+          <div class="chat-avatar"><img src="${CHATO_IMG}" alt="Chato"></div>
+          <div>
+            <div class="chat-text">
+              ¡Guau! 🐾 Soy <b>Chato</b>, Gerente de Producción de Joli Joli.<br><br>
+              Sé todo lo que pasa en la planta — OPs, modelos, fechas de armado, lo que necesites. Pregúntame sin miedo.
+            </div>
+            <div class="chat-time">${new Date().toLocaleTimeString('es-PE', {hour:'2-digit', minute:'2-digit'})}</div>
+          </div>
+        </div>
+      </div>
+      <div style="padding: 0 0 10px;">
+        <div class="chat-examples" id="chat-examples">
+          ${CHAT_EJEMPLOS.map(ej => `
+            <div class="chat-example" onclick="usarEjemplo('${ej}')">${ej}</div>
+          `).join("")}
+        </div>
+      </div>
+      <div class="chat-input-bar">
+        <textarea
+          class="chat-input"
+          id="chat-input"
+          placeholder="Escribe tu pregunta sobre producción..."
+          rows="1"
+          onkeypress="if(event.key==='Enter' && !event.shiftKey){ event.preventDefault(); enviarPregunta(); }"
+          oninput="this.style.height='auto'; this.style.height=this.scrollHeight+'px';"
+        ></textarea>
+        <button class="chat-send" id="chat-send" onclick="enviarPregunta()">Enviar</button>
+      </div>
+    </div>
+  `;
+
+  document.getElementById("chat-input").focus();
+}
+
+function usarEjemplo(texto) {
+  const input = document.getElementById("chat-input");
+  if (input) {
+    input.value = texto;
+    input.focus();
+    document.getElementById("chat-examples").style.display = "none";
+  }
+}
+
+function enviarPregunta() {
+  const input = document.getElementById("chat-input");
+  const sendBtn = document.getElementById("chat-send");
+  if (!input) return;
+
+  const pregunta = input.value.trim();
+  if (!pregunta) return;
+
+  const messagesEl = document.getElementById("chat-messages");
+  const hora = new Date().toLocaleTimeString('es-PE', {hour:'2-digit', minute:'2-digit'});
+
+  // Ocultar ejemplos tras primera pregunta
+  const ejemplosEl = document.getElementById("chat-examples");
+  if (ejemplosEl) ejemplosEl.style.display = "none";
+
+  // Agregar burbuja del usuario
+  messagesEl.innerHTML += `
+    <div class="chat-bubble user">
+      <div class="chat-avatar">👤</div>
+      <div>
+        <div class="chat-text">${pregunta.replace(/</g,"&lt;")}</div>
+        <div class="chat-time">${hora}</div>
+      </div>
+    </div>`;
+
+  // Limpiar input y deshabilitar botón
+  input.value = "";
+  input.style.height = "auto";
+  sendBtn.disabled = true;
+
+  // Burbuja de "escribiendo..."
+  const typingId = "typing-" + Date.now();
+  messagesEl.innerHTML += `
+    <div class="chat-bubble bot" id="${typingId}">
+      <div class="chat-avatar">JJ</div>
+      <div>
+        <div class="chat-text" style="padding:14px 15px;">
+          <span class="typing-dot"></span>
+          <span class="typing-dot"></span>
+          <span class="typing-dot"></span>
+        </div>
+      </div>
+    </div>`;
+
+  messagesEl.scrollTop = messagesEl.scrollHeight;
+
+  // Llamar a la API
+  fetch(`${API_URL}?reporte=chat&pregunta=${encodeURIComponent(pregunta)}`)
+    .then(r => r.json())
+    .then(data => {
+      document.getElementById(typingId)?.remove();
+
+      const respHora = new Date().toLocaleTimeString('es-PE', {hour:'2-digit', minute:'2-digit'});
+      const texto = data.error
+        ? `⚠️ ${data.error}`
+        : data.respuesta;
+
+      // Formatear saltos de línea y listas simples
+      const textoHtml = texto
+        .replace(/</g, "&lt;")
+        .replace(/\n\n/g, "<br><br>")
+        .replace(/\n/g, "<br>")
+        .replace(/\*\*(.*?)\*\*/g, "<b>$1</b>")
+        .replace(/\*(.*?)\*/g, "<i>$1</i>");
+
+      messagesEl.innerHTML += `
+        <div class="chat-bubble bot">
+          <div class="chat-avatar"><img src="${CHATO_IMG}" alt="Chato"></div>
+          <div>
+            <div class="chat-text">${textoHtml}</div>
+            <div class="chat-time">${respHora}</div>
+          </div>
+        </div>`;
+
+      messagesEl.scrollTop = messagesEl.scrollHeight;
+      sendBtn.disabled = false;
+      input.focus();
+    })
+    .catch(err => {
+      document.getElementById(typingId)?.remove();
+      messagesEl.innerHTML += `
+        <div class="chat-bubble bot">
+          <div class="chat-avatar"><img src="${CHATO_IMG}" alt="Chato"></div>
+          <div>
+            <div class="chat-text">🐾 ¡Ups! No pude conectarme: ${err.message}</div>
+          </div>
+        </div>`;
+      messagesEl.scrollTop = messagesEl.scrollHeight;
+      sendBtn.disabled = false;
+    });
 }
 
 // ═══════════════════════════════════════════════
