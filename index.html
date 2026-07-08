@@ -773,6 +773,225 @@
   }
 
   /* ═══════════════════════════════════════
+     EDITOR DE OP
+  ═══════════════════════════════════════ */
+  .editor-search {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: flex-end;
+  }
+
+  .editor-search .form-group { min-width: 140px; }
+
+  .btn-secondary {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--ink);
+    padding: 10px 16px;
+    border-radius: 7px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: border-color .15s;
+  }
+
+  .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+  .op-result-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .op-result-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    transition: border-color .15s, box-shadow .15s;
+  }
+
+  .op-result-card:hover {
+    border-color: var(--accent);
+    box-shadow: 0 2px 8px rgba(29,78,216,.08);
+  }
+
+  .op-result-card.selected {
+    border-color: var(--accent);
+    background: #f0f4ff;
+  }
+
+  .op-card-title { font-weight: 700; font-size: 14px; color: var(--ink); }
+  .op-card-sub   { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+  .btn-edit-op {
+    background: var(--accent);
+    color: white;
+    border: none;
+    padding: 7px 14px;
+    border-radius: 7px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    white-space: nowrap;
+  }
+
+  /* Formulario de edición */
+  .editor-form { }
+
+  .editor-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .editor-op-title { font-size: 18px; font-weight: 700; }
+  .editor-op-sub   { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+  .editor-actions { display: flex; gap: 8px; }
+
+  .btn-save {
+    background: var(--ok, #2f7d5f);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: opacity .15s;
+  }
+
+  .btn-save:hover { opacity: .88; }
+  .btn-save:disabled { opacity: .5; cursor: not-allowed; }
+
+  .editor-seccion {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 14px;
+    overflow: hidden;
+  }
+
+  .editor-seccion-title {
+    background: var(--navy);
+    color: #cfd7ea;
+    padding: 8px 14px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+  }
+
+  .editor-fields {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 0;
+  }
+
+  .editor-field {
+    padding: 10px 14px;
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .editor-field:last-child { border-right: none; }
+
+  .editor-field label {
+    display: block;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 5px;
+  }
+
+  .editor-field input,
+  .editor-field select {
+    width: 100%;
+    padding: 7px 9px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 12.5px;
+    font-family: inherit;
+    background: var(--paper);
+    color: var(--ink);
+    transition: border-color .12s;
+  }
+
+  .editor-field input:focus,
+  .editor-field select:focus {
+    outline: none;
+    border-color: var(--accent);
+    background: white;
+  }
+
+  .editor-field input.changed { border-color: var(--gold); background: #fffbf0; }
+
+  /* PIN modal */
+  .pin-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+  }
+
+  .pin-modal {
+    background: white;
+    border-radius: 14px;
+    padding: 28px 32px;
+    width: 320px;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0,0,0,.2);
+  }
+
+  .pin-title { font-size: 17px; font-weight: 700; margin-bottom: 6px; }
+  .pin-sub   { font-size: 12px; color: var(--muted); margin-bottom: 18px; }
+
+  .pin-input {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid var(--border);
+    border-radius: 9px;
+    font-size: 20px;
+    text-align: center;
+    letter-spacing: .2em;
+    font-family: 'IBM Plex Mono', monospace;
+    margin-bottom: 14px;
+    outline: none;
+  }
+
+  .pin-input:focus { border-color: var(--accent); }
+
+  .pin-error {
+    color: #c62828;
+    font-size: 12px;
+    margin-bottom: 10px;
+    min-height: 18px;
+  }
+
+  .pin-actions { display: flex; gap: 8px; }
+  .pin-actions button { flex: 1; padding: 10px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; border: none; }
+  .pin-cancel { background: var(--paper); color: var(--muted); border: 1px solid var(--border) !important; }
+  .pin-confirm { background: var(--navy); color: white; }
+
+  /* ═══════════════════════════════════════
      RESPONSIVE
   ═══════════════════════════════════════ */
   @media (max-width: 880px) {
@@ -829,6 +1048,9 @@
         <span class="nav-num" style="color:var(--gold)">✦</span>
         <span>Consultar con IA</span>
         <span style="font-size:9px;background:var(--gold);color:var(--navy);padding:1px 6px;border-radius:10px;margin-left:auto;font-weight:700;">BETA</span>
+      </div>
+      <div class="nav-item" data-view="editor">
+        <span class="nav-num">05</span> Editar OP
       </div>
     </div>
 
@@ -933,6 +1155,13 @@ const VIEWS = {
     fields: [],
     buildUrl: () => null,
     render: null
+  },
+  editor: {
+    titulo: "Editar Orden de Producción",
+    descripcion: "Busca una OP por número o modelo/color, edita sus campos y guarda los cambios directamente en la hoja.",
+    fields: [],
+    buildUrl: () => null,
+    render: null
   }
 };
 
@@ -956,6 +1185,8 @@ document.getElementById("tabs").addEventListener("click", (e) => {
     cargarDashboard();
   } else if (currentView === "chat") {
     renderChat();
+  } else if (currentView === "editor") {
+    renderEditor();
   } else {
     document.getElementById("result").innerHTML = `
       <div class="estado-msg">Completa los campos y presiona Buscar.</div>`;
@@ -1516,7 +1747,7 @@ function renderPlan(data) {
 // ═══════════════════════════════════════════════
 //  RENDER: CHAT CON IA
 // ═══════════════════════════════════════════════
-let chatHistory = []; // historial de burbujas en sesión
+let chatHistory = []; // historial de conversación en sesión
 
 const CHAT_EJEMPLOS = [
   "¿Cuánto se produjo hoy?",
@@ -1527,7 +1758,8 @@ const CHAT_EJEMPLOS = [
 ];
 
 function renderChat() {
-  document.getElementById("form-bar").innerHTML = ""; // sin formulario de búsqueda
+  chatHistory = []; // resetear historial al entrar a la vista
+  document.getElementById("form-bar").innerHTML = "";
 
   document.getElementById("result").innerHTML = `
     <div class="chat-wrap">
@@ -1623,7 +1855,12 @@ function enviarPregunta() {
   messagesEl.scrollTop = messagesEl.scrollHeight;
 
   // Llamar a la API
-  fetch(`${API_URL}?reporte=chat&pregunta=${encodeURIComponent(pregunta)}`)
+  // Agregar al historial antes de enviar
+  chatHistory.push({ rol: "user", texto: pregunta });
+  // Mantener máximo 6 turnos (12 mensajes) para no saturar tokens
+  if (chatHistory.length > 12) chatHistory = chatHistory.slice(-12);
+
+  fetch(`${API_URL}?reporte=chat&pregunta=${encodeURIComponent(pregunta)}&historial=${encodeURIComponent(JSON.stringify(chatHistory.slice(0,-1)))}`)
     .then(r => r.json())
     .then(data => {
       document.getElementById(typingId)?.remove();
@@ -1665,6 +1902,334 @@ function enviarPregunta() {
         </div>`;
       messagesEl.scrollTop = messagesEl.scrollHeight;
       sendBtn.disabled = false;
+    });
+}
+
+// ═══════════════════════════════════════════════
+//  EDITOR DE OP
+// ═══════════════════════════════════════════════
+const ESTADOS_VALIDOS = [
+  "CORTE","HABILITADO","PERFILADO","ARMADO","ALISTADO","PRODUCTO TERMINADO"
+];
+
+let editorDatosActuales = null; // OP actualmente en edición
+
+function renderEditor() {
+  document.getElementById("form-bar").innerHTML = "";
+  document.getElementById("result").innerHTML = `
+    <div class="card" style="margin-bottom:16px;">
+      <h3 style="margin-bottom:14px;">Buscar Orden de Producción</h3>
+      <div class="editor-search">
+        <div class="form-group">
+          <label>N° de OP</label>
+          <input type="text" id="ed-op" placeholder="Ej: 1248"
+            onkeypress="if(event.key==='Enter') buscarOPEditor()">
+        </div>
+        <div class="form-group">
+          <label>Modelo</label>
+          <input type="text" id="ed-modelo" placeholder="Ej: DIANA"
+            onkeypress="if(event.key==='Enter') buscarOPEditor()">
+        </div>
+        <div class="form-group">
+          <label>Color</label>
+          <input type="text" id="ed-color" placeholder="Ej: NEGRO"
+            onkeypress="if(event.key==='Enter') buscarOPEditor()">
+        </div>
+        <button class="btn-buscar" onclick="buscarOPEditor()">🔍 Buscar</button>
+      </div>
+    </div>
+    <div id="editor-result"></div>
+  `;
+  document.getElementById("ed-op").focus();
+}
+
+function buscarOPEditor() {
+  const op     = document.getElementById("ed-op")?.value.trim() || "";
+  const modelo = document.getElementById("ed-modelo")?.value.trim() || "";
+  const color  = document.getElementById("ed-color")?.value.trim() || "";
+
+  if (!op && !modelo) {
+    document.getElementById("editor-result").innerHTML = `
+      <div class="estado-msg error">⚠️ Ingresa al menos el número de OP o el modelo.</div>`;
+    return;
+  }
+
+  document.getElementById("editor-result").innerHTML = `
+    <div class="estado-msg"><div class="spinner"></div>Buscando...</div>`;
+
+  const url = `${API_URL}?reporte=buscarOP` +
+    (op     ? `&op=${encodeURIComponent(op)}`         : "") +
+    (modelo ? `&modelo=${encodeURIComponent(modelo)}` : "") +
+    (color  ? `&color=${encodeURIComponent(color)}`   : "");
+
+  fetch(url)
+    .then(r => r.json())
+    .then(data => {
+      if (data.error) {
+        document.getElementById("editor-result").innerHTML = `
+          <div class="estado-msg error">⚠️ ${data.error}</div>`;
+        return;
+      }
+      mostrarResultadosOP(data);
+    })
+    .catch(err => {
+      document.getElementById("editor-result").innerHTML = `
+        <div class="estado-msg error">⚠️ Error: ${err.message}</div>`;
+    });
+}
+
+function mostrarResultadosOP(data) {
+  if (data.resultados.length === 1) {
+    // Un solo resultado: abrir directamente el formulario
+    mostrarFormEditor(data.resultados[0], data.campos);
+    return;
+  }
+
+  // Múltiples resultados: mostrar lista para elegir
+  const tarjetas = data.resultados.map((r, idx) => {
+    const op     = r.campos[0]  || "—";
+    const modelo = r.campos[1]  || "—";
+    const color  = r.campos[2]  || "—";
+    const estado = r.campos[13] || "—";
+    return `
+      <div class="op-result-card">
+        <div>
+          <div class="op-card-title">OP ${op} — ${modelo} ${color}</div>
+          <div class="op-card-sub">Fila ${r.fila} · Estado: ${estado}</div>
+        </div>
+        <button class="btn-edit-op" onclick='seleccionarOP(${idx})'>Editar →</button>
+      </div>`;
+  }).join("");
+
+  // Guardar data globalmente para acceder desde seleccionarOP
+  window._editorData = data;
+
+  document.getElementById("editor-result").innerHTML = `
+    <div style="font-size:12px;color:var(--muted);margin-bottom:10px;">
+      ${data.total} resultado(s) encontrado(s). Selecciona el que quieres editar:
+    </div>
+    <div class="op-result-list">${tarjetas}</div>`;
+}
+
+function seleccionarOP(idx) {
+  const data = window._editorData;
+  mostrarFormEditor(data.resultados[idx], data.campos);
+}
+
+function mostrarFormEditor(registro, camposDef) {
+  editorDatosActuales = { registro, camposDef };
+
+  const op     = registro.campos[0]  || "—";
+  const modelo = registro.campos[1]  || "—";
+  const color  = registro.campos[2]  || "—";
+  const estado = registro.campos[13] || "—"; // col N — solo lectura
+
+  // Color del badge según estado
+  const estadoColores = {
+    "CORTE":              { bg:"#e8f0fe", color:"#1a56db" },
+    "HABILITADO":         { bg:"#e8f5e9", color:"#2f7d5f" },
+    "PERFILADO":          { bg:"#fff8e1", color:"#b45309" },
+    "ARMADO":             { bg:"#ede7f6", color:"#6d28d9" },
+    "ALISTADO":           { bg:"#e0f7fa", color:"#0d7377" },
+    "PRODUCTO TERMINADO": { bg:"#f3e8ff", color:"#7c3aed" }
+  };
+  const ec = estadoColores[estado.toUpperCase()] || { bg:"#f1f5f9", color:"#64748b" };
+
+  // Filtrar Cantidades del formulario (índices 4-12)
+  const camposFiltrados = camposDef.filter(c => c.seccion !== "Cantidades");
+
+  // Agrupar campos por sección
+  const secciones = {};
+  camposFiltrados.forEach(c => {
+    if (!secciones[c.seccion]) secciones[c.seccion] = [];
+    secciones[c.seccion].push(c);
+  });
+
+  const seccionesHtml = Object.entries(secciones).map(([sec, campos]) => {
+    const fieldsHtml = campos.map(c => {
+      const val = registro.campos[c.idx] || "";
+      let input;
+
+      if (c.tipo === "estado") {
+        const opts = ESTADOS_VALIDOS.map(e =>
+          `<option value="${e}" ${val.toUpperCase()===e?"selected":""}>${e}</option>`
+        ).join("");
+        input = `<select id="ef-${c.idx}" data-original="${val}" onchange="marcarCambiado(this)">${opts}</select>`;
+      } else if (c.tipo === "fecha") {
+        input = `<input type="text" id="ef-${c.idx}" value="${val}"
+          placeholder="dd/MM/yyyy" data-original="${val}"
+          oninput="marcarCambiado(this)">`;
+      } else if (c.tipo === "numero") {
+        input = `<input type="number" id="ef-${c.idx}" value="${val}"
+          data-original="${val}" oninput="marcarCambiado(this)">`;
+      } else {
+        input = `<input type="text" id="ef-${c.idx}" value="${val}"
+          data-original="${val}" oninput="marcarCambiado(this)">`;
+      }
+
+      return `
+        <div class="editor-field">
+          <label>${c.label}</label>
+          ${input}
+        </div>`;
+    }).join("");
+
+    return `
+      <div class="editor-seccion">
+        <div class="editor-seccion-title">${sec}</div>
+        <div class="editor-fields">${fieldsHtml}</div>
+      </div>`;
+  }).join("");
+
+  document.getElementById("editor-result").innerHTML = `
+    <div class="editor-form">
+      <div class="editor-header">
+        <div>
+          <div class="editor-op-title">
+            OP ${op} — ${modelo} ${color}
+            <span style="
+              display:inline-block;
+              margin-left:12px;
+              font-size:11px;
+              font-weight:700;
+              padding:3px 10px;
+              border-radius:20px;
+              background:${ec.bg};
+              color:${ec.color};
+              vertical-align:middle;
+              letter-spacing:.04em;
+            ">${estado}</span>
+          </div>
+          <div class="editor-op-sub">
+            Fila ${registro.fila} · Estado calculado automáticamente por fórmula · Modifica los campos y presiona Guardar
+          </div>
+        </div>
+        <div class="editor-actions">
+          <button class="btn-secondary" onclick="renderEditor()">← Volver</button>
+          <button class="btn-save" id="btn-guardar" onclick="iniciarGuardado()">
+            💾 Guardar cambios
+          </button>
+        </div>
+      </div>
+      ${seccionesHtml}
+      <div id="editor-msg" style="margin-top:10px;font-size:13px;"></div>
+    </div>`;
+}
+
+function marcarCambiado(el) {
+  const original = el.dataset.original || "";
+  if (el.value !== original) {
+    el.classList.add("changed");
+  } else {
+    el.classList.remove("changed");
+  }
+}
+
+function iniciarGuardado() {
+  if (!editorDatosActuales) return;
+
+  // Recopilar solo campos modificados
+  const { registro, camposDef } = editorDatosActuales;
+  const cambios = {};
+
+  camposDef.forEach(c => {
+    const el = document.getElementById(`ef-${c.idx}`);
+    if (!el) return;
+    const original = el.dataset.original || "";
+    if (el.value !== original) {
+      cambios[c.idx] = el.value;
+    }
+  });
+
+  if (Object.keys(cambios).length === 0) {
+    document.getElementById("editor-msg").innerHTML =
+      `<span style="color:var(--muted);">Sin cambios para guardar.</span>`;
+    return;
+  }
+
+  // Mostrar modal de PIN
+  mostrarPinModal(cambios);
+}
+
+function mostrarPinModal(cambios) {
+  const overlay = document.createElement("div");
+  overlay.className = "pin-overlay";
+  overlay.id = "pin-overlay";
+  overlay.innerHTML = `
+    <div class="pin-modal">
+      <div class="pin-title">🔐 Confirmar cambios</div>
+      <div class="pin-sub">Ingresa el PIN para guardar ${Object.keys(cambios).length} campo(s) modificado(s)</div>
+      <input type="password" class="pin-input" id="pin-input" maxlength="8"
+        placeholder="••••"
+        onkeypress="if(event.key==='Enter') confirmarPIN()">
+      <div class="pin-error" id="pin-error"></div>
+      <div class="pin-actions">
+        <button class="pin-cancel" onclick="cerrarPinModal()">Cancelar</button>
+        <button class="pin-confirm" onclick="confirmarPIN()">Confirmar</button>
+      </div>
+    </div>`;
+  document.body.appendChild(overlay);
+  setTimeout(() => document.getElementById("pin-input")?.focus(), 50);
+
+  // Guardar cambios en el overlay para acceder desde confirmarPIN
+  overlay._cambios = cambios;
+}
+
+function cerrarPinModal() {
+  document.getElementById("pin-overlay")?.remove();
+}
+
+function confirmarPIN() {
+  const overlay  = document.getElementById("pin-overlay");
+  const pin      = document.getElementById("pin-input")?.value || "";
+  const cambios  = overlay._cambios;
+  const errorEl  = document.getElementById("pin-error");
+  const confirmBtn = overlay.querySelector(".pin-confirm");
+
+  if (!pin) { errorEl.textContent = "Ingresa el PIN."; return; }
+
+  confirmBtn.disabled = true;
+  confirmBtn.textContent = "Guardando...";
+  errorEl.textContent = "";
+
+  fetch(API_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      pin,
+      fila: editorDatosActuales.registro.fila,
+      campos: cambios
+    })
+  })
+    .then(r => r.json())
+    .then(data => {
+      cerrarPinModal();
+      const msgEl = document.getElementById("editor-msg");
+
+      if (data.error) {
+        msgEl.innerHTML = `<span style="color:#c62828;">⚠️ ${data.error}</span>`;
+        return;
+      }
+
+      // Actualizar los data-original de los campos guardados
+      Object.keys(cambios).forEach(idx => {
+        const el = document.getElementById(`ef-${idx}`);
+        if (el) {
+          el.dataset.original = el.value;
+          el.classList.remove("changed");
+        }
+      });
+
+      let msg = `✅ ${data.cambiosAplicados} campo(s) guardado(s) correctamente en la fila ${data.fila}.`;
+      if (data.advertencias?.length) {
+        msg += ` ⚠️ Advertencias: ${data.advertencias.join("; ")}`;
+      }
+      msgEl.innerHTML = `<span style="color:#2f7d5f;font-weight:600;">${msg}</span>`;
+    })
+    .catch(err => {
+      cerrarPinModal();
+      document.getElementById("editor-msg").innerHTML =
+        `<span style="color:#c62828;">⚠️ Error de conexión: ${err.message}</span>`;
     });
 }
 
