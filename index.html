@@ -5,56 +5,55 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Reportes de Producción — JOLI JOLI</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
 
   :root {
-    --navy:        #0e1b33;
-    --navy-light:  #16284a;
-    --navy-line:   #25395f;
-    --paper:       #f3f5f8;
-    --surface:     #ffffff;
-    --border:      #e1e5ee;
-    --ink:         #18223a;
-    --muted:       #6b7488;
-    --gold:        #b8915a;
-    --gold-light:  #e8d9bf;
-    --accent:      #1d4ed8;
-    --ok:          #2f7d5f;
-    --warn:        #b3781f;
-    --danger:      #b3402f;
+    --navy:        #12151b;   /* sidebar / dark surfaces */
+    --navy-light:  #1c2028;   /* sidebar hover / active */
+    --navy-line:   rgba(255,255,255,.08);
+    --paper:       #f5f7f8;   /* app background */
+    --surface:     #ffffff;   /* card surface */
+    --border:      #e6eaed;
+    --ink:         #12151b;   /* headings / primary text */
+    --muted:       #6b7280;   /* secondary text */
+    --gold:        #0d9488;   /* Dantix turquoise — primary accent */
+    --gold-light:  #e3f6f3;   /* turquoise tint */
+    --accent:      #0d9488;   /* unified accent (buttons, focus, links) */
+    --ok:          #0f9d78;
+    --warn:        #b07a22;
+    --danger:      #c14a45;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
-  html, body {
-    height: 100%;
-  }
+  html, body { height: 100%; }
 
   body {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     background: var(--paper);
     color: var(--ink);
     font-size: 14px;
-    line-height: 1.5;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
   }
 
   /* ═══════════════════════════════════════
      CONFIG BANNER
   ═══════════════════════════════════════ */
   .config-banner {
-    background: #fdf3e2;
-    border-bottom: 1px solid var(--gold-light);
-    padding: 10px 24px;
-    font-size: 12px;
-    color: #6b4e1f;
+    background: var(--gold-light);
+    border-bottom: 1px solid #bfe9e3;
+    padding: 11px 28px;
+    font-size: 12.5px;
+    color: #0b6b61;
     display: none;
   }
   .config-banner.show { display: block; }
   .config-banner code {
     background: #fff;
     padding: 2px 7px;
-    border-radius: 4px;
-    border: 1px solid var(--gold-light);
+    border-radius: 5px;
+    border: 1px solid #bfe9e3;
     font-family: 'IBM Plex Mono', monospace;
   }
 
@@ -70,9 +69,9 @@
      SIDEBAR
   ═══════════════════════════════════════ */
   .sidebar {
-    width: 256px;
+    width: 268px;
     background: var(--navy);
-    color: #c7d0e6;
+    color: #9aa3b2;
     flex-shrink: 0;
     display: flex;
     flex-direction: column;
@@ -82,114 +81,150 @@
   }
 
   .brand-block {
-    padding: 28px 24px 22px;
+    padding: 30px 26px 24px;
     border-bottom: 1px solid var(--navy-line);
   }
 
   .brand-mark {
     width: 38px;
     height: 38px;
-    border: 1.5px solid var(--gold);
-    border-radius: 2px;
+    border: none;
+    border-radius: 11px;
+    background: linear-gradient(155deg, var(--gold) 0%, #0b7a70 100%);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: 'Source Serif 4', serif;
+    font-family: 'Inter', sans-serif;
     font-weight: 700;
-    font-size: 16px;
-    color: var(--gold);
-    margin-bottom: 14px;
+    font-size: 14px;
+    color: #ffffff;
+    margin-bottom: 0;
+    flex-shrink: 0;
+    box-shadow: 0 4px 10px rgba(13,148,136,.35);
   }
 
   .brand-name {
-    font-family: 'Source Serif 4', serif;
-    font-size: 18px;
-    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
     color: #fff;
-    letter-spacing: .01em;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
   }
 
   .brand-sub {
     font-size: 10px;
-    letter-spacing: .14em;
+    letter-spacing: .1em;
     text-transform: uppercase;
     color: var(--gold);
-    margin-top: 5px;
+    margin-top: 4px;
+    font-weight: 600;
   }
 
   .brand-org {
     font-size: 11px;
-    color: #7d88a3;
+    color: #6b7284;
     margin-top: 10px;
     line-height: 1.5;
   }
 
   .nav {
     flex: 1;
-    padding: 18px 14px;
+    padding: 20px 16px;
     overflow-y: auto;
   }
 
   .nav-eyebrow {
     font-size: 10px;
-    letter-spacing: .12em;
+    letter-spacing: .1em;
     text-transform: uppercase;
-    color: #5b6584;
+    color: #565d6e;
     padding: 0 10px;
     margin-bottom: 10px;
+    font-weight: 600;
   }
 
   .nav-item {
     display: flex;
     align-items: center;
-    gap: 11px;
-    padding: 11px 12px;
-    border-radius: 7px;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 9px;
     cursor: pointer;
-    font-size: 13px;
-    color: #aab4cc;
-    margin-bottom: 3px;
-    transition: background .15s, color .15s;
+    font-size: 13.5px;
+    font-weight: 500;
+    color: #9aa3b2;
+    margin-bottom: 2px;
+    transition: background .15s ease, color .15s ease;
     position: relative;
   }
 
   .nav-item:hover {
-    background: rgba(255,255,255,.04);
+    background: rgba(255,255,255,.05);
     color: #fff;
   }
 
   .nav-item.active {
-    background: var(--navy-light);
-    color: #fff;
-  }
-
-  .nav-item.active::before {
-    content: "";
-    position: absolute;
-    left: -14px;
-    top: 8px;
-    bottom: 8px;
-    width: 3px;
     background: var(--gold);
-    border-radius: 0 3px 3px 0;
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(13,148,136,.35);
   }
 
   .nav-num {
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
-    color: #5b6584;
+    font-size: 9.5px;
+    color: #6b7280;
     width: 16px;
+    flex-shrink: 0;
+    text-align: center;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .nav-item.active .nav-num { color: #fff; }
+
+  .sidebar-footer {
+    padding: 14px 16px 20px;
+    border-top: 1px solid var(--navy-line);
+    font-size: 10.5px;
+    color: #9aa3b2;
+    line-height: 1.6;
+  }
+
+  .sidebar-profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    border-radius: 12px;
+    background: rgba(255,255,255,.04);
+  }
+
+  .sidebar-profile-avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 9px;
+    background: linear-gradient(155deg, var(--gold) 0%, #0b7a70 100%);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 12px;
     flex-shrink: 0;
   }
 
-  .nav-item.active .nav-num { color: var(--gold); }
+  .sidebar-profile-name {
+    color: #fff;
+    font-size: 12.5px;
+    font-weight: 600;
+    line-height: 1.3;
+  }
 
-  .sidebar-footer {
-    padding: 16px 24px 20px;
-    border-top: 1px solid var(--navy-line);
+  .sidebar-profile-role {
+    color: #7d8697;
     font-size: 10.5px;
-    color: #5b6584;
-    line-height: 1.7;
   }
 
   .live-dot {
@@ -197,9 +232,9 @@
     width: 6px;
     height: 6px;
     border-radius: 50%;
-    background: #3dbd7d;
+    background: var(--gold);
     margin-right: 6px;
-    box-shadow: 0 0 0 3px rgba(61,189,125,.18);
+    box-shadow: 0 0 0 3px rgba(13,148,136,.2);
   }
 
   /* ═══════════════════════════════════════
@@ -215,50 +250,88 @@
   .topbar {
     background: var(--surface);
     border-bottom: 1px solid var(--border);
-    padding: 22px 32px 18px;
+    padding: 26px 36px 20px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+  }
+
+  .topbar-icons {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .topbar-icon-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: border-color .15s, color .15s, background .15s;
+  }
+
+  .topbar-icon-btn:hover {
+    border-color: var(--gold);
+    color: var(--gold);
+    background: var(--gold-light);
   }
 
   .topbar-eyebrow {
-    font-size: 10.5px;
-    letter-spacing: .12em;
+    display: inline-block;
+    font-size: 10px;
+    letter-spacing: .1em;
     text-transform: uppercase;
     color: var(--gold);
-    font-weight: 600;
-    margin-bottom: 6px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    background: var(--gold-light);
+    padding: 4px 10px;
+    border-radius: 20px;
   }
 
   .topbar-title {
-    font-family: 'Source Serif 4', serif;
-    font-size: 25px;
-    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    font-size: 27px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
     color: var(--ink);
   }
 
   .topbar-desc {
-    font-size: 12.5px;
+    font-size: 13px;
     color: var(--muted);
-    margin-top: 5px;
-    max-width: 620px;
+    margin-top: 6px;
+    max-width: 640px;
   }
 
   /* ═══════════════════════════════════════
      FORM BAR
   ═══════════════════════════════════════ */
-  .content { max-width: 1280px; width: 100%; margin: 0 auto; padding: 24px 32px 48px; }
+  .content { max-width: 1320px; width: 100%; margin: 0 auto; padding: 28px 36px 56px; }
 
   .form-bar {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 18px 20px;
-    margin-bottom: 22px;
+    border-radius: 14px;
+    padding: 20px 22px;
+    margin-bottom: 24px;
     display: flex;
-    gap: 14px;
+    gap: 16px;
     align-items: flex-end;
     flex-wrap: wrap;
+    box-shadow: 0 1px 2px rgba(16,24,40,.04);
   }
 
-  .form-group { display: flex; flex-direction: column; gap: 6px; }
+  .form-group { display: flex; flex-direction: column; gap: 7px; }
 
   .form-group label {
     font-size: 10.5px;
@@ -269,38 +342,40 @@
   }
 
   .form-group input {
-    padding: 10px 13px;
+    padding: 10px 14px;
     border: 1px solid var(--border);
-    border-radius: 7px;
+    border-radius: 9px;
     font-size: 13px;
     min-width: 160px;
     font-family: 'IBM Plex Mono', monospace;
     color: var(--ink);
     background: var(--paper);
-    transition: border-color .15s, background .15s;
+    transition: border-color .15s, background .15s, box-shadow .15s;
   }
 
   .form-group input:focus {
     outline: none;
     border-color: var(--accent);
     background: #fff;
+    box-shadow: 0 0 0 3px rgba(13,148,136,.12);
   }
 
   .btn-buscar {
-    background: var(--navy);
+    background: var(--ink);
     color: white;
     border: none;
-    padding: 11px 22px;
-    border-radius: 7px;
+    padding: 11px 24px;
+    border-radius: 9px;
     font-size: 13px;
     font-weight: 600;
     cursor: pointer;
-    transition: background .15s;
+    transition: background .15s, transform .1s;
     letter-spacing: .01em;
   }
 
-  .btn-buscar:hover { background: var(--navy-light); }
-  .btn-buscar:disabled { background: #aab; cursor: not-allowed; }
+  .btn-buscar:hover { background: #262b33; }
+  .btn-buscar:active { transform: translateY(1px); }
+  .btn-buscar:disabled { background: #b7bcc4; cursor: not-allowed; }
 
   /* ═══════════════════════════════════════
      CARDS / TABLES (usados por el JS)
@@ -308,49 +383,55 @@
   .card {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 20px 22px;
-    margin-bottom: 16px;
+    border-radius: 16px;
+    padding: 22px 24px;
+    margin-bottom: 18px;
+    box-shadow: 0 1px 2px rgba(16,24,40,.03);
   }
 
   .card h3 {
-    font-family: 'Source Serif 4', serif;
+    font-family: 'Inter', sans-serif;
     font-size: 15px;
-    font-weight: 600;
+    font-weight: 700;
+    letter-spacing: -0.01em;
     color: var(--ink);
   }
 
   table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
 
   th {
-    background: var(--navy);
-    color: #cfd7ea;
-    padding: 9px 10px;
+    background: transparent;
+    color: var(--muted);
+    padding: 10px 12px;
     text-align: center;
     font-weight: 600;
     font-size: 10.5px;
-    letter-spacing: .04em;
+    letter-spacing: .05em;
     text-transform: uppercase;
+    border-bottom: 2px solid var(--border);
   }
 
   td {
-    padding: 8px 10px;
+    padding: 11px 12px;
     border-bottom: 1px solid var(--border);
     text-align: center;
     color: var(--ink);
+    font-weight: 400;
   }
 
-  tbody tr:hover td { background: #f8f9fc; }
+  tbody tr { transition: background .12s; }
+  tbody tr:hover td { background: #fafbfc; }
 
-  .vencido   { background: #fbeae6; }
-  .proximo   { background: #fdf3e2; }
-  .normal    { background: #eaf3ee; }
-  .terminado { background: #ece8f7; color: #4d3f8c; }
+  .vencido   { background: #fbebea; color: var(--danger); }
+  .proximo   { background: #fbf3e4; color: var(--warn); }
+  .normal    { background: #e9f8f4; color: var(--ok); }
+  .terminado { background: #eef0fb; color: #4d3f8c; }
 
   .titulo {
-    font-family: 'Source Serif 4', serif;
-    font-size: 21px;
-    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
     color: var(--ink);
   }
 
@@ -361,7 +442,7 @@
   }
 
   .kpi {
-    padding: 14px 18px;
+    padding: 16px 20px;
     border-right: 1px solid var(--border);
   }
   .kpi:last-child { border-right: none; }
@@ -371,26 +452,26 @@
     letter-spacing: .08em;
     text-transform: uppercase;
     color: var(--muted);
-    margin-bottom: 6px;
+    margin-bottom: 8px;
     font-weight: 600;
   }
 
   .kpi-val {
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 26px;
+    font-size: 27px;
     font-weight: 600;
-    color: var(--navy);
+    color: var(--ink);
     line-height: 1;
   }
 
-  .kpi-sub { font-size: 11px; color: var(--muted); margin-top: 5px; }
+  .kpi-sub { font-size: 11px; color: var(--muted); margin-top: 6px; }
 
   /* ═══════════════════════════════════════
      ESTADOS (loading / error / empty)
   ═══════════════════════════════════════ */
   .estado-msg {
     text-align: center;
-    padding: 70px 20px;
+    padding: 80px 20px;
     color: var(--muted);
     font-size: 13px;
   }
@@ -398,12 +479,12 @@
   .estado-msg.error { color: var(--danger); }
 
   .spinner {
-    width: 30px; height: 30px;
+    width: 28px; height: 28px;
     border: 3px solid var(--border);
-    border-top-color: var(--navy);
+    border-top-color: var(--gold);
     border-radius: 50%;
     animation: spin .8s linear infinite;
-    margin: 0 auto 14px;
+    margin: 0 auto 16px;
   }
 
   @keyframes spin { to { transform: rotate(360deg); } }
@@ -412,31 +493,31 @@
      BARRAS
   ═══════════════════════════════════════ */
   .chart-area {
-    display: flex; gap: 10px; align-items: flex-end; padding: 10px 0 4px;
+    display: flex; gap: 12px; align-items: flex-end; padding: 12px 0 4px;
   }
   .bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; min-width: 44px; }
   .bar-total-label {
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px; font-weight: 600; margin-bottom: 5px; color: var(--ink);
+    font-size: 11px; font-weight: 600; margin-bottom: 6px; color: var(--ink);
   }
   .bar-stack {
-    width: 34px; height: 120px;
+    width: 32px; height: 120px;
     display: flex; flex-direction: column-reverse;
-    border-radius: 4px; overflow: hidden; border: 1px solid var(--border);
+    border-radius: 6px; overflow: hidden; border: 1px solid var(--border);
     background: var(--paper);
   }
   .bar-seg { width: 100%; }
   .bar-date {
-    font-size: 10px; color: var(--muted); margin-top: 6px; white-space: nowrap;
+    font-size: 10px; color: var(--muted); margin-top: 7px; white-space: nowrap;
     font-family: 'IBM Plex Mono', monospace;
   }
-  .leyenda { display: flex; flex-wrap: wrap; gap: 16px; margin-bottom: 14px; }
-  .leyenda-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--muted); }
-  .dot { width: 8px; height: 8px; border-radius: 2px; display: inline-block; }
+  .leyenda { display: flex; flex-wrap: wrap; gap: 18px; margin-bottom: 16px; }
+  .leyenda-item { display: flex; align-items: center; gap: 7px; font-size: 11.5px; color: var(--muted); }
+  .dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; }
 
   footer {
     text-align: center;
-    padding: 18px;
+    padding: 20px;
     font-size: 10.5px;
     color: var(--muted);
     border-top: 1px solid var(--border);
@@ -446,77 +527,99 @@
      DASHBOARD
   ═══════════════════════════════════════ */
   .dash-hero {
-    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
-    border-radius: 14px;
-    padding: 26px 28px;
-    margin-bottom: 18px;
+    position: relative;
+    overflow: hidden;
+    background:
+      radial-gradient(circle at 85% -10%, rgba(13,148,136,.35) 0%, rgba(13,148,136,0) 55%),
+      linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+    border-radius: 18px;
+    padding: 30px 32px;
+    margin-bottom: 20px;
     color: #fff;
     display: flex;
     justify-content: space-between;
-    align-items: flex-end;
+    align-items: center;
     flex-wrap: wrap;
-    gap: 18px;
+    gap: 20px;
   }
+
+  .dash-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(rgba(255,255,255,.08) 1px, transparent 1px);
+    background-size: 16px 16px;
+    -webkit-mask-image: linear-gradient(115deg, transparent 30%, black 75%);
+            mask-image: linear-gradient(115deg, transparent 30%, black 75%);
+    pointer-events: none;
+  }
+
+  .dash-hero > * { position: relative; z-index: 1; }
 
   .dash-hero-label {
     font-size: 10.5px;
-    letter-spacing: .12em;
+    letter-spacing: .1em;
     text-transform: uppercase;
-    color: var(--gold-light);
-    font-weight: 600;
-    margin-bottom: 8px;
+    color: #7fe0d3;
+    font-weight: 700;
+    margin-bottom: 9px;
   }
 
   .dash-hero-date {
-    font-family: 'Source Serif 4', serif;
-    font-size: 24px;
-    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    font-size: 25px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
   }
 
   .dash-hero-stats {
     display: flex;
-    gap: 32px;
+    gap: 36px;
   }
 
   .dash-hero-stat-val {
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 32px;
+    font-size: 30px;
     font-weight: 600;
     line-height: 1;
   }
 
   .dash-hero-stat-lbl {
     font-size: 10.5px;
-    color: #aab4cc;
-    margin-top: 6px;
+    color: #9aa3b2;
+    margin-top: 7px;
     letter-spacing: .03em;
   }
 
   .dash-grid {
     display: grid;
     grid-template-columns: 2fr 1fr;
-    gap: 16px;
-    margin-bottom: 16px;
+    gap: 18px;
+    margin-bottom: 18px;
   }
 
   .dash-kpi-row {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
-    gap: 12px;
-    margin-bottom: 16px;
+    gap: 14px;
+    margin-bottom: 18px;
   }
 
   .dash-kpi-card {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 14px 16px;
+    border-radius: 14px;
+    padding: 16px 18px;
     border-top: 3px solid var(--border);
+    box-shadow: 0 1px 2px rgba(16,24,40,.03);
+    transition: box-shadow .15s, transform .15s;
   }
+
+  .dash-kpi-card:hover { box-shadow: 0 4px 14px rgba(16,24,40,.07); transform: translateY(-1px); }
 
   .dash-kpi-card .etapa-val {
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 22px;
+    font-size: 23px;
     font-weight: 600;
     color: var(--ink);
     line-height: 1;
@@ -525,14 +628,15 @@
   .dash-kpi-card .etapa-lbl {
     font-size: 10.5px;
     color: var(--muted);
-    margin-top: 6px;
+    margin-top: 7px;
     font-weight: 600;
   }
 
   .dash-section-title {
-    font-family: 'Source Serif 4', serif;
-    font-size: 15px;
-    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    font-size: 15.5px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
     color: var(--ink);
     margin-bottom: 4px;
   }
@@ -540,7 +644,7 @@
   .dash-section-sub {
     font-size: 11.5px;
     color: var(--muted);
-    margin-bottom: 14px;
+    margin-bottom: 16px;
   }
 
   .trend-chart-wrap { width: 100%; overflow-x: auto; }
@@ -548,16 +652,17 @@
   .dash-side-card {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 20px;
-    margin-bottom: 16px;
+    border-radius: 16px;
+    padding: 22px;
+    margin-bottom: 18px;
+    box-shadow: 0 1px 2px rgba(16,24,40,.03);
   }
 
   .etapa-bar-row {
     display: flex;
     align-items: center;
-    gap: 10px;
-    margin-bottom: 12px;
+    gap: 12px;
+    margin-bottom: 13px;
   }
 
   .etapa-bar-label {
@@ -569,13 +674,13 @@
 
   .etapa-bar-track {
     flex: 1;
-    height: 8px;
+    height: 7px;
     background: var(--paper);
-    border-radius: 4px;
+    border-radius: 6px;
     overflow: hidden;
   }
 
-  .etapa-bar-fill { height: 100%; border-radius: 4px; }
+  .etapa-bar-fill { height: 100%; border-radius: 6px; }
 
   .etapa-bar-val {
     width: 38px;
@@ -592,19 +697,21 @@
     text-align: left;
     background: var(--paper);
     border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 12px 14px;
-    margin-bottom: 8px;
+    border-radius: 10px;
+    padding: 13px 15px;
+    margin-bottom: 9px;
     cursor: pointer;
     font-size: 12.5px;
+    font-weight: 500;
     color: var(--ink);
     font-family: 'Inter', sans-serif;
-    transition: border-color .15s, background .15s;
+    transition: border-color .15s, background .15s, transform .1s;
   }
 
   .dash-nav-btn:hover {
     border-color: var(--gold);
     background: #fff;
+    transform: translateX(2px);
   }
 
   .dash-nav-btn .arrow { float: right; color: var(--muted); }
@@ -625,7 +732,7 @@
     padding: 4px 0 16px;
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: 16px;
   }
 
   .chat-bubble {
@@ -640,14 +747,14 @@
 
   .chat-avatar {
     width: 30px; height: 30px;
-    border-radius: 8px;
+    border-radius: 9px;
     display: flex; align-items: center; justify-content: center;
     font-size: 13px;
     flex-shrink: 0;
   }
 
   .chat-bubble.user .chat-avatar {
-    background: var(--accent);
+    background: var(--ink);
   }
 
   .chat-bubble.bot .chat-avatar {
@@ -666,28 +773,28 @@
   .chat-text {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 12px 15px;
+    border-radius: 14px;
+    padding: 13px 16px;
     font-size: 13px;
     line-height: 1.6;
     color: var(--ink);
   }
 
   .chat-bubble.user .chat-text {
-    background: var(--navy);
-    color: #e8edf8;
-    border-color: var(--navy-light);
-    border-radius: 12px 2px 12px 12px;
+    background: var(--ink);
+    color: #eef1f5;
+    border-color: var(--ink);
+    border-radius: 14px 3px 14px 14px;
   }
 
   .chat-bubble.bot .chat-text {
-    border-radius: 2px 12px 12px 12px;
+    border-radius: 3px 14px 14px 14px;
   }
 
   .chat-time {
     font-size: 10px;
     color: var(--muted);
-    margin-top: 4px;
+    margin-top: 5px;
     text-align: right;
   }
 
@@ -696,35 +803,35 @@
   .chat-input-bar {
     display: flex;
     gap: 10px;
-    padding-top: 14px;
+    padding-top: 16px;
     border-top: 1px solid var(--border);
     margin-top: 8px;
   }
 
   .chat-input {
     flex: 1;
-    padding: 11px 14px;
+    padding: 12px 15px;
     border: 1px solid var(--border);
-    border-radius: 9px;
+    border-radius: 11px;
     font-size: 13px;
     font-family: 'Inter', sans-serif;
     background: var(--paper);
     color: var(--ink);
     resize: none;
     outline: none;
-    transition: border-color .15s;
+    transition: border-color .15s, box-shadow .15s;
     min-height: 44px;
     max-height: 120px;
   }
 
-  .chat-input:focus { border-color: var(--accent); background: white; }
+  .chat-input:focus { border-color: var(--accent); background: white; box-shadow: 0 0 0 3px rgba(13,148,136,.12); }
 
   .chat-send {
-    background: var(--navy);
+    background: var(--ink);
     color: white;
     border: none;
-    padding: 11px 18px;
-    border-radius: 9px;
+    padding: 12px 20px;
+    border-radius: 11px;
     font-size: 13px;
     font-weight: 600;
     cursor: pointer;
@@ -733,21 +840,21 @@
     flex-shrink: 0;
   }
 
-  .chat-send:hover { background: var(--navy-light); }
+  .chat-send:hover { background: #262b33; }
   .chat-send:disabled { background: var(--muted); cursor: not-allowed; }
 
   .chat-examples {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
-    margin-bottom: 16px;
+    margin-bottom: 18px;
   }
 
   .chat-example {
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 20px;
-    padding: 6px 13px;
+    padding: 7px 14px;
     font-size: 12px;
     color: var(--muted);
     cursor: pointer;
@@ -777,7 +884,7 @@
   ═══════════════════════════════════════ */
   .editor-search {
     display: flex;
-    gap: 10px;
+    gap: 12px;
     flex-wrap: wrap;
     align-items: flex-end;
   }
@@ -788,13 +895,13 @@
     background: var(--surface);
     border: 1px solid var(--border);
     color: var(--ink);
-    padding: 10px 16px;
-    border-radius: 7px;
+    padding: 10px 18px;
+    border-radius: 9px;
     font-size: 13px;
     font-weight: 600;
     cursor: pointer;
     font-family: inherit;
-    transition: border-color .15s;
+    transition: border-color .15s, color .15s;
   }
 
   .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
@@ -803,40 +910,41 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
-    margin-bottom: 20px;
+    margin-bottom: 22px;
   }
 
   .op-result-card {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 12px 16px;
+    border-radius: 12px;
+    padding: 14px 18px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     cursor: pointer;
-    transition: border-color .15s, box-shadow .15s;
+    transition: border-color .15s, box-shadow .15s, transform .1s;
   }
 
   .op-result-card:hover {
     border-color: var(--accent);
-    box-shadow: 0 2px 8px rgba(29,78,216,.08);
+    box-shadow: 0 4px 14px rgba(13,148,136,.1);
+    transform: translateY(-1px);
   }
 
   .op-result-card.selected {
     border-color: var(--accent);
-    background: #f0f4ff;
+    background: var(--gold-light);
   }
 
   .op-card-title { font-weight: 700; font-size: 14px; color: var(--ink); }
-  .op-card-sub   { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .op-card-sub   { font-size: 11px; color: var(--muted); margin-top: 3px; }
 
   .btn-edit-op {
     background: var(--accent);
     color: white;
     border: none;
-    padding: 7px 14px;
-    border-radius: 7px;
+    padding: 8px 16px;
+    border-radius: 8px;
     font-size: 12px;
     font-weight: 600;
     cursor: pointer;
@@ -851,22 +959,22 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 18px;
-    padding-bottom: 12px;
+    margin-bottom: 20px;
+    padding-bottom: 14px;
     border-bottom: 1px solid var(--border);
   }
 
-  .editor-op-title { font-size: 18px; font-weight: 700; }
-  .editor-op-sub   { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .editor-op-title { font-size: 19px; font-weight: 800; letter-spacing: -0.01em; }
+  .editor-op-sub   { font-size: 12px; color: var(--muted); margin-top: 3px; }
 
   .editor-actions { display: flex; gap: 8px; }
 
   .btn-save {
-    background: var(--ok, #2f7d5f);
+    background: var(--ok);
     color: white;
     border: none;
-    padding: 10px 20px;
-    border-radius: 8px;
+    padding: 11px 22px;
+    border-radius: 9px;
     font-size: 13px;
     font-weight: 700;
     cursor: pointer;
@@ -880,15 +988,15 @@
   .editor-seccion {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 10px;
-    margin-bottom: 14px;
+    border-radius: 12px;
+    margin-bottom: 16px;
     overflow: hidden;
   }
 
   .editor-seccion-title {
-    background: var(--navy);
-    color: #cfd7ea;
-    padding: 8px 14px;
+    background: var(--gold-light);
+    color: #0b6b61;
+    padding: 9px 16px;
     font-size: 11px;
     font-weight: 700;
     letter-spacing: .06em;
@@ -902,7 +1010,7 @@
   }
 
   .editor-field {
-    padding: 10px 14px;
+    padding: 11px 15px;
     border-right: 1px solid var(--border);
     border-bottom: 1px solid var(--border);
   }
@@ -916,15 +1024,15 @@
     letter-spacing: .04em;
     text-transform: uppercase;
     color: var(--muted);
-    margin-bottom: 5px;
+    margin-bottom: 6px;
   }
 
   .editor-field input,
   .editor-field select {
     width: 100%;
-    padding: 7px 9px;
+    padding: 8px 10px;
     border: 1px solid var(--border);
-    border-radius: 6px;
+    border-radius: 7px;
     font-size: 12.5px;
     font-family: inherit;
     background: var(--paper);
@@ -939,13 +1047,13 @@
     background: white;
   }
 
-  .editor-field input.changed { border-color: var(--gold); background: #fffbf0; }
+  .editor-field input.changed { border-color: var(--gold); background: var(--gold-light); }
 
   /* PIN modal */
   .pin-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,.5);
+    background: rgba(12,15,20,.55);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -954,42 +1062,147 @@
 
   .pin-modal {
     background: white;
-    border-radius: 14px;
-    padding: 28px 32px;
+    border-radius: 18px;
+    padding: 30px 34px;
     width: 320px;
     text-align: center;
-    box-shadow: 0 20px 60px rgba(0,0,0,.2);
+    box-shadow: 0 24px 60px rgba(0,0,0,.22);
   }
 
   .pin-title { font-size: 17px; font-weight: 700; margin-bottom: 6px; }
-  .pin-sub   { font-size: 12px; color: var(--muted); margin-bottom: 18px; }
+  .pin-sub   { font-size: 12px; color: var(--muted); margin-bottom: 20px; }
 
   .pin-input {
     width: 100%;
-    padding: 12px;
+    padding: 13px;
     border: 2px solid var(--border);
-    border-radius: 9px;
+    border-radius: 10px;
     font-size: 20px;
     text-align: center;
     letter-spacing: .2em;
     font-family: 'IBM Plex Mono', monospace;
-    margin-bottom: 14px;
+    margin-bottom: 15px;
     outline: none;
   }
 
   .pin-input:focus { border-color: var(--accent); }
 
   .pin-error {
-    color: #c62828;
+    color: var(--danger);
     font-size: 12px;
     margin-bottom: 10px;
     min-height: 18px;
   }
 
   .pin-actions { display: flex; gap: 8px; }
-  .pin-actions button { flex: 1; padding: 10px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; border: none; }
+  .pin-actions button { flex: 1; padding: 11px; border-radius: 9px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; border: none; }
   .pin-cancel { background: var(--paper); color: var(--muted); border: 1px solid var(--border) !important; }
-  .pin-confirm { background: var(--navy); color: white; }
+  .pin-confirm { background: var(--ink); color: white; }
+
+  /* ═══════════════════════════════════════
+     ÁRBOL DE PEDIDOS
+  ═══════════════════════════════════════ */
+  .tree { display: flex; flex-direction: column; gap: 8px; }
+
+  .tree-node { display: flex; flex-direction: column; gap: 8px; }
+
+  .tree-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 13px 16px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--surface);
+    transition: border-color .15s, box-shadow .15s;
+    box-shadow: 0 1px 2px rgba(16,24,40,.03);
+  }
+
+  .tree-row[onclick] { cursor: pointer; }
+  .tree-row[onclick]:hover { border-color: var(--gold); box-shadow: 0 4px 12px rgba(13,148,136,.08); }
+
+  .tree-row-pedido { font-weight: 700; font-size: 14px; }
+  .tree-row-modelo { font-weight: 600; font-size: 13px; background: var(--paper); }
+  .tree-row-color  { font-weight: 500; font-size: 12.5px; background: var(--paper); }
+  .tree-row-op     { font-weight: 400; font-size: 12px; border-style: dashed; color: var(--muted); }
+
+  .tree-chevron { flex-shrink: 0; color: var(--muted); transition: transform .18s; }
+  .tree-row.open > .tree-chevron { transform: rotate(90deg); color: var(--gold); }
+  .tree-chevron-spacer { display: inline-block; width: 14px; flex-shrink: 0; }
+
+  .tree-label { flex: 1; color: var(--ink); min-width: 0; }
+
+  .tree-qty {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11.5px;
+    color: var(--muted);
+    width: 78px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  .tree-progress {
+    width: 130px;
+    height: 7px;
+    background: var(--paper);
+    border-radius: 6px;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  .tree-progress-fill { height: 100%; border-radius: 6px; }
+
+  .tree-pct {
+    width: 40px;
+    text-align: right;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11.5px;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+
+  .tree-children {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-left: 26px;
+    border-left: 2px solid var(--border);
+    margin-left: 8px;
+  }
+
+  .tree-children.collapsed { display: none; }
+
+  @media (max-width: 640px) {
+    .tree-qty { display: none; }
+    .tree-progress { width: 80px; }
+  }
+
+  /* ═══════════════════════════════════════
+     CONTROL DE EMPAQUE — chips + tabla de tallas
+  ═══════════════════════════════════════ */
+  .filter-chip {
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 7px 14px;
+    border-radius: 100px;
+    cursor: pointer;
+    transition: .15s;
+    white-space: nowrap;
+  }
+  .filter-chip[aria-pressed="true"] { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .filter-chip:hover:not([aria-pressed="true"]) { border-color: var(--gold); color: var(--ink); }
+
+  .talla-table { width: 100%; border-collapse: collapse; font-size: 11.5px; margin-top: 4px; }
+  .talla-table th {
+    background: transparent; color: var(--muted); padding: 7px 10px; text-align: center;
+    font-weight: 600; font-size: 9.5px; letter-spacing: .04em; text-transform: uppercase;
+    border-bottom: 2px solid var(--border);
+  }
+  .talla-table td { padding: 7px 10px; text-align: center; border-bottom: 1px solid var(--border); }
+  .talla-table .talla-sin { color: var(--muted); }
 
   /* ═══════════════════════════════════════
      RESPONSIVE
@@ -1007,7 +1220,14 @@
     .dash-hero { flex-direction: column; align-items: flex-start; }
     .kpi { border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); }
   }
+
+  @media (max-width: 520px) {
+    .topbar { padding: 20px 20px 16px; }
+    .content { padding: 20px 16px 40px; }
+    .topbar-title { font-size: 22px; }
+  }
 </style>
+
 </head>
 <body>
 
@@ -1020,53 +1240,75 @@
   <!-- SIDEBAR -->
   <div class="sidebar">
     <div class="brand-block">
-      <div class="brand-mark">VG</div>
-      <div class="brand-name">Joli Joli</div>
-      <div class="brand-sub">Reportes de Producción</div>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div class="brand-mark">VG</div>
+        <div>
+          <div class="brand-name">Joli Joli</div>
+          <div class="brand-sub">Reportes de Producción</div>
+        </div>
+      </div>
       <div class="brand-org">Grupo V.G. SAC<br>Planeamiento y Control</div>
     </div>
 
     <div class="nav" id="tabs">
       <div class="nav-eyebrow">Panel</div>
       <div class="nav-item active" data-view="dashboard">
-        <span class="nav-num">●</span> Inicio
+        <span class="nav-num"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9a1 1 0 0 0 1 1H9a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h2.5a1 1 0 0 0 1-1v-9"/></svg></span> Inicio
       </div>
       <div class="nav-eyebrow" style="margin-top:14px;">Reportes</div>
       <div class="nav-item" data-view="semanal">
-        <span class="nav-num">01</span> Reporte Semanal
-      </div>
-      <div class="nav-item" data-view="modelo">
-        <span class="nav-num">02</span> Consultar Modelo
+        <span class="nav-num"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="4.5" width="17" height="16" rx="2.5"/><path d="M3.5 9.5h17"/><path d="M8 3v3M16 3v3"/></svg></span> Reporte Semanal
       </div>
       <div class="nav-item" data-view="estadoModelo">
-        <span class="nav-num">03</span> Estado por Modelo
+        <span class="nav-num"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="7.5" height="7.5" rx="1.5"/><rect x="13" y="3.5" width="7.5" height="7.5" rx="1.5"/><rect x="3.5" y="13" width="7.5" height="7.5" rx="1.5"/><rect x="13" y="13" width="7.5" height="7.5" rx="1.5"/></svg></span> Estado por Modelo
       </div>
-      <div class="nav-item" data-view="plan">
-        <span class="nav-num">04</span> Plan de Armado
+      <div class="nav-item" data-view="arbol">
+        <span class="nav-num"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v6"/><path d="M12 9 6 13"/><path d="M12 9l6 4"/><circle cx="12" cy="3" r="2"/><circle cx="6" cy="16" r="2"/><circle cx="12" cy="16" r="2"/><circle cx="18" cy="16" r="2"/><path d="M12 9v4"/></svg></span> Árbol de Pedidos
+      </div>
+      <div class="nav-item" data-view="planSemana">
+        <span class="nav-num"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="4.5" width="17" height="16" rx="2.5"/><path d="M3.5 9.5h17"/><path d="M8 3v3M16 3v3"/><path d="M8 14h2M12 14h2M16 14h1M8 17.5h2"/></svg></span> Plan 7 Días
+      </div>
+      <div class="nav-item" data-view="recepcionEmpaque">
+        <span class="nav-num"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8 12 3 3 8l9 5 9-5Z"/><path d="M3 8v8l9 5 9-5V8"/><path d="M12 13v8"/></svg></span> Control de Empaque
       </div>
       <div class="nav-item" data-view="chat" style="margin-top:8px;border-top:1px solid var(--navy-line);padding-top:14px;">
-        <span class="nav-num" style="color:var(--gold)">✦</span>
+        <span class="nav-num" style="color:var(--gold)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/></svg></span>
         <span>Consultar con IA</span>
-        <span style="font-size:9px;background:var(--gold);color:var(--navy);padding:1px 6px;border-radius:10px;margin-left:auto;font-weight:700;">BETA</span>
+        <span style="font-size:9px;background:var(--gold);color:#fff;padding:2px 7px;border-radius:10px;margin-left:auto;font-weight:700;">BETA</span>
       </div>
       <div class="nav-item" data-view="editor">
-        <span class="nav-num">05</span> Editar OP
+        <span class="nav-num"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></span> Editar OP
       </div>
     </div>
 
     <div class="sidebar-footer">
-      <span class="live-dot"></span>Datos en vivo<br>
-      Fuente: hoja PRODUCCIÓN
+      <div class="sidebar-profile">
+        <div class="sidebar-profile-avatar">VG</div>
+        <div>
+          <div class="sidebar-profile-name">Grupo V.G. SAC</div>
+          <div class="sidebar-profile-role"><span class="live-dot"></span>Datos en vivo</div>
+        </div>
+      </div>
     </div>
   </div>
 
   <!-- MAIN -->
   <div class="main">
     <div class="topbar">
-      <div class="topbar-eyebrow">PCP · Joli Joli</div>
-      <div class="topbar-title" id="topbar-title">Inicio</div>
-      <div class="topbar-desc" id="topbar-desc">
-        Resumen ejecutivo de producción: última jornada, semana actual y tendencia de 14 días.
+      <div>
+        <div class="topbar-eyebrow">PCP · Joli Joli</div>
+        <div class="topbar-title" id="topbar-title">Inicio</div>
+        <div class="topbar-desc" id="topbar-desc">
+          Resumen ejecutivo de producción: última jornada, semana actual y tendencia de 14 días.
+        </div>
+      </div>
+      <div class="topbar-icons">
+        <div class="topbar-icon-btn" title="Buscar">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        </div>
+        <div class="topbar-icon-btn" title="Notificaciones">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 5 2 6 2 6H4s2-1 2-6Z"/><path d="M10 21a2 2 0 0 0 4 0"/></svg>
+        </div>
       </div>
     </div>
 
@@ -1098,6 +1340,52 @@ const COLORES_ETAPA = {
   armado: "#9b5de5", alistado: "#2ec4b6"
 };
 
+const ICONOS_ETAPA = {
+  corte: '<path d="M6 6a2 2 0 1 0 0 4 2 2 0 0 0 0-4Z"/><path d="M6 14a2 2 0 1 0 0 4 2 2 0 0 0 0-4Z"/><path d="m8.5 7.5 11 9M8.5 16.5l11-9"/>',
+  habilitado: '<path d="M14.5 3.5a3.5 3.5 0 0 0-4.9 4l-6.4 6.4a1.5 1.5 0 0 0 2.1 2.1l6.4-6.4a3.5 3.5 0 0 0 4.4-4.4l-2.4 2.4-1.8-1.8Z"/>',
+  perfilado: '<path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/>',
+  armado: '<path d="m15 6 3 3-9 9H6v-3l9-9Z"/><path d="m13.5 7.5 3 3"/>',
+  alistado: '<path d="M21 8 12 3 3 8l9 5 9-5Z"/><path d="M3 8v8l9 5 9-5V8"/><path d="M12 13v8"/>'
+};
+
+function _iconoEtapa(key, size) {
+  return `<svg width="${size||13}" height="${size||13}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${ICONOS_ETAPA[key] || ""}</svg>`;
+}
+
+// Genera un donut SVG multi-segmento a partir de [{label,color,value}]
+function _donutSvg(segmentos, size, strokeW) {
+  size = size || 128; strokeW = strokeW || 16;
+  const r = (size - strokeW) / 2, cx = size / 2, cy = size / 2;
+  const total = segmentos.reduce((s, x) => s + x.value, 0) || 1;
+  const circunferencia = 2 * Math.PI * r;
+  let acumulado = 0;
+  const circles = segmentos.map(seg => {
+    const frac = seg.value / total;
+    const dash = frac * circunferencia;
+    const gap = circunferencia - dash;
+    const offset = -acumulado * circunferencia;
+    acumulado += frac;
+    return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${seg.color}" stroke-width="${strokeW}"
+      stroke-dasharray="${dash.toFixed(1)} ${gap.toFixed(1)}" stroke-dashoffset="${offset.toFixed(1)}"
+      transform="rotate(-90 ${cx} ${cy})" stroke-linecap="butt"><title>${seg.label}: ${seg.value}</title></circle>`;
+  }).join("");
+  return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">${circles}</svg>`;
+}
+
+
+
+// Helpers de fecha del lado del cliente (formato dd/MM/yyyy, igual al backend)
+function _formatFechaCliente(d) {
+  const dd = String(d.getDate()).padStart(2, "0");
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  return `${dd}/${mm}/${d.getFullYear()}`;
+}
+function _parseFechaCliente(str) {
+  const m = String(str || "").trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if (!m) return null;
+  return new Date(Number(m[3]), Number(m[2]) - 1, Number(m[1]));
+}
+
 let currentView = "dashboard";
 
 // ═══════════════════════════════════════════════
@@ -1115,21 +1403,11 @@ const VIEWS = {
     titulo: "Reporte Semanal",
     descripcion: "Producción por etapa y día en un rango de fechas, con avance acumulado y detalle por modelo.",
     fields: [
-      { id: "fechaIni", label: "Fecha inicial", placeholder: "dd/MM/yyyy", type: "text" },
-      { id: "fechaFin", label: "Fecha final",   placeholder: "dd/MM/yyyy", type: "text" }
+      { id: "fechaIni", label: "Fecha inicial", placeholder: "dd/MM/yyyy", type: "text", default: () => _formatFechaCliente(new Date(Date.now() - 6 * 86400000)) },
+      { id: "fechaFin", label: "Fecha final",   placeholder: "dd/MM/yyyy", type: "text", default: () => _formatFechaCliente(new Date()) }
     ],
     buildUrl: (v) => `${API_URL}?reporte=semanal&fechaIni=${encodeURIComponent(v.fechaIni)}&fechaFin=${encodeURIComponent(v.fechaFin)}`,
     render: renderSemanal
-  },
-  modelo: {
-    titulo: "Consultar Modelo",
-    descripcion: "Estado de producción de un modelo y color específico, con detalle por orden de producción y tallas.",
-    fields: [
-      { id: "modelo", label: "Modelo", placeholder: "Ej: RENATA", type: "text" },
-      { id: "color",  label: "Color",  placeholder: "Ej: NEGRO",  type: "text" }
-    ],
-    buildUrl: (v) => `${API_URL}?reporte=modelo&modelo=${encodeURIComponent(v.modelo)}&color=${encodeURIComponent(v.color)}`,
-    render: renderModelo
   },
   estadoModelo: {
     titulo: "Estado por Modelo",
@@ -1140,14 +1418,38 @@ const VIEWS = {
     buildUrl: (v) => `${API_URL}?reporte=estadoModelo&modelo=${encodeURIComponent(v.modelo)}`,
     render: renderEstadoModelo
   },
-  plan: {
-    titulo: "Plan de Armado",
-    descripcion: "Órdenes de producción programadas para armado en una fecha específica, con tallas y totales.",
+  arbol: {
+    titulo: "Árbol de Pedidos",
+    descripcion: "Cada pedido, desglosado por modelo, color y orden de producción, con cantidad y % de avance en cada nivel.",
+    fields: [],
+    buildUrl: () => `${API_URL}?reporte=arbolPedidos`,
+    render: renderArbolPedidos
+  },
+  planSemana: {
+    titulo: "Plan de Armado — Rango",
+    descripcion: "Órdenes programadas para armado dentro de un rango de fechas, agrupadas día por día. Por defecto: hoy hasta 7 días después.",
     fields: [
-      { id: "fecha", label: "Fecha", placeholder: "dd/MM/yyyy", type: "text" }
+      { id: "fechaIni", label: "Fecha inicial", placeholder: "dd/MM/yyyy", type: "text", default: () => _formatFechaCliente(new Date()) },
+      { id: "fechaFin", label: "Fecha final",   placeholder: "dd/MM/yyyy", type: "text", default: () => _formatFechaCliente(new Date(Date.now() + 7 * 86400000)) }
     ],
-    buildUrl: (v) => `${API_URL}?reporte=plan&fecha=${encodeURIComponent(v.fecha)}`,
-    render: renderPlan
+    buildUrl: (v) => {
+      const dIni = _parseFechaCliente(v.fechaIni);
+      const dFin = _parseFechaCliente(v.fechaFin);
+      let dias = 7;
+      if (dIni && dFin) {
+        dias = Math.round((dFin - dIni) / 86400000) + 1;
+        if (dias < 1) dias = 1;
+      }
+      return `${API_URL}?reporte=planSemana&fecha=${encodeURIComponent(v.fechaIni)}&dias=${dias}`;
+    },
+    render: renderPlanSemana
+  },
+  recepcionEmpaque: {
+    titulo: "Control de Empaque",
+    descripcion: "Pedido vs. recepción física (Clase A/B/C) por modelo, color, OP y talla. Datos de la hoja Control_Recepcion_Calzado.",
+    fields: [],
+    buildUrl: () => `${API_URL}?reporte=recepcionEmpaque`,
+    render: renderRecepcionEmpaque
   },
   chat: {
     titulo: "Consultar con IA",
@@ -1183,6 +1485,10 @@ document.getElementById("tabs").addEventListener("click", (e) => {
 
   if (currentView === "dashboard") {
     cargarDashboard();
+  } else if (currentView === "arbol") {
+    cargarArbol();
+  } else if (currentView === "recepcionEmpaque") {
+    cargarRecepcionEmpaque();
   } else if (currentView === "chat") {
     renderChat();
   } else if (currentView === "editor") {
@@ -1197,12 +1503,12 @@ function renderFormBar() {
   const view = VIEWS[currentView];
 
   if (view.fields.length === 0) {
-    // Vista sin formulario (dashboard): mostrar botón de refrescar
+    // Vista sin formulario (dashboard / árbol): mostrar botón de refrescar
     document.getElementById("form-bar").innerHTML = `
       <div style="font-size:12px;color:var(--muted);flex:1;">
         Datos calculados en tiempo real desde tu hoja de producción.
       </div>
-      <button class="btn-buscar" onclick="cargarDashboard()">🔄 Actualizar</button>
+      <button class="btn-buscar" onclick="recargarVistaActual()">🔄 Actualizar</button>
     `;
     return;
   }
@@ -1210,7 +1516,7 @@ function renderFormBar() {
   const fieldsHtml = view.fields.map(f => `
     <div class="form-group">
       <label>${f.label}</label>
-      <input type="text" id="field-${f.id}" placeholder="${f.placeholder}"
+      <input type="text" id="field-${f.id}" placeholder="${f.placeholder}" value="${f.default ? f.default() : ''}"
         onkeypress="if(event.key==='Enter') buscar()">
     </div>
   `).join("");
@@ -1280,6 +1586,113 @@ function cargarDashboard() {
     });
 }
 
+// Reintenta la vista actual cuando no tiene formulario propio (dashboard / árbol / empaque)
+function recargarVistaActual() {
+  if (currentView === "dashboard") cargarDashboard();
+  else if (currentView === "arbol") cargarArbol();
+  else if (currentView === "recepcionEmpaque") cargarRecepcionEmpaque();
+}
+
+// ═══════════════════════════════════════════════
+//  CARGAR ÁRBOL DE PEDIDOS
+// ═══════════════════════════════════════════════
+function cargarArbol() {
+  document.getElementById("result").innerHTML = `
+    <div class="estado-msg"><div class="spinner"></div>Construyendo árbol de pedidos...</div>`;
+
+  fetch(VIEWS.arbol.buildUrl())
+    .then(r => r.json())
+    .then(data => {
+      if (data.error) {
+        document.getElementById("result").innerHTML = `
+          <div class="estado-msg error">⚠️ ${data.error}</div>`;
+        return;
+      }
+      renderArbolPedidos(data);
+    })
+    .catch(err => {
+      document.getElementById("result").innerHTML = `
+        <div class="estado-msg error">⚠️ Error de conexión: ${err.message}</div>`;
+    });
+}
+
+// Expande/contrae un nodo del árbol (pedido, modelo o color)
+function toggleTreeNode(headerEl) {
+  headerEl.classList.toggle("open");
+  const children = headerEl.nextElementSibling;
+  if (children) children.classList.toggle("collapsed");
+}
+
+function _colorAvance(pct) {
+  if (pct >= 100) return "var(--ok)";
+  if (pct >= 50) return "var(--gold)";
+  if (pct >= 20) return "var(--warn)";
+  return "var(--danger)";
+}
+
+function _treeRow(nivelClase, label, pares, avance, extra) {
+  return `
+    <div class="tree-row ${nivelClase}" ${extra && extra.onclick ? `onclick="${extra.onclick}"` : ""}>
+      ${extra && extra.chevron !== false ? `
+        <svg class="tree-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
+      ` : `<span class="tree-chevron-spacer"></span>`}
+      <span class="tree-label">${label}</span>
+      ${extra && extra.badge ? extra.badge : ""}
+      <span class="tree-qty">${pares} pares</span>
+      <div class="tree-progress"><div class="tree-progress-fill" style="width:${avance}%;background:${_colorAvance(avance)}"></div></div>
+      <span class="tree-pct" style="color:${_colorAvance(avance)}">${avance}%</span>
+    </div>`;
+}
+
+function renderArbolPedidos(data) {
+  const nodosPedido = data.pedidos.map((p, pi) => {
+    const idP = `p${pi}`;
+
+    const nodosModelo = p.modelos.map((m, mi) => {
+      const idM = `${idP}m${mi}`;
+
+      const nodosColor = m.colores.map((c, ci) => {
+        const idC = `${idM}c${ci}`;
+
+        const filasOp = c.ops.map(o => {
+          const badge = o.vencida
+            ? `<span style="font-size:10px;font-weight:700;color:var(--danger);margin-right:8px;">⚠ VENCIDA</span>`
+            : o.proxima
+              ? `<span style="font-size:10px;font-weight:700;color:var(--warn);margin-right:8px;">🔔 PRÓXIMA</span>`
+              : "";
+          return _treeRow("tree-row-op", `OP ${o.op} <span style="color:var(--muted);font-weight:400;">· ${o.estado}${o.fechaArmado ? " · Armado " + o.fechaArmado : ""}</span>`, o.pares, o.avance, { chevron: false, badge });
+        }).join("");
+
+        return `
+          <div class="tree-node">
+            ${_treeRow("tree-row-color", c.color, c.totalPares, c.avance, { onclick: `toggleTreeNode(this)` })}
+            <div class="tree-children collapsed">${filasOp}</div>
+          </div>`;
+      }).join("");
+
+      return `
+        <div class="tree-node">
+          ${_treeRow("tree-row-modelo", m.modelo, m.totalPares, m.avance, { onclick: `toggleTreeNode(this)` })}
+          <div class="tree-children collapsed">${nodosColor}</div>
+        </div>`;
+    }).join("");
+
+    return `
+      <div class="tree-node">
+        ${_treeRow("tree-row-pedido", `Pedido · ${p.fecha}`, p.totalPares, p.avance, { onclick: `toggleTreeNode(this)` })}
+        <div class="tree-children collapsed">${nodosModelo}</div>
+      </div>`;
+  }).join("");
+
+  document.getElementById("result").innerHTML = `
+    <div class="card" style="margin-bottom:18px;display:flex;gap:32px;flex-wrap:wrap;">
+      <div><div class="kpi-lbl">Pedidos</div><div class="kpi-val">${data.totalPedidos}</div></div>
+      <div><div class="kpi-lbl">Total pares</div><div class="kpi-val">${data.totalPares}</div></div>
+    </div>
+    <div class="tree">${nodosPedido}</div>
+  `;
+}
+
 // ═══════════════════════════════════════════════
 //  RENDER: DASHBOARD (INICIO)
 // ═══════════════════════════════════════════════
@@ -1288,7 +1701,13 @@ function renderDashboard(data) {
   const sa  = data.semanaActual;
   const t14 = data.ultimos14Dias;
 
-  // ── HERO: última jornada trabajada ──
+  // ── HERO: última jornada trabajada + anillo de % terminado ──
+  const pctHero = ud.totalEtapas > 0 ? Math.round(ud.alistado / ud.totalEtapas * 100) : 0;
+  const ringHero = _donutSvg([
+    { label: "Terminado", color: "#2ec4b6", value: pctHero },
+    { label: "Resto", color: "rgba(255,255,255,.14)", value: 100 - pctHero }
+  ], 92, 9);
+
   const heroHtml = `
     <div class="dash-hero">
       <div>
@@ -1309,17 +1728,27 @@ function renderDashboard(data) {
           <div class="dash-hero-stat-lbl">PROM. DIARIO (SEMANA)</div>
         </div>
       </div>
+      <div style="position:relative;width:92px;height:92px;flex-shrink:0;">
+        ${ringHero}
+        <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:19px;font-weight:700;color:#fff;">${pctHero}%</div>
+          <div style="font-size:8px;color:#9aa3b2;letter-spacing:.05em;text-transform:uppercase;">Terminado</div>
+        </div>
+      </div>
     </div>`;
 
   // ── KPI ROW: 5 tarjetas, una por etapa del último día ──
   const kpiRowHtml = `
     <div class="dash-kpi-row">
       ${ud.porEtapa.map(e => `
-        <div class="dash-kpi-card" style="border-top-color:${COLORES_ETAPA[e.key]}">
-          <div class="etapa-val">${e.valor}</div>
-          <div class="etapa-lbl">
-            <span class="dot" style="background:${COLORES_ETAPA[e.key]}"></span> ${e.label}
+        <div class="dash-kpi-card" style="border-top-color:${COLORES_ETAPA[e.key]};background:color-mix(in srgb, ${COLORES_ETAPA[e.key]} 6%, white);">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div class="etapa-val">${e.valor}</div>
+            <div style="width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;background:color-mix(in srgb, ${COLORES_ETAPA[e.key]} 16%, white);color:${COLORES_ETAPA[e.key]};">
+              ${_iconoEtapa(e.key, 15)}
+            </div>
           </div>
+          <div class="etapa-lbl">${e.label}</div>
         </div>`).join("")}
     </div>`;
 
@@ -1363,11 +1792,11 @@ function renderDashboard(data) {
   }).join("");
 
   const circulosTotal = puntosTotal.map(p => `
-    <circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="3" fill="#1d4ed8">
+    <circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="3" fill="#0d9488">
       <title>${p.d.fecha}: ${p.d.totalEtapas} doc (total etapas)</title>
     </circle>`).join("");
   const circulosAlistado = puntosAlistado.map(p => `
-    <circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="3" fill="#2ec4b6">
+    <circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="3" fill="#12151b">
       <title>${p.d.fecha}: ${p.d.alistado} doc (terminado)</title>
     </circle>`).join("");
 
@@ -1376,14 +1805,14 @@ function renderDashboard(data) {
       <svg viewBox="0 0 ${W} ${H}" style="width:100%;min-width:480px;height:auto;display:block;">
         <defs>
           <linearGradient id="gradTotal" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="#1d4ed8" stop-opacity="0.16"/>
-            <stop offset="100%" stop-color="#1d4ed8" stop-opacity="0"/>
+            <stop offset="0%" stop-color="#0d9488" stop-opacity="0.22"/>
+            <stop offset="100%" stop-color="#0d9488" stop-opacity="0"/>
           </linearGradient>
         </defs>
         ${gridLines}
         <path d="${areaTotal}" fill="url(#gradTotal)" stroke="none"/>
-        <path d="${lineaTotal}" fill="none" stroke="#1d4ed8" stroke-width="2"/>
-        <path d="${lineaAlistado}" fill="none" stroke="#2ec4b6" stroke-width="2" stroke-dasharray="4 3"/>
+        <path d="${lineaTotal}" fill="none" stroke="#0d9488" stroke-width="2.5"/>
+        <path d="${lineaAlistado}" fill="none" stroke="#12151b" stroke-width="2" stroke-dasharray="4 3"/>
         ${circulosTotal}
         ${circulosAlistado}
         ${xLabels}
@@ -1403,20 +1832,53 @@ function renderDashboard(data) {
       <div class="etapa-bar-val">${e.total}</div>
     </div>`).join("");
 
-  // ── Accesos rápidos a los otros reportes ──
+  // ── Donut de distribución de movimientos (14 días) ──
+  const totalT14 = t14.totalesPorEtapa.reduce((s, e) => s + e.total, 0);
+  const donutT14 = _donutSvg(t14.totalesPorEtapa.map(e => ({ label: e.label, color: COLORES_ETAPA[e.key], value: e.total })), 116, 15);
+  const donutCardHtml = `
+    <div class="dash-side-card">
+      <div class="dash-section-title">Distribución 14 días</div>
+      <div class="dash-section-sub">Movimientos totales por etapa</div>
+      <div style="display:flex;align-items:center;gap:18px;margin-top:8px;">
+        <div style="position:relative;width:116px;height:116px;flex-shrink:0;">
+          ${donutT14}
+          <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:19px;font-weight:700;color:var(--ink);">${totalT14}</div>
+            <div style="font-size:8.5px;color:var(--muted);letter-spacing:.04em;text-transform:uppercase;">Total</div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;flex:1;min-width:0;">
+          ${t14.totalesPorEtapa.map(e => `
+            <div style="display:flex;align-items:center;gap:7px;font-size:11.5px;">
+              <span class="dot" style="background:${COLORES_ETAPA[e.key]}"></span>
+              <span style="flex:1;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${e.label}</span>
+              <span style="font-family:'IBM Plex Mono',monospace;color:var(--muted);">${e.total}</span>
+            </div>`).join("")}
+        </div>
+      </div>
+    </div>`;
+
+  // ── Accesos rápidos a los otros reportes (grid con ícono) ──
+  const accesosData = [
+    { view: "semanal", label: "Reporte Semanal", color: "#3a6ea8",
+      icon: '<rect x="3.5" y="4.5" width="17" height="16" rx="2.5"/><path d="M3.5 9.5h17"/><path d="M8 3v3M16 3v3"/>' },
+    { view: "estadoModelo", label: "Estado por Modelo", color: "#e09b2d",
+      icon: '<rect x="3.5" y="3.5" width="7.5" height="7.5" rx="1.5"/><rect x="13" y="3.5" width="7.5" height="7.5" rx="1.5"/><rect x="3.5" y="13" width="7.5" height="7.5" rx="1.5"/><rect x="13" y="13" width="7.5" height="7.5" rx="1.5"/>' },
+    { view: "arbol", label: "Árbol de Pedidos", color: "#9b5de5",
+      icon: '<path d="M12 3v6"/><path d="M12 9 6 13"/><path d="M12 9l6 4"/><circle cx="12" cy="3" r="2"/><circle cx="6" cy="16" r="2"/><circle cx="12" cy="16" r="2"/><circle cx="18" cy="16" r="2"/><path d="M12 9v4"/>' },
+    { view: "planSemana", label: "Plan 7 Días", color: "#2ec4b6",
+      icon: '<rect x="3.5" y="4.5" width="17" height="16" rx="2.5"/><path d="M3.5 9.5h17"/><path d="M8 3v3M16 3v3"/><path d="M8 14h2M12 14h2M16 14h1M8 17.5h2"/>' }
+  ];
   const accesos = `
-    <button class="dash-nav-btn" onclick="irAVista('semanal')">
-      📊 Reporte Semanal <span class="arrow">→</span>
-    </button>
-    <button class="dash-nav-btn" onclick="irAVista('modelo')">
-      👟 Consultar Modelo <span class="arrow">→</span>
-    </button>
-    <button class="dash-nav-btn" onclick="irAVista('estadoModelo')">
-      🎨 Estado por Modelo <span class="arrow">→</span>
-    </button>
-    <button class="dash-nav-btn" onclick="irAVista('plan')">
-      📅 Plan de Armado <span class="arrow">→</span>
-    </button>`;
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+      ${accesosData.map(a => `
+        <button class="dash-nav-btn" style="border-top:3px solid ${a.color};display:flex;flex-direction:column;align-items:flex-start;gap:10px;padding:14px;" onclick="irAVista('${a.view}')">
+          <span style="width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;background:color-mix(in srgb, ${a.color} 14%, white);color:${a.color};">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${a.icon}</svg>
+          </span>
+          <span style="font-size:12px;font-weight:600;line-height:1.3;">${a.label}</span>
+        </button>`).join("")}
+    </div>`;
 
   document.getElementById("result").innerHTML = `
     ${heroHtml}
@@ -1432,12 +1894,14 @@ function renderDashboard(data) {
 
         <div class="card">
           <div class="dash-section-title">Etapa líder del periodo</div>
-          <div class="dash-section-sub"><b style="color:var(--navy)">${t14.etapaLider}</b> concentra ${t14.etapaLiderTotal} movimientos en los últimos ${serie.length} días.</div>
+          <div class="dash-section-sub"><b style="color:var(--ink)">${t14.etapaLider}</b> concentra ${t14.etapaLiderTotal} movimientos en los últimos ${serie.length} días.</div>
           ${barrasEtapa14}
         </div>
       </div>
 
       <div>
+        ${donutCardHtml}
+
         <div class="dash-side-card">
           <div class="dash-section-title">Semana actual</div>
           <div class="dash-section-sub">${sa.lunes} — ${sa.hoy}</div>
@@ -1583,55 +2047,6 @@ function renderSemanal(data) {
 }
 
 // ═══════════════════════════════════════════════
-//  RENDER: CONSULTAR MODELO
-// ═══════════════════════════════════════════════
-function renderModelo(data) {
-  const hoy = new Date(); hoy.setHours(0,0,0,0);
-
-  const filasEstados = Object.entries(data.resumenEstados)
-    .map(([est, cant]) => `<tr><td>${est}</td><td>${cant}</td></tr>`).join("");
-
-  const filasDetalle = data.detalle.map(item => {
-    let clase = "";
-    if (item.fechaArmado) {
-      const [dd, mm, yy] = item.fechaArmado.split("/").map(Number);
-      const f = new Date(yy, mm - 1, dd);
-      const diff = Math.floor((f - hoy) / 86400000);
-      clase = diff < 0 ? "vencido" : diff <= 3 ? "proximo" : "normal";
-    }
-    const t = item.tallas;
-    const total = t.t35+t.t36+t.t37+t.t38+t.t39+t.t40;
-    return `
-      <tr class="${clase}">
-        <td>${item.op}</td><td>${item.estado}</td><td>${item.fechaArmado || ""}</td>
-        <td>${t.t35}</td><td>${t.t36}</td><td>${t.t37}</td><td>${t.t38}</td><td>${t.t39}</td><td>${t.t40}</td>
-        <td><b>${total}</b></td>
-      </tr>`;
-  }).join("");
-
-  document.getElementById("result").innerHTML = `
-    <div class="card">
-      <div class="titulo">${data.modelo} — ${data.color}</div><br>
-      <div class="kpi-val" style="font-size:40px;">${data.pendientes}</div>
-      <b>OPs Pendientes</b><br><br>
-      <b>Producto Terminado:</b> ${data.terminados}
-    </div>
-    <div class="card">
-      <h3>📊 Resumen por Estado</h3>
-      <table><tr><th>Estado</th><th>Cantidad</th></tr>${filasEstados}</table>
-    </div>
-    <div class="card">
-      <h3>👟 Distribución por OP y Tallas</h3>
-      <table>
-        <tr><th>OP</th><th>Estado</th><th>Armado</th>
-        <th>35</th><th>36</th><th>37</th><th>38</th><th>39</th><th>40</th><th>Total</th></tr>
-        ${filasDetalle}
-      </table>
-    </div>
-  `;
-}
-
-// ═══════════════════════════════════════════════
 //  RENDER: ESTADO GENERAL DE MODELO
 // ═══════════════════════════════════════════════
 function renderEstadoModelo(data) {
@@ -1711,42 +2126,203 @@ function renderEstadoModelo(data) {
 }
 
 // ═══════════════════════════════════════════════
-//  RENDER: PLAN DE ARMADO
+//  RENDER: PLAN DE ARMADO — RANGO DE FECHAS
 // ═══════════════════════════════════════════════
-function renderPlan(data) {
-  const filas = data.detalle.map(item => {
-    const t = item.tallas;
+function renderPlanSemana(data) {
+  const nodosDias = data.dias.map(d => {
+    const filas = d.ops.map(item => {
+      const t = item.tallas;
+      return `
+        <tr>
+          <td>${item.op}</td><td>${item.modelo}</td><td>${item.color}</td><td>${item.estado}</td>
+          <td>${t.t35}</td><td>${t.t36}</td><td>${t.t37}</td><td>${t.t38}</td><td>${t.t39}</td><td>${t.t40}</td>
+          <td><b>${item.total}</b></td>
+        </tr>`;
+    }).join("");
+
+    const contenido = d.ops.length > 0 ? `
+      <div style="padding:14px 16px;">
+        <table>
+          <tr><th>OP</th><th>Modelo</th><th>Color</th><th>Estado</th>
+          <th>35</th><th>36</th><th>37</th><th>38</th><th>39</th><th>40</th><th>Total</th></tr>
+          ${filas}
+        </table>
+      </div>` : `<div style="padding:14px 16px;color:var(--muted);font-size:12.5px;">Sin OPs programadas para este día.</div>`;
+
     return `
-      <tr>
-        <td>${item.op}</td><td>${item.modelo}</td><td>${item.color}</td><td>${item.estado}</td>
-        <td>${t.t35}</td><td>${t.t36}</td><td>${t.t37}</td><td>${t.t38}</td><td>${t.t39}</td><td>${t.t40}</td>
-        <td><b>${item.total}</b></td>
-      </tr>`;
+      <div class="tree-node">
+        <div class="tree-row tree-row-pedido" onclick="toggleTreeNode(this)">
+          <svg class="tree-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
+          <span class="tree-label">${d.fecha}</span>
+          <span style="font-size:11.5px;color:var(--muted);margin-right:4px;">${d.totalOps} OP${d.totalOps !== 1 ? "s" : ""}</span>
+          <span class="tree-qty" style="width:auto;">${d.totalPares} pares</span>
+        </div>
+        <div class="tree-children collapsed">${contenido}</div>
+      </div>`;
   }).join("");
 
-  const sinResultados = data.detalle.length === 0
-    ? `<div class="card" style="color:#c62828;">⚠️ No hay OPs programadas para ${data.fecha}.</div>` : "";
-
   document.getElementById("result").innerHTML = `
-    <div class="card">
-      <div class="titulo">Plan de Armado</div><br>
-      <b>Fecha:</b> ${data.fecha}<br><br>
-      <b>OPs Programadas:</b> ${data.opsProgramadas}<br>
-      <b>Total Pares:</b> ${data.totalPares}
+    <div class="card" style="margin-bottom:18px;display:flex;gap:32px;flex-wrap:wrap;">
+      <div><div class="kpi-lbl">Rango</div><div class="kpi-val" style="font-size:17px;">${data.fechaInicio} — ${data.fechaFin}</div></div>
+      <div><div class="kpi-lbl">OPs Programadas</div><div class="kpi-val">${data.totalOps}</div></div>
+      <div><div class="kpi-lbl">Total Pares</div><div class="kpi-val">${data.totalPares}</div></div>
     </div>
-    ${sinResultados}
-    ${data.detalle.length > 0 ? `
-    <div class="card"><table>
-      <tr><th>OP</th><th>Modelo</th><th>Color</th><th>Estado</th>
-      <th>35</th><th>36</th><th>37</th><th>38</th><th>39</th><th>40</th><th>Total</th></tr>
-      ${filas}
-    </table></div>` : ""}
+    <div class="tree">${nodosDias}</div>
   `;
 }
 
 // ═══════════════════════════════════════════════
-//  RENDER: CHAT CON IA
+//  CONTROL DE EMPAQUE (segunda hoja de cálculo)
 // ═══════════════════════════════════════════════
+let _empaqueData = null;       // respuesta cruda de la API (se guarda para filtrar sin recargar)
+let _empaqueFiltro = "all";    // all | Pendiente | Completo
+let _empaqueQuery = "";
+
+function cargarRecepcionEmpaque() {
+  document.getElementById("result").innerHTML = `
+    <div class="estado-msg"><div class="spinner"></div>Cruzando pedido vs. recepción...</div>`;
+
+  fetch(VIEWS.recepcionEmpaque.buildUrl())
+    .then(r => r.json())
+    .then(data => {
+      if (data.error) {
+        document.getElementById("result").innerHTML = `
+          <div class="estado-msg error">⚠️ ${data.error}</div>`;
+        return;
+      }
+      _empaqueData = data;
+      _empaqueFiltro = "all";
+      _empaqueQuery = "";
+      renderRecepcionEmpaque();
+    })
+    .catch(err => {
+      document.getElementById("result").innerHTML = `
+        <div class="estado-msg error">⚠️ Error de conexión: ${err.message}</div>`;
+    });
+}
+
+function _empaqueSetFiltro(el) {
+  document.querySelectorAll("#empaqueChips .filter-chip").forEach(c => c.setAttribute("aria-pressed", "false"));
+  el.setAttribute("aria-pressed", "true");
+  _empaqueFiltro = el.dataset.f;
+  _empaqueRenderTree();
+}
+function _empaqueSetQuery(val) {
+  _empaqueQuery = val;
+  _empaqueRenderTree();
+}
+
+function _empaqueGetFiltrados() {
+  const q = (_empaqueQuery || "").trim().toUpperCase();
+  return _empaqueData.registros.filter(r => {
+    if (_empaqueFiltro !== "all" && r.estado !== _empaqueFiltro) return false;
+    if (!q) return true;
+    return r.modelo.includes(q) || r.color.includes(q) || String(r.op).includes(q);
+  });
+}
+
+// Renderiza solo el árbol (llamado al filtrar/buscar, sin re-pintar los controles)
+function _empaqueRenderTree() {
+  const filtrados = _empaqueGetFiltrados();
+  const byModelo = {};
+  filtrados.forEach(r => { (byModelo[r.modelo] = byModelo[r.modelo] || []).push(r); });
+  const modelos = Object.keys(byModelo).sort();
+
+  const rollup = (list) => {
+    const pedido = list.reduce((s, r) => s + r.totalPedido, 0);
+    const recibido = list.reduce((s, r) => s + r.totalRecibido, 0);
+    const pct = pedido === 0 ? 100 : Math.round(100 * recibido / pedido);
+    const pend = list.filter(r => r.estado === "Pendiente").length;
+    return { pct, pend, count: list.length };
+  };
+
+  const nodosModelo = modelos.map((modelo, mi) => {
+    const modeloRows = byModelo[modelo];
+    const mRoll = rollup(modeloRows);
+    const byColor = {};
+    modeloRows.forEach(r => { (byColor[r.color] = byColor[r.color] || []).push(r); });
+    const colores = Object.keys(byColor).sort();
+
+    const nodosColor = colores.map((color, ci) => {
+      const colorRows = byColor[color].sort((a, b) => a.op - b.op);
+      const cRoll = rollup(colorRows);
+
+      const filasOp = colorRows.map(r => {
+        const tallasHtml = r.tallas.map(t => {
+          if (t.pedido === 0) {
+            return `<tr><td>${t.talla}</td><td class="talla-sin" colspan="5">Sin pedido</td></tr>`;
+          }
+          return `<tr>
+            <td>${t.talla}</td><td>${t.pedido}</td>
+            <td>${t.recibidoA}</td><td>${t.recibidoB}</td><td>${t.recibidoC}</td>
+            <td><b>${t.totalRecibido}</b></td>
+          </tr>`;
+        }).join("");
+
+        return `
+          <div class="tree-node">
+            ${_treeRow("tree-row-op", `OP ${r.op} <span style="color:var(--muted);font-weight:400;">· pedido ${r.fechaPedido || "—"}</span>`, r.totalPedido, r.pct, { onclick: "toggleTreeNode(this)" })}
+            <div class="tree-children collapsed">
+              <table class="talla-table">
+                <tr><th>Talla</th><th>Pedido</th><th>A</th><th>B</th><th>C</th><th>Total</th></tr>
+                ${tallasHtml}
+              </table>
+            </div>
+          </div>`;
+      }).join("");
+
+      return `
+        <div class="tree-node">
+          ${_treeRow("tree-row-color", color, colorRows.reduce((s,r)=>s+r.totalPedido,0), cRoll.pct, { onclick: "toggleTreeNode(this)" })}
+          <div class="tree-children collapsed">${filasOp}</div>
+        </div>`;
+    }).join("");
+
+    return `
+      <div class="tree-node">
+        ${_treeRow("tree-row-pedido", modelo, modeloRows.reduce((s,r)=>s+r.totalPedido,0), mRoll.pct, { onclick: "toggleTreeNode(this)" })}
+        <div class="tree-children collapsed">${nodosColor}</div>
+      </div>`;
+  }).join("");
+
+  document.getElementById("empaqueTree").innerHTML = modelos.length > 0
+    ? nodosModelo
+    : `<div class="estado-msg">No hay resultados para este filtro/búsqueda.</div>`;
+}
+
+function renderRecepcionEmpaque() {
+  const data = _empaqueData;
+
+  document.getElementById("result").innerHTML = `
+    <div class="card" style="margin-bottom:18px;display:flex;gap:32px;flex-wrap:wrap;">
+      <div><div class="kpi-lbl">OPs</div><div class="kpi-val">${data.totalOps}</div></div>
+      <div><div class="kpi-lbl">Pendientes</div><div class="kpi-val" style="color:var(--warn);">${data.opsPendientes}</div></div>
+      <div><div class="kpi-lbl">Completas</div><div class="kpi-val" style="color:var(--ok);">${data.opsCompletas}</div></div>
+      <div><div class="kpi-lbl">Avance Global</div><div class="kpi-val">${data.pctGlobal}%</div></div>
+      <div><div class="kpi-lbl">Descartado (Clase C)</div><div class="kpi-val" style="color:var(--danger);">${data.totalDescartadoC}</div></div>
+    </div>
+
+    <div class="card" style="margin-bottom:18px;">
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+        <div style="flex:1 1 220px;position:relative;">
+          <input type="text" placeholder="Buscar modelo, color u OP..." oninput="_empaqueSetQuery(this.value)"
+            style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:9px;font-size:13px;background:var(--paper);">
+        </div>
+        <div id="empaqueChips" style="display:flex;gap:6px;flex-wrap:wrap;">
+          <button class="filter-chip" data-f="all" aria-pressed="true" onclick="_empaqueSetFiltro(this)">Todos</button>
+          <button class="filter-chip" data-f="Pendiente" aria-pressed="false" onclick="_empaqueSetFiltro(this)">Pendiente</button>
+          <button class="filter-chip" data-f="Completo" aria-pressed="false" onclick="_empaqueSetFiltro(this)">Completo</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="tree" id="empaqueTree"></div>
+  `;
+
+  _empaqueRenderTree();
+}
+
+
 let chatHistory = []; // historial de conversación en sesión
 
 const CHAT_EJEMPLOS = [
@@ -2242,3 +2818,4 @@ cargarDashboard();
 
 </body>
 </html>
+
