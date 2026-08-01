@@ -1577,7 +1577,10 @@ function buscar() {
     <div class="estado-msg"><div class="spinner"></div>Cargando datos...</div>`;
 
   let promesa;
-  if (currentView === "planSemana" && vals.fechaIni === view.fields[0].default()) {
+  if (currentView === "semanal" && vals.fechaIni === view.fields[0].default() && vals.fechaFin === view.fields[1].default()) {
+    // Rango por defecto (hoy-6 → hoy): coincide con lo que genera el workflow
+    promesa = fetchConCache("semanal", view.buildUrl(vals));
+  } else if (currentView === "planSemana" && vals.fechaIni === view.fields[0].default()) {
     // Rango por defecto (hoy → +7 días): coincide con lo que genera el workflow
     promesa = fetchConCache("planSemana", view.buildUrl(vals));
   } else if (currentView === "estadoModelo") {
@@ -2853,4 +2856,3 @@ cargarDashboard();
 
 </body>
 </html>
-
