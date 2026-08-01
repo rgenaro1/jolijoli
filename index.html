@@ -1328,6 +1328,35 @@
 // ═══════════════════════════════════════════════
 const API_URL = "https://script.google.com/macros/s/AKfycbytKtv838e0hdQb8VfV-xtX5O81bYlQWyCTwmwzMKP9MDqJq__NRExiaPAxZaZQ6MXUog/exec";
 
+// ═══════════════════════════════════════════════
+//  CACHÉ ESTÁTICA (JSON generado 4x/día por GitHub Actions)
+//  Intenta leer /data/<archivo>.json (rápido, mismo dominio de GitHub Pages).
+//  Si no existe o falla, cae automáticamente a la API de Apps Script en vivo.
+// ═══════════════════════════════════════════════
+async function fetchConCache(nombreArchivo, urlLive) {
+  try {
+    const resCache = await fetch(`./data/${nombreArchivo}.json`, { cache: "no-store" });
+    if (resCache.ok) {
+      const data = await resCache.json();
+      if (!data || !data.error) return data;
+    }
+  } catch (e) {
+    // sin caché disponible todavía (primer despliegue) — seguimos con la API en vivo
+  }
+  const resLive = await fetch(urlLive);
+  return resLive.json();
+}
+
+// Convierte "DIANA", "Diana ", "Rosé" → "diana", "rose" — debe coincidir
+// exactamente con la función de slug usada en el workflow de GitHub Actions.
+function _slugModelo(nombre) {
+  return String(nombre || "")
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "_")
+    .replace(/^_+|_+$/g, "");
+}
+
 if (!API_URL || API_URL.includes("PEGA_AQUI")) {
   document.getElementById("config-banner").classList.add("show");
 }
@@ -1547,8 +1576,17 @@ function buscar() {
   document.getElementById("result").innerHTML = `
     <div class="estado-msg"><div class="spinner"></div>Cargando datos...</div>`;
 
-  fetch(view.buildUrl(vals))
-    .then(r => r.json())
+  let promesa;
+  if (currentView === "planSemana" && vals.fechaIni === view.fields[0].default()) {
+    // Rango por defecto (hoy → +7 días): coincide con lo que genera el workflow
+    promesa = fetchConCache("planSemana", view.buildUrl(vals));
+  } else if (currentView === "estadoModelo") {
+    promesa = fetchConCache(`estadoModelo/${_slugModelo(vals.modelo)}`, view.buildUrl(vals));
+  } else {
+    promesa = fetch(view.buildUrl(vals)).then(r => r.json());
+  }
+
+  promesa
     .then(data => {
       if (data.error) {
         document.getElementById("result").innerHTML = `
@@ -1570,8 +1608,7 @@ function cargarDashboard() {
   document.getElementById("result").innerHTML = `
     <div class="estado-msg"><div class="spinner"></div>Calculando indicadores...</div>`;
 
-  fetch(VIEWS.dashboard.buildUrl())
-    .then(r => r.json())
+  fetchConCache("dashboard", VIEWS.dashboard.buildUrl())
     .then(data => {
       if (data.error) {
         document.getElementById("result").innerHTML = `
@@ -1600,8 +1637,7 @@ function cargarArbol() {
   document.getElementById("result").innerHTML = `
     <div class="estado-msg"><div class="spinner"></div>Construyendo árbol de pedidos...</div>`;
 
-  fetch(VIEWS.arbol.buildUrl())
-    .then(r => r.json())
+  fetchConCache("arbolPedidos", VIEWS.arbol.buildUrl())
     .then(data => {
       if (data.error) {
         document.getElementById("result").innerHTML = `
@@ -2182,8 +2218,7 @@ function cargarRecepcionEmpaque() {
   document.getElementById("result").innerHTML = `
     <div class="estado-msg"><div class="spinner"></div>Cruzando pedido vs. recepción...</div>`;
 
-  fetch(VIEWS.recepcionEmpaque.buildUrl())
-    .then(r => r.json())
+  fetchConCache("recepcionEmpaque", VIEWS.recepcionEmpaque.buildUrl())
     .then(data => {
       if (data.error) {
         document.getElementById("result").innerHTML = `
