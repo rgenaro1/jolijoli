@@ -25,33 +25,34 @@ jobs:
       - name: Descargar dashboard
         env:
           API_URL: ${{ secrets.APPS_SCRIPT_URL }}
-        run: curl -sL -f "$API_URL?reporte=dashboard" -o data/dashboard.json
+        run: curl -sL -f --max-time 30 "$API_URL?reporte=dashboard" -o data/dashboard.json
 
       - name: Descargar árbol de pedidos
         env:
           API_URL: ${{ secrets.APPS_SCRIPT_URL }}
-        run: curl -sL -f "$API_URL?reporte=arbolPedidos" -o data/arbolPedidos.json
+        run: curl -sL -f --max-time 30 "$API_URL?reporte=arbolPedidos" -o data/arbolPedidos.json
 
       - name: Descargar control de empaque
         env:
           API_URL: ${{ secrets.APPS_SCRIPT_URL }}
-        run: curl -sL -f "$API_URL?reporte=recepcionEmpaque" -o data/recepcionEmpaque.json
+        run: curl -sL -f --max-time 30 "$API_URL?reporte=recepcionEmpaque" -o data/recepcionEmpaque.json
 
-      # Opcional: cachear también el reporte semanal de la semana actual (lunes a hoy)
-      - name: Descargar reporte semanal (semana actual)
+      # Opcional: cachear también el reporte semanal (ventana móvil de 7 días: hoy-6 → hoy,
+      # que es el mismo rango que usa por defecto el frontend)
+      - name: Descargar reporte semanal (últimos 7 días)
         env:
           API_URL: ${{ secrets.APPS_SCRIPT_URL }}
         run: |
-          FECHA_INI=$(date -d "monday" +%d/%m/%Y)
+          FECHA_INI=$(date -d "6 days ago" +%d/%m/%Y)
           FECHA_FIN=$(date +%d/%m/%Y)
-          curl -sL -f "$API_URL?reporte=semanal&fechaIni=${FECHA_INI}&fechaFin=${FECHA_FIN}" -o data/semanal.json
+          curl -sL -f --max-time 30 "$API_URL?reporte=semanal&fechaIni=${FECHA_INI}&fechaFin=${FECHA_FIN}" -o data/semanal.json
 
       - name: Descargar plan de armado (hoy → +7 días)
         env:
           API_URL: ${{ secrets.APPS_SCRIPT_URL }}
         run: |
           FECHA=$(date +%d/%m/%Y)
-          curl -sL -f "$API_URL?reporte=planSemana&fecha=${FECHA}&dias=8" -o data/planSemana.json
+          curl -sL -f --max-time 30 "$API_URL?reporte=planSemana&fecha=${FECHA}&dias=8" -o data/planSemana.json
 
       - name: Descargar estado por modelo (uno por cada modelo activo)
         env:
@@ -60,12 +61,16 @@ jobs:
           mkdir -p data/estadoModelo
           # Requiere que Apps Script tenga un endpoint reporte=listaModelos
           # que devuelva algo como: {"modelos": ["DIANA", "RENATA", "GRACE", ...]}
-          if curl -sL -f "$API_URL?reporte=listaModelos" -o /tmp/modelos.json; then
-            for MODELO in $(jq -r '.modelos[]' /tmp/modelos.json); do
-              SLUG=$(echo "$MODELO" | iconv -t ascii//TRANSLIT | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/_/g; s/^_+|_+$//g')
-              curl -sL -f "$API_URL?reporte=estadoModelo&modelo=$(python3 -c "import urllib.parse,sys;print(urllib.parse.quote(sys.argv[1]))" "$MODELO")" \
-                -o "data/estadoModelo/${SLUG}.json"
-            done
+          if curl -sL -f --max-time 30 "$API_URL?reporte=listaModelos" -o /tmp/modelos.json; then
+            TOTAL=$(jq -r '.modelos | length' /tmp/modelos.json)
+            echo "Modelos encontrados: $TOTAL"
+            jq -r '.modelos[]' /tmp/modelos.json | xargs -P 8 -I {} bash -c '
+              MODELO="{}"
+              SLUG=$(echo "$MODELO" | iconv -t ascii//TRANSLIT | tr "[:upper:]" "[:lower:]" | sed -E "s/[^a-z0-9]+/_/g; s/^_+|_+$//g")
+              ENCODED=$(python3 -c "import urllib.parse,sys;print(urllib.parse.quote(sys.argv[1]))" "$MODELO")
+              curl -sL -f --max-time 30 "'"$API_URL"'?reporte=estadoModelo&modelo=${ENCODED}" -o "data/estadoModelo/${SLUG}.json" \
+                || echo "⚠️ Falló el modelo: $MODELO"
+            '
           else
             echo "⚠️ No existe reporte=listaModelos todavía en Apps Script — se omite el precacheo de estadoModelo."
           fi
