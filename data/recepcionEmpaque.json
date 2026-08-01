@@ -1,1 +1,1 @@
-{"ok":false,"error":"No se pudo acceder a la hoja de control de empaque: Exception: Illegal spreadsheet id or key: 1_EXAMPLE_ID_EMPAQUE"}
+{"ok":false,"error":"No existe la pestaña RESUMEN CRUCE en la hoja de empaque."}
