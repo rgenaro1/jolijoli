@@ -25,17 +25,17 @@ jobs:
       - name: Descargar dashboard
         env:
           API_URL: ${{ secrets.APPS_SCRIPT_URL }}
-        run: curl -s -f "$API_URL?reporte=dashboard" -o data/dashboard.json
+        run: curl -sL -f "$API_URL?reporte=dashboard" -o data/dashboard.json
 
       - name: Descargar árbol de pedidos
         env:
           API_URL: ${{ secrets.APPS_SCRIPT_URL }}
-        run: curl -s -f "$API_URL?reporte=arbolPedidos" -o data/arbolPedidos.json
+        run: curl -sL -f "$API_URL?reporte=arbolPedidos" -o data/arbolPedidos.json
 
       - name: Descargar control de empaque
         env:
           API_URL: ${{ secrets.APPS_SCRIPT_URL }}
-        run: curl -s -f "$API_URL?reporte=recepcionEmpaque" -o data/recepcionEmpaque.json
+        run: curl -sL -f "$API_URL?reporte=recepcionEmpaque" -o data/recepcionEmpaque.json
 
       # Opcional: cachear también el reporte semanal de la semana actual (lunes a hoy)
       - name: Descargar reporte semanal (semana actual)
@@ -44,14 +44,14 @@ jobs:
         run: |
           FECHA_INI=$(date -d "monday" +%d/%m/%Y)
           FECHA_FIN=$(date +%d/%m/%Y)
-          curl -s -f "$API_URL?reporte=semanal&fechaIni=${FECHA_INI}&fechaFin=${FECHA_FIN}" -o data/semanal.json
+          curl -sL -f "$API_URL?reporte=semanal&fechaIni=${FECHA_INI}&fechaFin=${FECHA_FIN}" -o data/semanal.json
 
       - name: Descargar plan de armado (hoy → +7 días)
         env:
           API_URL: ${{ secrets.APPS_SCRIPT_URL }}
         run: |
           FECHA=$(date +%d/%m/%Y)
-          curl -s -f "$API_URL?reporte=planSemana&fecha=${FECHA}&dias=8" -o data/planSemana.json
+          curl -sL -f "$API_URL?reporte=planSemana&fecha=${FECHA}&dias=8" -o data/planSemana.json
 
       - name: Descargar estado por modelo (uno por cada modelo activo)
         env:
@@ -60,10 +60,10 @@ jobs:
           mkdir -p data/estadoModelo
           # Requiere que Apps Script tenga un endpoint reporte=listaModelos
           # que devuelva algo como: {"modelos": ["DIANA", "RENATA", "GRACE", ...]}
-          if curl -s -f "$API_URL?reporte=listaModelos" -o /tmp/modelos.json; then
+          if curl -sL -f "$API_URL?reporte=listaModelos" -o /tmp/modelos.json; then
             for MODELO in $(jq -r '.modelos[]' /tmp/modelos.json); do
               SLUG=$(echo "$MODELO" | iconv -t ascii//TRANSLIT | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/_/g; s/^_+|_+$//g')
-              curl -s -f "$API_URL?reporte=estadoModelo&modelo=$(python3 -c "import urllib.parse,sys;print(urllib.parse.quote(sys.argv[1]))" "$MODELO")" \
+              curl -sL -f "$API_URL?reporte=estadoModelo&modelo=$(python3 -c "import urllib.parse,sys;print(urllib.parse.quote(sys.argv[1]))" "$MODELO")" \
                 -o "data/estadoModelo/${SLUG}.json"
             done
           else
