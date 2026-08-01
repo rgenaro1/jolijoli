@@ -1,10 +1,1 @@
-<HTML>
-<HEAD>
-<TITLE>Moved Temporarily</TITLE>
-</HEAD>
-<BODY BGCOLOR="#FFFFFF" TEXT="#000000">
-<!-- GSE Default Error -->
-<H1>Moved Temporarily</H1>
-The document has moved <A HREF="https://script.googleusercontent.com/macros/echo?user_content_key=AUkAhnQGxjnewcIgTsMvP3_JrBGChBHjnnm6ZyCZ3MALhKcf57Q5A5tZLyeo826Rckcwn0V9qSoEedam5vC-WU83qhV76x8fascMpdAo5wsfQH76mjmfYHtD3B3csAIjH1-P45_Xb6cDKDFdpb4BazXdJP2ezBgAidn8cbmSWnarjCBs9SAlWvFVF1xci1Ob8oABzBurmrkDWbASSRzcYJJZom7n-ijzcGJmrruYl0jvLjkdslgWCeu6qJR9BmrNTB6yOQ8Jhkpn32XCBWYCoIyTA1O-615Uuy1tG1OtadYtVDS5cOPki1DBw_lD1PGzdA&amp;lib=MXaBAnuXJxno38lEJ_DO4nrC5iLnPC8DH">here</A>.
-</BODY>
-</HTML>
+{"ok":false,"error":"Error interno en el servidor: Exception: The parameters (String,String,String) don't match the method signature for Utilities.formatDate."}
