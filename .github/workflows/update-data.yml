@@ -22,53 +22,62 @@ jobs:
       - name: Crear carpeta data
         run: mkdir -p data
 
+      # NOTA: --max-time subido a 90s (el reporte dashboard es el más pesado de calcular)
+      # y --retry 2 para reintentar automáticamente ante timeouts o errores 5xx transitorios.
+      # continue-on-error: true evita que un solo reporte lento tumbe a todos los demás.
       - name: Descargar dashboard
+        continue-on-error: true
         env:
           API_URL: ${{ secrets.APPS_SCRIPT_URL }}
-        run: curl -sL -f --max-time 30 "$API_URL?reporte=dashboard" -o data/dashboard.json
+        run: curl -sL -f --max-time 90 --retry 2 --retry-delay 5 --retry-connrefused "$API_URL?reporte=dashboard" -o data/dashboard.json
 
       - name: Descargar árbol de pedidos
+        continue-on-error: true
         env:
           API_URL: ${{ secrets.APPS_SCRIPT_URL }}
-        run: curl -sL -f --max-time 30 "$API_URL?reporte=arbolPedidos" -o data/arbolPedidos.json
+        run: curl -sL -f --max-time 90 --retry 2 --retry-delay 5 --retry-connrefused "$API_URL?reporte=arbolPedidos" -o data/arbolPedidos.json
 
       - name: Descargar control de empaque
+        continue-on-error: true
         env:
           API_URL: ${{ secrets.APPS_SCRIPT_URL }}
-        run: curl -sL -f --max-time 30 "$API_URL?reporte=recepcionEmpaque" -o data/recepcionEmpaque.json
+        run: curl -sL -f --max-time 90 --retry 2 --retry-delay 5 --retry-connrefused "$API_URL?reporte=recepcionEmpaque" -o data/recepcionEmpaque.json
 
       # Opcional: cachear también el reporte semanal (ventana móvil de 7 días: hoy-6 → hoy,
       # que es el mismo rango que usa por defecto el frontend)
       - name: Descargar reporte semanal (últimos 7 días)
+        continue-on-error: true
         env:
           API_URL: ${{ secrets.APPS_SCRIPT_URL }}
         run: |
           FECHA_INI=$(date -d "6 days ago" +%d/%m/%Y)
           FECHA_FIN=$(date +%d/%m/%Y)
-          curl -sL -f --max-time 30 "$API_URL?reporte=semanal&fechaIni=${FECHA_INI}&fechaFin=${FECHA_FIN}" -o data/semanal.json
+          curl -sL -f --max-time 90 --retry 2 --retry-delay 5 --retry-connrefused "$API_URL?reporte=semanal&fechaIni=${FECHA_INI}&fechaFin=${FECHA_FIN}" -o data/semanal.json
 
       - name: Descargar plan de armado (hoy → +7 días)
+        continue-on-error: true
         env:
           API_URL: ${{ secrets.APPS_SCRIPT_URL }}
         run: |
           FECHA=$(date +%d/%m/%Y)
-          curl -sL -f --max-time 30 "$API_URL?reporte=planSemana&fecha=${FECHA}&dias=8" -o data/planSemana.json
+          curl -sL -f --max-time 90 --retry 2 --retry-delay 5 --retry-connrefused "$API_URL?reporte=planSemana&fecha=${FECHA}&dias=8" -o data/planSemana.json
 
       - name: Descargar estado por modelo (uno por cada modelo activo)
+        continue-on-error: true
         env:
           API_URL: ${{ secrets.APPS_SCRIPT_URL }}
         run: |
           mkdir -p data/estadoModelo
           # Requiere que Apps Script tenga un endpoint reporte=listaModelos
           # que devuelva algo como: {"modelos": ["DIANA", "RENATA", "GRACE", ...]}
-          if curl -sL -f --max-time 30 "$API_URL?reporte=listaModelos" -o /tmp/modelos.json; then
+          if curl -sL -f --max-time 90 --retry 2 --retry-delay 5 --retry-connrefused "$API_URL?reporte=listaModelos" -o /tmp/modelos.json; then
             TOTAL=$(jq -r '.modelos | length' /tmp/modelos.json)
             echo "Modelos encontrados: $TOTAL"
             jq -r '.modelos[]' /tmp/modelos.json | xargs -P 8 -I {} bash -c '
               MODELO="{}"
               SLUG=$(echo "$MODELO" | iconv -t ascii//TRANSLIT | tr "[:upper:]" "[:lower:]" | sed -E "s/[^a-z0-9]+/_/g; s/^_+|_+$//g")
               ENCODED=$(python3 -c "import urllib.parse,sys;print(urllib.parse.quote(sys.argv[1]))" "$MODELO")
-              curl -sL -f --max-time 30 "'"$API_URL"'?reporte=estadoModelo&modelo=${ENCODED}" -o "data/estadoModelo/${SLUG}.json" \
+              curl -sL -f --max-time 90 --retry 2 --retry-delay 5 --retry-connrefused "'"$API_URL"'?reporte=estadoModelo&modelo=${ENCODED}" -o "data/estadoModelo/${SLUG}.json" \
                 || echo "⚠️ Falló el modelo: $MODELO"
             '
           else
