@@ -1391,7 +1391,12 @@ const API_URL = "https://script.google.com/macros/s/AKfycbytKtv838e0hdQb8VfV-xtX
 // ═══════════════════════════════════════════════
 async function fetchConCache(nombreArchivo, urlLive) {
   try {
-    const resCache = await fetch(`./data/${nombreArchivo}.json`, { cache: "no-store" });
+    // ?t=timestamp: "no-store" solo evita que el NAVEGADOR reuse una copia
+    // vieja; no evita que la CDN de GitHub Pages (Fastly) sirva una version
+    // cacheada desde algun nodo de borde aunque el archivo ya este actualizado
+    // en el repo. Al cambiar la URL en cada carga, la CDN no puede devolver
+    // una respuesta cacheada para esa URL exacta y va hasta el origen.
+    const resCache = await fetch(`./data/${nombreArchivo}.json?t=${Date.now()}`, { cache: "no-store" });
     if (resCache.ok) {
       const data = await resCache.json();
       if (!data || !data.error) return data;
@@ -2931,4 +2936,3 @@ cargarDashboard();
 
 </body>
 </html>
-
