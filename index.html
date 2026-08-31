@@ -807,9 +807,86 @@
     margin-left: auto;
   }
 
+  .empaque-pedidos-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .empaque-pedido-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 10px 14px;
+    background: #f8fafc;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+  }
+
+  .empaque-pedido-info {
+    width: 200px;
+    flex-shrink: 0;
+  }
+
+  .empaque-pedido-date {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+
+  .empaque-pedido-sub {
+    font-size: 10.5px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  .empaque-pedido-track-wrap {
+    flex: 1;
+    min-width: 120px;
+  }
+
+  .empaque-pedido-track {
+    position: relative;
+    height: 22px;
+    background: #e2e8f0;
+    border-radius: 6px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+  }
+
+  .empaque-pedido-fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 8px;
+    min-width: 24px;
+    transition: width .4s ease;
+  }
+
+  .empaque-pedido-pct {
+    width: 45px;
+    text-align: right;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
   @media (max-width: 980px) {
     .empaque-kpi-grid { grid-template-columns: repeat(2, 1fr); }
     .empaque-charts-grid { grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 700px) {
+    .empaque-pedido-row { flex-direction: column; align-items: stretch; gap: 8px; }
+    .empaque-pedido-info { width: 100%; display: flex; justify-content: space-between; align-items: center; }
+    .empaque-pedido-track-wrap { width: 100% !important; }
   }
 
   @media (max-width: 540px) {
@@ -2202,6 +2279,61 @@ function _renderEntregaProductosSection(dataEmpaque) {
     { label: "Pendientes", color: "#94a3b8", value: sinIngreso }
   ], 126, 17);
 
+  // Agrupar por fechaPedido
+  const porPedido = {};
+  regs.forEach(r => {
+    let f = r.fechaPedido || "Sin Fecha";
+    if (f.includes("T")) {
+      const dt = new Date(f);
+      if (!isNaN(dt)) f = String(dt.getDate()).padStart(2, "0") + "/" + String(dt.getMonth() + 1).padStart(2, "0") + "/" + dt.getFullYear();
+    }
+    if (!porPedido[f]) {
+      porPedido[f] = { fecha: f, pedido: 0, recibido: 0, totalOPs: 0, completas: 0, parciales: 0, sinIngreso: 0 };
+    }
+    const p = r.totalPedido || 0;
+    const rec = r.totalRecibido || 0;
+    porPedido[f].pedido += p;
+    porPedido[f].recibido += rec;
+    porPedido[f].totalOPs++;
+    if ((p > 0 && rec >= p) || (p === 0 && rec === 0) || r.estado === "Completo") {
+      porPedido[f].completas++;
+    } else if (rec > 0) {
+      porPedido[f].parciales++;
+    } else {
+      porPedido[f].sinIngreso++;
+    }
+  });
+
+  const pedidosOrdenados = Object.values(porPedido);
+  const maxParesPedido = Math.max(...pedidosOrdenados.map(p => p.pedido), 1);
+
+  const pedidosHtml = pedidosOrdenados.map(p => {
+    const fillPct = p.pedido > 0 ? Math.min(100, Math.round(100 * p.recibido / p.pedido)) : 0;
+    const trackWidthPct = (p.pedido / maxParesPedido * 100).toFixed(1);
+    const estadoColor = fillPct >= 100 ? "var(--ok)" : (fillPct >= 50 ? "var(--gold)" : (fillPct > 0 ? "var(--warn)" : "var(--muted)"));
+
+    return `
+      <div class="empaque-pedido-row">
+        <div class="empaque-pedido-info">
+          <div class="empaque-pedido-date">Pedido · ${p.fecha}</div>
+          <div class="empaque-pedido-sub">
+            <span style="color:var(--ok);font-weight:600;">${p.completas} completas</span>, 
+            <span style="color:var(--warn);font-weight:600;">${p.parciales} parciales</span>, 
+            <span style="color:var(--muted);font-weight:600;">${p.sinIngreso} pendientes</span>
+          </div>
+        </div>
+        <div class="empaque-pedido-track-wrap" style="width:${trackWidthPct}%;">
+          <div class="empaque-pedido-track">
+            <div class="empaque-pedido-fill" style="width:${fillPct}%;background:${estadoColor};">
+              ${p.recibido > 0 ? `<span class="empaque-fill-val">${p.recibido.toLocaleString()}</span>` : ""}
+            </div>
+            <span class="empaque-track-total">${p.pedido.toLocaleString()} pares</span>
+          </div>
+        </div>
+        <div class="empaque-pedido-pct" style="color:${estadoColor};">${fillPct}%</div>
+      </div>`;
+  }).join("");
+
   return `
     <div class="empaque-dashboard-block">
       <div class="empaque-section-header">
@@ -2276,6 +2408,29 @@ function _renderEntregaProductosSection(dataEmpaque) {
               </div>
             </div>
           </div>
+        </div>
+      </div>
+
+      <!-- Tarjeta: Avance por Pedido -->
+      <div class="empaque-chart-card" style="margin-top:14px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px;">
+          <div>
+            <div class="empaque-card-heading" style="margin-bottom:3px;">Avance por Pedido (Lotes de Fabricación)</div>
+            <div style="font-size:11.5px;color:var(--muted);">
+              <b style="color:var(--ok);">${completas} OPs completas</b> · 
+              <b style="color:var(--warn);">${enProceso} OPs parciales</b> · 
+              <b style="color:var(--muted);">${sinIngreso} OPs pendientes</b>
+            </div>
+          </div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;">
+            <span class="empaque-tag green">🟢 ${completas} Completas</span>
+            <span class="empaque-tag" style="background:#fef3c7;color:#b45309;">🟡 ${enProceso} Parciales</span>
+            <span class="empaque-tag gray">⚪ ${sinIngreso} Pendientes</span>
+          </div>
+        </div>
+
+        <div class="empaque-pedidos-list">
+          ${pedidosHtml}
         </div>
       </div>
     </div>
