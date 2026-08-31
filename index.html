@@ -1537,7 +1537,7 @@ const VIEWS = {
   },
   recepcionEmpaque: {
     titulo: "Control de Empaque",
-    descripcion: "Pedido vs. recepción física (Clase A/B/C) por modelo, color, OP y talla. Datos de la hoja Control_Recepcion_Calzado.",
+    descripcion: "Pedido vs. recepción física (Clase A/B/C) por modelo, color, OP y talla (órdenes 3354 en adelante). Datos de la hoja Control_Recepcion_Calzado.",
     fields: [],
     buildUrl: () => `${API_URL}?reporte=recepcionEmpaque`,
     render: renderRecepcionEmpaque
@@ -2326,6 +2326,8 @@ let _empaqueData = null;       // respuesta cruda de la API (se guarda para filt
 let _empaqueFiltro = "all";    // all | Pendiente | Completo
 let _empaqueQuery = "";
 
+const OP_MIN_EMPAQUE = 3354;
+
 function cargarRecepcionEmpaque() {
   document.getElementById("result").innerHTML = `
     <div class="estado-msg"><div class="spinner"></div>Cruzando pedido vs. recepción...</div>`;
@@ -2337,7 +2339,37 @@ function cargarRecepcionEmpaque() {
           <div class="estado-msg error">⚠️ ${data.error}</div>`;
         return;
       }
-      _empaqueData = data;
+
+      // Filtrar a partir de la OP 3354 en adelante
+      const registrosValidos = (data.registros || []).filter(r => Number(r.op) >= OP_MIN_EMPAQUE);
+
+      const totalOps = registrosValidos.length;
+      const opsPendientes = registrosValidos.filter(r => r.estado === "Pendiente").length;
+      const opsCompletas = registrosValidos.filter(r => r.estado === "Completo").length;
+      const totalPedido = registrosValidos.reduce((s, r) => s + (r.totalPedido || 0), 0);
+      const totalRecibido = registrosValidos.reduce((s, r) => s + (r.totalRecibido || 0), 0);
+      const pctGlobal = totalPedido > 0 ? Math.round(100 * totalRecibido / totalPedido) : 0;
+
+      let totalDescartadoC = 0;
+      registrosValidos.forEach(r => {
+        if (r.tallas) {
+          r.tallas.forEach(t => {
+            totalDescartadoC += t.recibidoC || 0;
+          });
+        }
+      });
+
+      _empaqueData = {
+        ...data,
+        registros: registrosValidos,
+        totalOps,
+        opsPendientes,
+        opsCompletas,
+        totalPedido,
+        totalRecibido,
+        pctGlobal,
+        totalDescartadoC
+      };
       _empaqueFiltro = "all";
       _empaqueQuery = "";
       renderRecepcionEmpaque();
@@ -2442,10 +2474,11 @@ function renderRecepcionEmpaque() {
 
   document.getElementById("result").innerHTML = `
     <div class="card" style="margin-bottom:18px;display:flex;gap:32px;flex-wrap:wrap;">
-      <div><div class="kpi-lbl">OPs</div><div class="kpi-val">${data.totalOps}</div></div>
+      <div><div class="kpi-lbl">OPs (≥ 3354)</div><div class="kpi-val">${data.totalOps}</div></div>
       <div><div class="kpi-lbl">Pendientes</div><div class="kpi-val" style="color:var(--warn);">${data.opsPendientes}</div></div>
       <div><div class="kpi-lbl">Completas</div><div class="kpi-val" style="color:var(--ok);">${data.opsCompletas}</div></div>
-      <div><div class="kpi-lbl">Avance Global</div><div class="kpi-val">${data.pctGlobal}%</div></div>
+      <div><div class="kpi-lbl">Pares Recibidos / Total</div><div class="kpi-val">${data.totalRecibido} <span style="font-size:15px;font-weight:500;color:var(--muted);">/ ${data.totalPedido}</span></div></div>
+      <div><div class="kpi-lbl">Avance Global</div><div class="kpi-val" style="color:${_colorAvance(data.pctGlobal)}">${data.pctGlobal}%</div></div>
       <div><div class="kpi-lbl">Descartado (Clase C)</div><div class="kpi-val" style="color:var(--danger);">${data.totalDescartadoC}</div></div>
     </div>
 
