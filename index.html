@@ -2761,11 +2761,44 @@ function enviarPregunta() {
 // ═══════════════════════════════════════════════
 //  EDITOR DE OP
 // ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════════
+//  EDITOR DE OP
+// ═══════════════════════════════════════════════
 const ESTADOS_VALIDOS = [
-  "CORTE","HABILITADO","PERFILADO","ARMADO","ALISTADO","PRODUCTO TERMINADO"
+  "CORTE",
+  "HABILITADO",
+  "PERFILADO",
+  "ALMACEN DE PERFILADO",
+  "ARMADO",
+  "AREA DE ARMADO",
+  "ALISTADO",
+  "AREA DE ALISTADO",
+  "PRODUCTO TERMINADO"
+];
+
+const CAMPOS_DEF_DEFAULT = [
+  { key: "modelo", label: "Modelo", tipo: "texto", seccion: "Identificación", idx: 1 },
+  { key: "color", label: "Color", tipo: "texto", seccion: "Identificación", idx: 2 },
+  { key: "fechaPedido", label: "Fecha de Pedido", tipo: "fecha", seccion: "Fechas", idx: 3, placeholder: "dd/MM/yyyy" },
+  { key: "fechaArmado", label: "Fecha de Armado", tipo: "fecha", seccion: "Fechas", idx: 14, placeholder: "dd/MM/yyyy" },
+  { key: "estado", label: "Estado", tipo: "estado", seccion: "Estado de Producción", idx: 13 },
+  { key: "t35", label: "Talla 35", tipo: "numero", seccion: "Cantidades por Talla", idx: 4 },
+  { key: "t36", label: "Talla 36", tipo: "numero", seccion: "Cantidades por Talla", idx: 5 },
+  { key: "t37", label: "Talla 37", tipo: "numero", seccion: "Cantidades por Talla", idx: 6 },
+  { key: "t38", label: "Talla 38", tipo: "numero", seccion: "Cantidades por Talla", idx: 7 },
+  { key: "t39", label: "Talla 39", tipo: "numero", seccion: "Cantidades por Talla", idx: 8 },
+  { key: "t40", label: "Talla 40", tipo: "numero", seccion: "Cantidades por Talla", idx: 9 }
 ];
 
 let editorDatosActuales = null; // OP actualmente en edición
+
+function _getCampoValor(registro, c) {
+  if (!registro) return "";
+  if (registro[c.key] !== undefined && registro[c.key] !== null) return String(registro[c.key]);
+  if (c.key.startsWith("t") && registro.tallas && registro.tallas[c.key] !== undefined) return String(registro.tallas[c.key]);
+  if (registro.campos && c.idx !== undefined && registro.campos[c.idx] !== undefined) return String(registro.campos[c.idx]);
+  return "";
+}
 
 function renderEditor() {
   document.getElementById("form-bar").innerHTML = "";
@@ -2775,12 +2808,12 @@ function renderEditor() {
       <div class="editor-search">
         <div class="form-group">
           <label>N° de OP</label>
-          <input type="text" id="ed-op" placeholder="Ej: 1248"
+          <input type="text" id="ed-op" placeholder="Ej: 3354"
             onkeypress="if(event.key==='Enter') buscarOPEditor()">
         </div>
         <div class="form-group">
           <label>Modelo</label>
-          <input type="text" id="ed-modelo" placeholder="Ej: DIANA"
+          <input type="text" id="ed-modelo" placeholder="Ej: CANDELA"
             onkeypress="if(event.key==='Enter') buscarOPEditor()">
         </div>
         <div class="form-group">
@@ -2832,18 +2865,26 @@ function buscarOPEditor() {
 }
 
 function mostrarResultadosOP(data) {
+  if (!data.resultados || data.resultados.length === 0) {
+    document.getElementById("editor-result").innerHTML = `
+      <div class="estado-msg">No se encontraron órdenes de producción con esos criterios.</div>`;
+    return;
+  }
+
+  const camposDef = data.campos || CAMPOS_DEF_DEFAULT;
+
   if (data.resultados.length === 1) {
     // Un solo resultado: abrir directamente el formulario
-    mostrarFormEditor(data.resultados[0], data.campos);
+    mostrarFormEditor(data.resultados[0], camposDef);
     return;
   }
 
   // Múltiples resultados: mostrar lista para elegir
   const tarjetas = data.resultados.map((r, idx) => {
-    const op     = r.campos[0]  || "—";
-    const modelo = r.campos[1]  || "—";
-    const color  = r.campos[2]  || "—";
-    const estado = r.campos[13] || "—";
+    const op     = r.op     || (r.campos && r.campos[0])  || "—";
+    const modelo = r.modelo || (r.campos && r.campos[1])  || "—";
+    const color  = r.color  || (r.campos && r.campos[2])  || "—";
+    const estado = r.estado || (r.campos && r.campos[13]) || "—";
     return `
       <div class="op-result-card">
         <div>
@@ -2854,69 +2895,71 @@ function mostrarResultadosOP(data) {
       </div>`;
   }).join("");
 
-  // Guardar data globalmente para acceder desde seleccionarOP
-  window._editorData = data;
+  window._editorData = { ...data, campos: camposDef };
 
   document.getElementById("editor-result").innerHTML = `
     <div style="font-size:12px;color:var(--muted);margin-bottom:10px;">
-      ${data.total} resultado(s) encontrado(s). Selecciona el que quieres editar:
+      ${data.total || data.resultados.length} resultado(s) encontrado(s). Selecciona el que quieres editar:
     </div>
     <div class="op-result-list">${tarjetas}</div>`;
 }
 
 function seleccionarOP(idx) {
   const data = window._editorData;
-  mostrarFormEditor(data.resultados[idx], data.campos);
+  mostrarFormEditor(data.resultados[idx], data.campos || CAMPOS_DEF_DEFAULT);
 }
 
 function mostrarFormEditor(registro, camposDef) {
-  editorDatosActuales = { registro, camposDef };
+  const campos = camposDef || CAMPOS_DEF_DEFAULT;
+  editorDatosActuales = { registro, camposDef: campos };
 
-  const op     = registro.campos[0]  || "—";
-  const modelo = registro.campos[1]  || "—";
-  const color  = registro.campos[2]  || "—";
-  const estado = registro.campos[13] || "—"; // col N — solo lectura
+  const op     = registro.op     || (registro.campos && registro.campos[0])  || "—";
+  const modelo = registro.modelo || (registro.campos && registro.campos[1])  || "—";
+  const color  = registro.color  || (registro.campos && registro.campos[2])  || "—";
+  const estado = registro.estado || (registro.campos && registro.campos[13]) || "—";
 
   // Color del badge según estado
   const estadoColores = {
-    "CORTE":              { bg:"#e8f0fe", color:"#1a56db" },
-    "HABILITADO":         { bg:"#e8f5e9", color:"#2f7d5f" },
-    "PERFILADO":          { bg:"#fff8e1", color:"#b45309" },
-    "ARMADO":             { bg:"#ede7f6", color:"#6d28d9" },
-    "ALISTADO":           { bg:"#e0f7fa", color:"#0d7377" },
-    "PRODUCTO TERMINADO": { bg:"#f3e8ff", color:"#7c3aed" }
+    "CORTE":                { bg:"#e8f0fe", color:"#1a56db" },
+    "HABILITADO":           { bg:"#e8f5e9", color:"#2f7d5f" },
+    "PERFILADO":            { bg:"#fff8e1", color:"#b45309" },
+    "ALMACEN DE PERFILADO": { bg:"#fff8e1", color:"#b45309" },
+    "ARMADO":               { bg:"#ede7f6", color:"#6d28d9" },
+    "AREA DE ARMADO":       { bg:"#ede7f6", color:"#6d28d9" },
+    "ALISTADO":             { bg:"#e0f7fa", color:"#0d7377" },
+    "AREA DE ALISTADO":     { bg:"#e0f7fa", color:"#0d7377" },
+    "PRODUCTO TERMINADO":   { bg:"#f3e8ff", color:"#7c3aed" }
   };
   const ec = estadoColores[estado.toUpperCase()] || { bg:"#f1f5f9", color:"#64748b" };
 
-  // Filtrar Cantidades del formulario (índices 4-12)
-  const camposFiltrados = camposDef.filter(c => c.seccion !== "Cantidades");
-
   // Agrupar campos por sección
   const secciones = {};
-  camposFiltrados.forEach(c => {
-    if (!secciones[c.seccion]) secciones[c.seccion] = [];
-    secciones[c.seccion].push(c);
+  campos.forEach(c => {
+    const sec = c.seccion || "General";
+    if (!secciones[sec]) secciones[sec] = [];
+    secciones[sec].push(c);
   });
 
-  const seccionesHtml = Object.entries(secciones).map(([sec, campos]) => {
-    const fieldsHtml = campos.map(c => {
-      const val = registro.campos[c.idx] || "";
+  const seccionesHtml = Object.entries(secciones).map(([sec, list]) => {
+    const fieldsHtml = list.map(c => {
+      const val = _getCampoValor(registro, c);
+      const fieldId = `ef-${c.key || c.idx}`;
       let input;
 
       if (c.tipo === "estado") {
         const opts = ESTADOS_VALIDOS.map(e =>
           `<option value="${e}" ${val.toUpperCase()===e?"selected":""}>${e}</option>`
         ).join("");
-        input = `<select id="ef-${c.idx}" data-original="${val}" onchange="marcarCambiado(this)">${opts}</select>`;
+        input = `<select id="${fieldId}" data-original="${val}" onchange="marcarCambiado(this)">${opts}</select>`;
       } else if (c.tipo === "fecha") {
-        input = `<input type="text" id="ef-${c.idx}" value="${val}"
-          placeholder="dd/MM/yyyy" data-original="${val}"
+        input = `<input type="text" id="${fieldId}" value="${val}"
+          placeholder="${c.placeholder || 'dd/MM/yyyy'}" data-original="${val}"
           oninput="marcarCambiado(this)">`;
       } else if (c.tipo === "numero") {
-        input = `<input type="number" id="ef-${c.idx}" value="${val}"
+        input = `<input type="number" id="${fieldId}" value="${val}"
           data-original="${val}" oninput="marcarCambiado(this)">`;
       } else {
-        input = `<input type="text" id="ef-${c.idx}" value="${val}"
+        input = `<input type="text" id="${fieldId}" value="${val}"
           data-original="${val}" oninput="marcarCambiado(this)">`;
       }
 
@@ -2954,7 +2997,7 @@ function mostrarFormEditor(registro, camposDef) {
             ">${estado}</span>
           </div>
           <div class="editor-op-sub">
-            Fila ${registro.fila} · Estado calculado automáticamente por fórmula · Modifica los campos y presiona Guardar
+            Fila ${registro.fila} · Modifica los campos que desees y presiona Guardar cambios
           </div>
         </div>
         <div class="editor-actions">
@@ -2981,16 +3024,18 @@ function marcarCambiado(el) {
 function iniciarGuardado() {
   if (!editorDatosActuales) return;
 
-  // Recopilar solo campos modificados
   const { registro, camposDef } = editorDatosActuales;
   const cambios = {};
 
   camposDef.forEach(c => {
-    const el = document.getElementById(`ef-${c.idx}`);
+    const el = document.getElementById(`ef-${c.key || c.idx}`);
     if (!el) return;
     const original = el.dataset.original || "";
     if (el.value !== original) {
-      cambios[c.idx] = el.value;
+      cambios[c.key || c.idx] = el.value;
+      if (c.idx !== undefined) {
+        cambios[c.idx] = el.value;
+      }
     }
   });
 
@@ -3000,7 +3045,6 @@ function iniciarGuardado() {
     return;
   }
 
-  // Mostrar modal de PIN
   mostrarPinModal(cambios);
 }
 
@@ -3024,7 +3068,6 @@ function mostrarPinModal(cambios) {
   document.body.appendChild(overlay);
   setTimeout(() => document.getElementById("pin-input")?.focus(), 50);
 
-  // Guardar cambios en el overlay para acceder desde confirmarPIN
   overlay._cambios = cambios;
 }
 
@@ -3064,16 +3107,15 @@ function confirmarPIN() {
         return;
       }
 
-      // Actualizar los data-original de los campos guardados
-      Object.keys(cambios).forEach(idx => {
-        const el = document.getElementById(`ef-${idx}`);
+      Object.keys(cambios).forEach(k => {
+        const el = document.getElementById(`ef-${k}`);
         if (el) {
           el.dataset.original = el.value;
           el.classList.remove("changed");
         }
       });
 
-      let msg = `✅ ${data.cambiosAplicados} campo(s) guardado(s) correctamente en la fila ${data.fila}.`;
+      let msg = `✅ ${data.cambiosAplicados || 'Cambios'} guardado(s) correctamente en la fila ${data.fila || editorDatosActuales.registro.fila}.`;
       if (data.advertencias?.length) {
         msg += ` ⚠️ Advertencias: ${data.advertencias.join("; ")}`;
       }
