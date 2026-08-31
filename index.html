@@ -3086,10 +3086,7 @@ function iniciarGuardado() {
     const original = el.dataset.original || "";
     if (el.value !== original) {
       if (c.col) cambios[c.col] = el.value;
-      if (c.colIdx !== undefined) {
-        cambios[c.colIdx] = el.value;
-        cambios[c.colIdx - 1] = el.value;
-      }
+      if (c.colIdx !== undefined) cambios[c.colIdx] = el.value;
       cambios[c.key] = el.value;
     }
   });
