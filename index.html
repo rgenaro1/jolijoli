@@ -591,6 +591,232 @@
     letter-spacing: .03em;
   }
 
+  /* ═══════════════════════════════════════
+     ENTREGA DE PRODUCTOS (DASHBOARD)
+  ═══════════════════════════════════════ */
+  .empaque-dashboard-block {
+    margin-bottom: 22px;
+  }
+
+  .empaque-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .empaque-section-title {
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .empaque-section-badge {
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 500;
+    background: var(--surface);
+    padding: 3px 10px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+  }
+
+  .empaque-kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-bottom: 14px;
+  }
+
+  .empaque-kpi-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px 18px;
+    box-shadow: var(--shadow-sm);
+    transition: transform .15s ease, box-shadow .15s ease;
+  }
+
+  .empaque-kpi-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
+  }
+
+  .empaque-kpi-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+
+  .empaque-kpi-number {
+    font-family: 'Inter', sans-serif;
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+  }
+
+  .empaque-kpi-unit {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--muted);
+  }
+
+  .empaque-tag {
+    font-size: 10.5px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 12px;
+  }
+  .empaque-tag.green { background: #e6f7f2; color: #0d9488; }
+  .empaque-tag.gray  { background: #f1f5f9; color: #64748b; }
+
+  .empaque-charts-grid {
+    display: grid;
+    grid-template-columns: 1.65fr 1fr;
+    gap: 14px;
+  }
+
+  .empaque-chart-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px 20px;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .empaque-card-heading {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 16px;
+  }
+
+  .empaque-bars-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .empaque-model-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 12px;
+  }
+
+  .empaque-model-name {
+    width: 90px;
+    font-weight: 700;
+    color: var(--ink);
+    text-align: right;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .empaque-model-track-wrap {
+    flex: 1;
+    min-width: 120px;
+  }
+
+  .empaque-model-track {
+    position: relative;
+    height: 24px;
+    background: #e9ecef;
+    border-radius: 6px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+  }
+
+  .empaque-model-fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, #0d9488 0%, #14b8a6 100%);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 8px;
+    min-width: 24px;
+    transition: width .4s ease;
+  }
+
+  .empaque-fill-val {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    color: #ffffff;
+    text-shadow: 0 1px 2px rgba(0,0,0,.25);
+  }
+
+  .empaque-track-total {
+    position: absolute;
+    right: 8px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10.5px;
+    font-weight: 600;
+    color: #64748b;
+    pointer-events: none;
+  }
+
+  .empaque-donut-flex {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    gap: 18px;
+    padding: 8px 0;
+  }
+
+  .empaque-donut-legend {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .empaque-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+  }
+
+  .empaque-legend-label {
+    color: var(--ink);
+    font-weight: 500;
+  }
+
+  .empaque-legend-val {
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 700;
+    color: var(--muted);
+    margin-left: auto;
+  }
+
+  @media (max-width: 980px) {
+    .empaque-kpi-grid { grid-template-columns: repeat(2, 1fr); }
+    .empaque-charts-grid { grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 540px) {
+    .empaque-kpi-grid { grid-template-columns: 1fr; }
+    .empaque-model-name { width: 70px; font-size: 11px; }
+  }
+
   .dash-grid {
     display: grid;
     grid-template-columns: 2fr 1fr;
@@ -1711,14 +1937,17 @@ function cargarDashboard() {
   document.getElementById("result").innerHTML = `
     <div class="estado-msg"><div class="spinner"></div>Calculando indicadores...</div>`;
 
-  fetchConCache("dashboard", VIEWS.dashboard.buildUrl())
-    .then(data => {
-      if (data.error) {
+  Promise.all([
+    fetchConCache("dashboard", VIEWS.dashboard.buildUrl()),
+    fetchConCache("recepcionEmpaque", VIEWS.recepcionEmpaque.buildUrl()).catch(() => null)
+  ])
+    .then(([dataDashboard, dataEmpaque]) => {
+      if (dataDashboard && dataDashboard.error) {
         document.getElementById("result").innerHTML = `
-          <div class="estado-msg error">⚠️ ${data.error}</div>`;
+          <div class="estado-msg error">⚠️ ${dataDashboard.error}</div>`;
         return;
       }
-      renderDashboard(data);
+      renderDashboard(dataDashboard, dataEmpaque);
     })
     .catch(err => {
       document.getElementById("result").innerHTML = `
@@ -1895,13 +2124,173 @@ function renderArbolPedidos(data) {
   `;
 }
 
+function _renderEntregaProductosSection(dataEmpaque) {
+  if (!dataEmpaque || !dataEmpaque.registros) return "";
+
+  const OP_MIN = 3354;
+  const regs = (dataEmpaque.registros || []).filter(r => {
+    const opValida = Number(r.op) >= OP_MIN;
+    const fechaValida = r.fechaPedido && r.fechaPedido.trim() !== "" && r.fechaPedido.trim() !== "-";
+    return opValida && fechaValida;
+  });
+
+  if (regs.length === 0) return "";
+
+  const totalPedido = regs.reduce((s, r) => s + (r.totalPedido || 0), 0);
+  const totalRecibido = regs.reduce((s, r) => s + (r.totalRecibido || 0), 0);
+  const pctGlobal = totalPedido > 0 ? Math.round(100 * totalRecibido / totalPedido) : 0;
+  const totalOps = regs.length;
+
+  let completas = 0;
+  let enProceso = 0;
+  let sinIngreso = 0;
+  let descarteC = 0;
+
+  regs.forEach(r => {
+    const p = r.totalPedido || 0;
+    const rec = r.totalRecibido || 0;
+    if ((p > 0 && rec >= p) || (p === 0 && rec === 0) || r.estado === "Completo") {
+      completas++;
+    } else if (rec > 0) {
+      enProceso++;
+    } else {
+      sinIngreso++;
+    }
+
+    if (r.tallas) {
+      r.tallas.forEach(t => {
+        descarteC += (t.recibidoC || 0);
+      });
+    }
+  });
+
+  const pctCompletas = totalOps > 0 ? Math.round(100 * completas / totalOps) : 0;
+
+  // Agrupar por modelo
+  const porModelo = {};
+  regs.forEach(r => {
+    const m = r.modelo || "Sin Modelo";
+    if (!porModelo[m]) porModelo[m] = { modelo: m, pedido: 0, recibido: 0 };
+    porModelo[m].pedido += (r.totalPedido || 0);
+    porModelo[m].recibido += (r.totalRecibido || 0);
+  });
+
+  const topModelos = Object.values(porModelo).sort((a, b) => b.pedido - a.pedido).slice(0, 5);
+  const maxPedido = Math.max(...topModelos.map(m => m.pedido), 1);
+
+  const barrasModelosHtml = topModelos.map(m => {
+    const fillPct = m.pedido > 0 ? Math.min(100, Math.round(100 * m.recibido / m.pedido)) : 0;
+    const trackWidthPct = (m.pedido / maxPedido * 100).toFixed(1);
+
+    return `
+      <div class="empaque-model-row">
+        <div class="empaque-model-name" title="${m.modelo}">${m.modelo}</div>
+        <div class="empaque-model-track-wrap" style="width:${trackWidthPct}%;">
+          <div class="empaque-model-track">
+            <div class="empaque-model-fill" style="width:${fillPct}%;">
+              ${m.recibido > 0 ? `<span class="empaque-fill-val">${m.recibido.toLocaleString()}</span>` : ""}
+            </div>
+            <span class="empaque-track-total">${m.pedido.toLocaleString()}</span>
+          </div>
+        </div>
+      </div>`;
+  }).join("");
+
+  const donutCumplimiento = _donutSvg([
+    { label: "Completadas", color: "#0d9488", value: completas },
+    { label: "En Proceso", color: "#d97706", value: enProceso },
+    { label: "Pendientes", color: "#94a3b8", value: sinIngreso }
+  ], 126, 17);
+
+  return `
+    <div class="empaque-dashboard-block">
+      <div class="empaque-section-header">
+        <div class="empaque-section-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--gold);"><rect x="3.5" y="4.5" width="17" height="16" rx="2.5"/><path d="M3.5 9.5h17"/><path d="M8 3v3M16 3v3"/><path d="m9 14 2 2 4-4"/></svg>
+          ENTREGA DE PRODUCTOS
+        </div>
+        <div class="empaque-section-badge">Control de Empaque · OPs ≥ ${OP_MIN}</div>
+      </div>
+
+      <div class="empaque-kpi-grid">
+        <div class="empaque-kpi-card">
+          <div class="empaque-kpi-title">Total Pedido</div>
+          <div class="empaque-kpi-number">${totalPedido.toLocaleString()} <span class="empaque-kpi-unit">pares</span></div>
+        </div>
+
+        <div class="empaque-kpi-card">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <div class="empaque-kpi-title">Total Recibido</div>
+            <span class="empaque-tag green">${pctGlobal}% ↗</span>
+          </div>
+          <div class="empaque-kpi-number">${totalRecibido.toLocaleString()} <span class="empaque-kpi-unit">pares (${pctGlobal}%)</span></div>
+        </div>
+
+        <div class="empaque-kpi-card">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <div class="empaque-kpi-title">OPs Completas</div>
+            <span class="empaque-tag gray">${pctCompletas}%</span>
+          </div>
+          <div class="empaque-kpi-number">${completas} <span class="empaque-kpi-unit">de ${totalOps}</span></div>
+        </div>
+
+        <div class="empaque-kpi-card">
+          <div class="empaque-kpi-title">Descarte Clase C</div>
+          <div class="empaque-kpi-number">${descarteC} <span class="empaque-kpi-unit">pares</span></div>
+        </div>
+      </div>
+
+      <div class="empaque-charts-grid">
+        <div class="empaque-chart-card">
+          <div class="empaque-card-heading">Pares Recibidos vs Pedido por Modelo</div>
+          <div class="empaque-bars-container">
+            ${barrasModelosHtml}
+          </div>
+        </div>
+
+        <div class="empaque-chart-card">
+          <div class="empaque-card-heading">Estado de Cumplimiento de OPs</div>
+          <div class="empaque-donut-flex">
+            <div style="position:relative;width:126px;height:126px;flex-shrink:0;">
+              ${donutCumplimiento}
+              <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:22px;font-weight:700;color:var(--ink);">${pctCompletas}%</div>
+                <div style="font-size:8px;color:var(--muted);letter-spacing:.05em;text-transform:uppercase;">Completadas</div>
+              </div>
+            </div>
+            <div class="empaque-donut-legend">
+              <div class="empaque-legend-item">
+                <span class="dot" style="background:#0d9488;"></span>
+                <span class="empaque-legend-label">Completadas</span>
+                <span class="empaque-legend-val">${completas}</span>
+              </div>
+              <div class="empaque-legend-item">
+                <span class="dot" style="background:#d97706;"></span>
+                <span class="empaque-legend-label">En Proceso</span>
+                <span class="empaque-legend-val">${enProceso}</span>
+              </div>
+              <div class="empaque-legend-item">
+                <span class="dot" style="background:#94a3b8;"></span>
+                <span class="empaque-legend-label">Pendientes</span>
+                <span class="empaque-legend-val">${sinIngreso}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
 // ═══════════════════════════════════════════════
 //  RENDER: DASHBOARD (INICIO)
 // ═══════════════════════════════════════════════
-function renderDashboard(data) {
+function renderDashboard(data, dataEmpaque) {
   const ud  = data.ultimoDia;
   const sa  = data.semanaActual;
   const t14 = data.ultimos14Dias;
+
+  const entregaProductosHtml = _renderEntregaProductosSection(dataEmpaque);
 
   // ── HERO: última jornada trabajada + anillo de % terminado ──
   const pctHero = ud.totalEtapas > 0 ? Math.round(ud.alistado / ud.totalEtapas * 100) : 0;
@@ -2083,6 +2472,7 @@ function renderDashboard(data) {
     </div>`;
 
   document.getElementById("result").innerHTML = `
+    ${entregaProductosHtml}
     ${heroHtml}
     ${kpiRowHtml}
 
