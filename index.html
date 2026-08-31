@@ -2813,16 +2813,40 @@ const CAMPOS_DEF_DEFAULT = [
 
 let editorDatosActuales = null; // OP actualmente en edición
 
+function _formatearFechaValor(val) {
+  if (!val) return "";
+  if (val instanceof Date) {
+    const d = String(val.getDate()).padStart(2, "0");
+    const m = String(val.getMonth() + 1).padStart(2, "0");
+    const y = val.getFullYear();
+    return `${d}/${m}/${y}`;
+  }
+  const s = String(val).trim();
+  if (s.includes("T") && !isNaN(Date.parse(s))) {
+    const dt = new Date(s);
+    const d = String(dt.getUTCDate()).padStart(2, "0");
+    const m = String(dt.getUTCMonth() + 1).padStart(2, "0");
+    const y = dt.getUTCFullYear();
+    return `${d}/${m}/${y}`;
+  }
+  return s;
+}
+
 function _getCampoValor(registro, c) {
   if (!registro) return "";
-  if (registro[c.key] !== undefined && registro[c.key] !== null) return String(registro[c.key]);
-  if (c.fallbackKey && registro[c.fallbackKey] !== undefined && registro[c.fallbackKey] !== null) return String(registro[c.fallbackKey]);
-  if (c.key.startsWith("t") && registro.tallas && registro.tallas[c.key] !== undefined) return String(registro.tallas[c.key]);
-  if (registro.campos) {
-    if (c.colIdx && registro.campos[c.colIdx - 1] !== undefined) return String(registro.campos[c.colIdx - 1]);
-    if (c.col && registro.campos[c.col] !== undefined) return String(registro.campos[c.col]);
+  let v = "";
+  if (registro[c.key] !== undefined && registro[c.key] !== null) v = registro[c.key];
+  else if (c.col && registro[c.col] !== undefined && registro[c.col] !== null) v = registro[c.col];
+  else if (c.fallbackKey && registro[c.fallbackKey] !== undefined && registro[c.fallbackKey] !== null) v = registro[c.fallbackKey];
+  else if (c.key.startsWith("t") && registro.tallas && registro.tallas[c.key] !== undefined) v = registro.tallas[c.key];
+  else if (registro.campos) {
+    if (c.colIdx && registro.campos[c.colIdx - 1] !== undefined) v = registro.campos[c.colIdx - 1];
+    else if (c.col && registro.campos[c.col] !== undefined) v = registro.campos[c.col];
   }
-  return "";
+  if (c.tipo === "fecha") {
+    return _formatearFechaValor(v);
+  }
+  return String(v ?? "");
 }
 
 function renderEditor() {
