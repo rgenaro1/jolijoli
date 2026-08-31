@@ -3088,24 +3088,35 @@ function confirmarPIN() {
   confirmBtn.textContent = "Guardando...";
   errorEl.textContent = "";
 
+  // Se usa 'text/plain;charset=utf-8' para evitar el preflight OPTIONS de CORS en Google Apps Script
   fetch(API_URL, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "text/plain;charset=utf-8" },
     body: JSON.stringify({
       pin,
       fila: editorDatosActuales.registro.fila,
       campos: cambios
     })
   })
-    .then(r => r.json())
+    .then(async r => {
+      const text = await r.text();
+      try {
+        return JSON.parse(text);
+      } catch (e) {
+        return { error: "Respuesta no válida del servidor: " + text.slice(0, 100) };
+      }
+    })
     .then(data => {
-      cerrarPinModal();
       const msgEl = document.getElementById("editor-msg");
 
       if (data.error) {
-        msgEl.innerHTML = `<span style="color:#c62828;">⚠️ ${data.error}</span>`;
+        confirmBtn.disabled = false;
+        confirmBtn.textContent = "Confirmar";
+        errorEl.textContent = data.error;
         return;
       }
+
+      cerrarPinModal();
 
       Object.keys(cambios).forEach(k => {
         const el = document.getElementById(`ef-${k}`);
@@ -3119,12 +3130,14 @@ function confirmarPIN() {
       if (data.advertencias?.length) {
         msg += ` ⚠️ Advertencias: ${data.advertencias.join("; ")}`;
       }
-      msgEl.innerHTML = `<span style="color:#2f7d5f;font-weight:600;">${msg}</span>`;
+      if (msgEl) {
+        msgEl.innerHTML = `<span style="color:#2f7d5f;font-weight:600;">${msg}</span>`;
+      }
     })
     .catch(err => {
-      cerrarPinModal();
-      document.getElementById("editor-msg").innerHTML =
-        `<span style="color:#c62828;">⚠️ Error de conexión: ${err.message}</span>`;
+      confirmBtn.disabled = false;
+      confirmBtn.textContent = "Confirmar";
+      errorEl.textContent = "Error de conexión: " + err.message;
     });
 }
 
