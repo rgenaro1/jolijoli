@@ -3146,6 +3146,7 @@ function confirmarPIN() {
     headers: { "Content-Type": "text/plain;charset=utf-8" },
     body: JSON.stringify({
       pin,
+      op: editorDatosActuales.registro.op,
       fila: editorDatosActuales.registro.fila,
       filaNum: editorDatosActuales.registro.fila,
       cambios: cambios,
