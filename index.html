@@ -3147,7 +3147,10 @@ function confirmarPIN() {
     body: JSON.stringify({
       pin,
       fila: editorDatosActuales.registro.fila,
-      campos: cambios
+      filaNum: editorDatosActuales.registro.fila,
+      cambios: cambios,
+      campos: cambios,
+      camposNuevos: cambios
     })
   })
     .then(async r => {
