@@ -2777,17 +2777,38 @@ const ESTADOS_VALIDOS = [
 ];
 
 const CAMPOS_DEF_DEFAULT = [
-  { key: "modelo", label: "Modelo", tipo: "texto", seccion: "Identificación", idx: 1 },
-  { key: "color", label: "Color", tipo: "texto", seccion: "Identificación", idx: 2 },
-  { key: "fechaPedido", label: "Fecha de Pedido", tipo: "fecha", seccion: "Fechas", idx: 3, placeholder: "dd/MM/yyyy" },
-  { key: "fechaArmado", label: "Fecha de Armado", tipo: "fecha", seccion: "Fechas", idx: 14, placeholder: "dd/MM/yyyy" },
-  { key: "estado", label: "Estado", tipo: "estado", seccion: "Estado de Producción", idx: 13 },
-  { key: "t35", label: "Talla 35", tipo: "numero", seccion: "Cantidades por Talla", idx: 4 },
-  { key: "t36", label: "Talla 36", tipo: "numero", seccion: "Cantidades por Talla", idx: 5 },
-  { key: "t37", label: "Talla 37", tipo: "numero", seccion: "Cantidades por Talla", idx: 6 },
-  { key: "t38", label: "Talla 38", tipo: "numero", seccion: "Cantidades por Talla", idx: 7 },
-  { key: "t39", label: "Talla 39", tipo: "numero", seccion: "Cantidades por Talla", idx: 8 },
-  { key: "t40", label: "Talla 40", tipo: "numero", seccion: "Cantidades por Talla", idx: 9 }
+  // ── 1. Información General (Solo Lectura: Columnas A a N) ──
+  { col: "A",  colIdx: 1,  key: "op",          label: "N° OP (Col A)",             tipo: "texto",  seccion: "1. Datos de la OP (Solo Lectura · Col A—N)", readOnly: true },
+  { col: "B",  colIdx: 2,  key: "modelo",      label: "Modelo (Col B)",            tipo: "texto",  seccion: "1. Datos de la OP (Solo Lectura · Col A—N)", readOnly: true },
+  { col: "C",  colIdx: 3,  key: "color",       label: "Color (Col C)",             tipo: "texto",  seccion: "1. Datos de la OP (Solo Lectura · Col A—N)", readOnly: true },
+  { col: "D",  colIdx: 4,  key: "fechaPedido", label: "Fecha de Pedido (Col D)",   tipo: "texto",  seccion: "1. Datos de la OP (Solo Lectura · Col A—N)", readOnly: true },
+  { col: "N",  colIdx: 14, key: "estado",      label: "Estado Actual (Col N)",     tipo: "texto",  seccion: "1. Datos de la OP (Solo Lectura · Col A—N)", readOnly: true },
+
+  // ── 2. Corte (Columnas O, T) ──
+  { col: "O",  colIdx: 15, key: "col_O",       label: "Corte (Col O)",             tipo: "fecha",  seccion: "2. Corte (Col O, T)", placeholder: "dd/MM/yyyy" },
+  { col: "T",  colIdx: 20, key: "col_T",       label: "Corte Fin (Col T)",         tipo: "fecha",  seccion: "2. Corte (Col O, T)", placeholder: "dd/MM/yyyy" },
+
+  // ── 3. Habilitado (Columna U) ──
+  { col: "U",  colIdx: 21, key: "col_U",       label: "Habilitado (Col U)",        tipo: "fecha",  seccion: "3. Habilitado (Col U)", placeholder: "dd/MM/yyyy" },
+
+  // ── 4. Perfilado (Columnas AA, AF) ──
+  { col: "AA", colIdx: 27, key: "col_AA",      label: "Perfilado (Col AA)",        tipo: "fecha",  seccion: "4. Perfilado (Col AA, AF)", placeholder: "dd/MM/yyyy" },
+  { col: "AF", colIdx: 32, key: "col_AF",      label: "Perfilado Fin (Col AF)",    tipo: "fecha",  seccion: "4. Perfilado (Col AA, AF)", placeholder: "dd/MM/yyyy" },
+
+  // ── 5. Armado (Columna AM) ──
+  { col: "AM", colIdx: 39, key: "col_AM",      label: "Armado (Col AM)",           tipo: "fecha",  seccion: "5. Armado (Col AM)", placeholder: "dd/MM/yyyy", fallbackKey: "fechaArmado" },
+
+  // ── 6. Alistado (Columnas AN, AR) ──
+  { col: "AN", colIdx: 40, key: "col_AN",      label: "Alistado (Col AN)",         tipo: "fecha",  seccion: "6. Alistado (Col AN, AR)", placeholder: "dd/MM/yyyy" },
+  { col: "AR", colIdx: 44, key: "col_AR",      label: "Alistado Fin (Col AR)",     tipo: "fecha",  seccion: "6. Alistado (Col AN, AR)", placeholder: "dd/MM/yyyy" },
+
+  // ── 7. Cantidades por Talla (Columnas AS a AX) ──
+  { col: "AS", colIdx: 45, key: "t35",         label: "Talla 35 (Col AS)",         tipo: "numero", seccion: "7. Cantidades por Talla (Col AS—AX)", min: 0 },
+  { col: "AT", colIdx: 46, key: "t36",         label: "Talla 36 (Col AT)",         tipo: "numero", seccion: "7. Cantidades por Talla (Col AS—AX)", min: 0 },
+  { col: "AU", colIdx: 47, key: "t37",         label: "Talla 37 (Col AU)",         tipo: "numero", seccion: "7. Cantidades por Talla (Col AS—AX)", min: 0 },
+  { col: "AV", colIdx: 48, key: "t38",         label: "Talla 38 (Col AV)",         tipo: "numero", seccion: "7. Cantidades por Talla (Col AS—AX)", min: 0 },
+  { col: "AW", colIdx: 49, key: "t39",         label: "Talla 39 (Col AW)",         tipo: "numero", seccion: "7. Cantidades por Talla (Col AS—AX)", min: 0 },
+  { col: "AX", colIdx: 50, key: "t40",         label: "Talla 40 (Col AX)",         tipo: "numero", seccion: "7. Cantidades por Talla (Col AS—AX)", min: 0 }
 ];
 
 let editorDatosActuales = null; // OP actualmente en edición
@@ -2795,8 +2816,12 @@ let editorDatosActuales = null; // OP actualmente en edición
 function _getCampoValor(registro, c) {
   if (!registro) return "";
   if (registro[c.key] !== undefined && registro[c.key] !== null) return String(registro[c.key]);
+  if (c.fallbackKey && registro[c.fallbackKey] !== undefined && registro[c.fallbackKey] !== null) return String(registro[c.fallbackKey]);
   if (c.key.startsWith("t") && registro.tallas && registro.tallas[c.key] !== undefined) return String(registro.tallas[c.key]);
-  if (registro.campos && c.idx !== undefined && registro.campos[c.idx] !== undefined) return String(registro.campos[c.idx]);
+  if (registro.campos) {
+    if (c.colIdx && registro.campos[c.colIdx - 1] !== undefined) return String(registro.campos[c.colIdx - 1]);
+    if (c.col && registro.campos[c.col] !== undefined) return String(registro.campos[c.col]);
+  }
   return "";
 }
 
@@ -2943,10 +2968,12 @@ function mostrarFormEditor(registro, camposDef) {
   const seccionesHtml = Object.entries(secciones).map(([sec, list]) => {
     const fieldsHtml = list.map(c => {
       const val = _getCampoValor(registro, c);
-      const fieldId = `ef-${c.key || c.idx}`;
+      const fieldId = `ef-${c.col || c.key || c.colIdx}`;
       let input;
 
-      if (c.tipo === "estado") {
+      if (c.readOnly) {
+        input = `<input type="text" id="${fieldId}" value="${val}" readonly tabindex="-1" style="background:var(--paper);color:var(--muted);cursor:not-allowed;border-color:var(--border);">`;
+      } else if (c.tipo === "estado") {
         const opts = ESTADOS_VALIDOS.map(e =>
           `<option value="${e}" ${val.toUpperCase()===e?"selected":""}>${e}</option>`
         ).join("");
@@ -2956,7 +2983,7 @@ function mostrarFormEditor(registro, camposDef) {
           placeholder="${c.placeholder || 'dd/MM/yyyy'}" data-original="${val}"
           oninput="marcarCambiado(this)">`;
       } else if (c.tipo === "numero") {
-        input = `<input type="number" id="${fieldId}" value="${val}"
+        input = `<input type="number" id="${fieldId}" value="${val}" min="${c.min ?? 0}"
           data-original="${val}" oninput="marcarCambiado(this)">`;
       } else {
         input = `<input type="text" id="${fieldId}" value="${val}"
@@ -2997,7 +3024,7 @@ function mostrarFormEditor(registro, camposDef) {
             ">${estado}</span>
           </div>
           <div class="editor-op-sub">
-            Fila ${registro.fila} · Modifica los campos que desees y presiona Guardar cambios
+            Fila ${registro.fila} · Columnas A a N son solo lectura · Modifica los campos de producción/tallas y presiona Guardar
           </div>
         </div>
         <div class="editor-actions">
@@ -3028,14 +3055,18 @@ function iniciarGuardado() {
   const cambios = {};
 
   camposDef.forEach(c => {
-    const el = document.getElementById(`ef-${c.key || c.idx}`);
+    if (c.readOnly) return; // Columnas A a N son solo lectura
+    const fieldId = `ef-${c.col || c.key || c.colIdx}`;
+    const el = document.getElementById(fieldId);
     if (!el) return;
     const original = el.dataset.original || "";
     if (el.value !== original) {
-      cambios[c.key || c.idx] = el.value;
-      if (c.idx !== undefined) {
-        cambios[c.idx] = el.value;
+      if (c.col) cambios[c.col] = el.value;
+      if (c.colIdx !== undefined) {
+        cambios[c.colIdx] = el.value;
+        cambios[c.colIdx - 1] = el.value;
       }
+      cambios[c.key] = el.value;
     }
   });
 
