@@ -1136,9 +1136,10 @@
     font-family: 'IBM Plex Mono', monospace;
     font-size: 11.5px;
     color: var(--muted);
-    width: 78px;
+    min-width: 125px;
     text-align: right;
     flex-shrink: 0;
+    white-space: nowrap;
   }
 
   .tree-progress {
@@ -1750,6 +1751,7 @@ function _colorAvance(pct) {
 }
 
 function _treeRow(nivelClase, label, pares, avance, extra) {
+  const qtyText = typeof pares === "number" ? `${pares} pares` : pares;
   return `
     <div class="tree-row ${nivelClase}" ${extra && extra.onclick ? `onclick="${extra.onclick}"` : ""}>
       ${extra && extra.chevron !== false ? `
@@ -1757,21 +1759,29 @@ function _treeRow(nivelClase, label, pares, avance, extra) {
       ` : `<span class="tree-chevron-spacer"></span>`}
       <span class="tree-label">${label}</span>
       ${extra && extra.badge ? extra.badge : ""}
-      <span class="tree-qty">${pares} pares</span>
+      <span class="tree-qty">${qtyText}</span>
       <div class="tree-progress"><div class="tree-progress-fill" style="width:${avance}%;background:${_colorAvance(avance)}"></div></div>
       <span class="tree-pct" style="color:${_colorAvance(avance)}">${avance}%</span>
     </div>`;
 }
 
 function renderArbolPedidos(data) {
+  let globalListos = 0;
+
   const nodosPedido = data.pedidos.map((p, pi) => {
     const idP = `p${pi}`;
+    let pedidoListos = 0;
+    const pedidoTotal = p.totalPares || 0;
 
     const nodosModelo = p.modelos.map((m, mi) => {
       const idM = `${idP}m${mi}`;
+      let modeloListos = 0;
+      const modeloTotal = m.totalPares || 0;
 
       const nodosColor = m.colores.map((c, ci) => {
         const idC = `${idM}c${ci}`;
+        let colorListos = 0;
+        const colorTotal = c.totalPares || 0;
 
         const filasOp = c.ops.map(o => {
           const badge = o.vencida
@@ -1779,34 +1789,53 @@ function renderArbolPedidos(data) {
             : o.proxima
               ? `<span style="font-size:10px;font-weight:700;color:var(--warn);margin-right:8px;">🔔 PRÓXIMA</span>`
               : "";
-          return _treeRow("tree-row-op", `OP ${o.op} <span style="color:var(--muted);font-weight:400;">· ${o.estado}${o.fechaArmado ? " · Armado " + o.fechaArmado : ""}</span>`, o.pares, o.avance, { chevron: false, badge });
+          const opListos = o.avance >= 100 ? o.pares : Math.round(o.pares * (o.avance / 100));
+          colorListos += opListos;
+
+          return _treeRow(
+            "tree-row-op",
+            `OP ${o.op} <span style="color:var(--muted);font-weight:400;">· ${o.estado}${o.fechaArmado ? " · Armado " + o.fechaArmado : ""}</span>`,
+            `${opListos} de ${o.pares} pares`,
+            o.avance,
+            { chevron: false, badge }
+          );
         }).join("");
+
+        modeloListos += colorListos;
 
         return `
           <div class="tree-node">
-            ${_treeRow("tree-row-color", c.color, c.totalPares, c.avance, { onclick: `toggleTreeNode(this)` })}
+            ${_treeRow("tree-row-color", c.color, `${colorListos} de ${colorTotal} pares`, c.avance, { onclick: `toggleTreeNode(this)` })}
             <div class="tree-children collapsed">${filasOp}</div>
           </div>`;
       }).join("");
 
+      pedidoListos += modeloListos;
+
       return `
         <div class="tree-node">
-          ${_treeRow("tree-row-modelo", m.modelo, m.totalPares, m.avance, { onclick: `toggleTreeNode(this)` })}
+          ${_treeRow("tree-row-modelo", m.modelo, `${modeloListos} de ${modeloTotal} pares`, m.avance, { onclick: `toggleTreeNode(this)` })}
           <div class="tree-children collapsed">${nodosColor}</div>
         </div>`;
     }).join("");
 
+    globalListos += pedidoListos;
+
     return `
       <div class="tree-node">
-        ${_treeRow("tree-row-pedido", `Pedido · ${p.fecha}`, p.totalPares, p.avance, { onclick: `toggleTreeNode(this)` })}
+        ${_treeRow("tree-row-pedido", `Pedido · ${p.fecha}`, `${pedidoListos} de ${pedidoTotal} pares`, p.avance, { onclick: `toggleTreeNode(this)` })}
         <div class="tree-children collapsed">${nodosModelo}</div>
       </div>`;
   }).join("");
 
+  const globalTotal = data.totalPares || 0;
+  const globalPct = globalTotal > 0 ? Math.round(globalListos / globalTotal * 100) : 0;
+
   document.getElementById("result").innerHTML = `
     <div class="card" style="margin-bottom:18px;display:flex;gap:32px;flex-wrap:wrap;">
       <div><div class="kpi-lbl">Pedidos</div><div class="kpi-val">${data.totalPedidos}</div></div>
-      <div><div class="kpi-lbl">Total pares</div><div class="kpi-val">${data.totalPares}</div></div>
+      <div><div class="kpi-lbl">Total pares</div><div class="kpi-val">${globalListos} <span style="font-size:15px;font-weight:500;color:var(--muted);">/ ${globalTotal}</span></div></div>
+      <div><div class="kpi-lbl">Avance Global</div><div class="kpi-val" style="color:${_colorAvance(data.avanceGlobal ?? globalPct)}">${data.avanceGlobal ?? globalPct}%</div></div>
     </div>
     <div class="tree">${nodosPedido}</div>
   `;
@@ -2351,7 +2380,7 @@ function _empaqueRenderTree() {
     const recibido = list.reduce((s, r) => s + r.totalRecibido, 0);
     const pct = pedido === 0 ? 100 : Math.round(100 * recibido / pedido);
     const pend = list.filter(r => r.estado === "Pendiente").length;
-    return { pct, pend, count: list.length };
+    return { pct, pend, count: list.length, pedido, recibido };
   };
 
   const nodosModelo = modelos.map((modelo, mi) => {
@@ -2379,7 +2408,7 @@ function _empaqueRenderTree() {
 
         return `
           <div class="tree-node">
-            ${_treeRow("tree-row-op", `OP ${r.op} <span style="color:var(--muted);font-weight:400;">· pedido ${r.fechaPedido || "—"}</span>`, r.totalPedido, r.pct, { onclick: "toggleTreeNode(this)" })}
+            ${_treeRow("tree-row-op", `OP ${r.op} <span style="color:var(--muted);font-weight:400;">· pedido ${r.fechaPedido || "—"}</span>`, `${r.totalRecibido} de ${r.totalPedido} pares`, r.pct, { onclick: "toggleTreeNode(this)" })}
             <div class="tree-children collapsed">
               <table class="talla-table">
                 <tr><th>Talla</th><th>Pedido</th><th>A</th><th>B</th><th>C</th><th>Total</th></tr>
@@ -2391,14 +2420,14 @@ function _empaqueRenderTree() {
 
       return `
         <div class="tree-node">
-          ${_treeRow("tree-row-color", color, colorRows.reduce((s,r)=>s+r.totalPedido,0), cRoll.pct, { onclick: "toggleTreeNode(this)" })}
+          ${_treeRow("tree-row-color", color, `${cRoll.recibido} de ${cRoll.pedido} pares`, cRoll.pct, { onclick: "toggleTreeNode(this)" })}
           <div class="tree-children collapsed">${filasOp}</div>
         </div>`;
     }).join("");
 
     return `
       <div class="tree-node">
-        ${_treeRow("tree-row-pedido", modelo, modeloRows.reduce((s,r)=>s+r.totalPedido,0), mRoll.pct, { onclick: "toggleTreeNode(this)" })}
+        ${_treeRow("tree-row-pedido", modelo, `${mRoll.recibido} de ${mRoll.pedido} pares`, mRoll.pct, { onclick: "toggleTreeNode(this)" })}
         <div class="tree-children collapsed">${nodosColor}</div>
       </div>`;
   }).join("");
