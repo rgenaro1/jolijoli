@@ -2394,8 +2394,12 @@ function cargarRecepcionEmpaque() {
         return;
       }
 
-      // Filtrar a partir de la OP 3354 en adelante
-      const registrosValidos = (data.registros || []).filter(r => Number(r.op) >= OP_MIN_EMPAQUE);
+      // Filtrar a partir de la OP 3354 en adelante y que tengan fecha de pedido asignada
+      const registrosValidos = (data.registros || []).filter(r => {
+        const opValida = Number(r.op) >= OP_MIN_EMPAQUE;
+        const fechaValida = r.fechaPedido && r.fechaPedido.trim() !== "" && r.fechaPedido.trim() !== "-";
+        return opValida && fechaValida;
+      });
 
       const totalOps = registrosValidos.length;
       const opsPendientes = registrosValidos.filter(r => r.estado === "Pendiente").length;
