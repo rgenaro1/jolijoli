@@ -2429,12 +2429,20 @@ function _empaqueRenderTree() {
       const filasOp = colorRows.map(r => {
         const tallasHtml = r.tallas.map(t => {
           if (t.pedido === 0) {
-            return `<tr><td>${t.talla}</td><td class="talla-sin" colspan="5">Sin pedido</td></tr>`;
+            return `<tr><td>${t.talla}</td><td class="talla-sin" colspan="6">Sin pedido</td></tr>`;
           }
+          const dif = (t.pedido || 0) - (t.totalRecibido || 0);
+          const difStyle = dif > 0
+            ? 'style="color:var(--danger);font-weight:700;"'
+            : dif < 0
+              ? 'style="color:var(--ok);font-weight:600;"'
+              : 'style="color:var(--muted);"';
+
           return `<tr>
             <td>${t.talla}</td><td>${t.pedido}</td>
             <td>${t.recibidoA}</td><td>${t.recibidoB}</td><td>${t.recibidoC}</td>
             <td><b>${t.totalRecibido}</b></td>
+            <td ${difStyle}>${dif}</td>
           </tr>`;
         }).join("");
 
@@ -2443,7 +2451,7 @@ function _empaqueRenderTree() {
             ${_treeRow("tree-row-op", `OP ${r.op} <span style="color:var(--muted);font-weight:400;">· pedido ${r.fechaPedido || "—"}</span>`, `${r.totalRecibido} de ${r.totalPedido} pares`, r.pct, { onclick: "toggleTreeNode(this)" })}
             <div class="tree-children collapsed">
               <table class="talla-table">
-                <tr><th>Talla</th><th>Pedido</th><th>A</th><th>B</th><th>C</th><th>Total</th></tr>
+                <tr><th>Talla</th><th>Pedido</th><th>A</th><th>B</th><th>C</th><th>Total</th><th>Diferencia</th></tr>
                 ${tallasHtml}
               </table>
             </div>
