@@ -1130,7 +1130,22 @@
   .tree-row.open > .tree-chevron { transform: rotate(90deg); color: var(--gold); }
   .tree-chevron-spacer { display: inline-block; width: 14px; flex-shrink: 0; }
 
-  .tree-label { flex: 1; color: var(--ink); min-width: 0; }
+  .tree-label {
+    flex: 1;
+    color: var(--ink);
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .tree-subtext {
+    font-size: 11.5px;
+    font-weight: 400;
+    color: var(--muted);
+    white-space: nowrap;
+  }
 
   .tree-qty {
     font-family: 'IBM Plex Mono', monospace;
@@ -1172,6 +1187,10 @@
   }
 
   .tree-children.collapsed { display: none; }
+
+  @media (max-width: 768px) {
+    .tree-subtext { display: none; }
+  }
 
   @media (max-width: 640px) {
     .tree-qty { display: none; }
@@ -1752,12 +1771,13 @@ function _colorAvance(pct) {
 
 function _treeRow(nivelClase, label, pares, avance, extra) {
   const qtyText = typeof pares === "number" ? `${pares} pares` : pares;
+  const subtextHtml = extra && extra.subtext ? `<span class="tree-subtext">${extra.subtext}</span>` : "";
   return `
     <div class="tree-row ${nivelClase}" ${extra && extra.onclick ? `onclick="${extra.onclick}"` : ""}>
       ${extra && extra.chevron !== false ? `
         <svg class="tree-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
       ` : `<span class="tree-chevron-spacer"></span>`}
-      <span class="tree-label">${label}</span>
+      <span class="tree-label">${label}${subtextHtml}</span>
       ${extra && extra.badge ? extra.badge : ""}
       <span class="tree-qty">${qtyText}</span>
       <div class="tree-progress"><div class="tree-progress-fill" style="width:${avance}%;background:${_colorAvance(avance)}"></div></div>
@@ -2408,11 +2428,42 @@ function _empaqueRenderTree() {
   const modelos = Object.keys(byModelo).sort();
 
   const rollup = (list) => {
-    const pedido = list.reduce((s, r) => s + r.totalPedido, 0);
-    const recibido = list.reduce((s, r) => s + r.totalRecibido, 0);
+    const pedido = list.reduce((s, r) => s + (r.totalPedido || 0), 0);
+    const recibido = list.reduce((s, r) => s + (r.totalRecibido || 0), 0);
     const pct = pedido === 0 ? 100 : Math.round(100 * recibido / pedido);
     const pend = list.filter(r => r.estado === "Pendiente").length;
-    return { pct, pend, count: list.length, pedido, recibido };
+
+    let completas = 0;
+    let incompletas = 0;
+    let sinIngreso = 0;
+
+    list.forEach(r => {
+      const p = r.totalPedido || 0;
+      const rec = r.totalRecibido || 0;
+      if (p === 0 && rec === 0) {
+        completas++;
+      } else if (rec >= p) {
+        completas++;
+      } else if (rec > 0) {
+        incompletas++;
+      } else {
+        sinIngreso++;
+      }
+    });
+
+    const parts = [];
+    if (completas > 0) {
+      parts.push(`<span style="color:var(--ok);font-weight:600;">${completas} OP ${completas === 1 ? 'completa' : 'completas'}</span>`);
+    }
+    if (incompletas > 0) {
+      parts.push(`<span style="color:var(--warn);font-weight:600;">${incompletas} OP ${incompletas === 1 ? 'incompleta' : 'incompletas'}</span>`);
+    }
+    if (sinIngreso > 0) {
+      parts.push(`<span style="color:var(--muted);font-weight:500;">${sinIngreso} OP sin ingreso</span>`);
+    }
+    const subtext = parts.join(', ');
+
+    return { pct, pend, count: list.length, pedido, recibido, subtext };
   };
 
   const nodosModelo = modelos.map((modelo, mi) => {
@@ -2460,14 +2511,14 @@ function _empaqueRenderTree() {
 
       return `
         <div class="tree-node">
-          ${_treeRow("tree-row-color", color, `${cRoll.recibido} de ${cRoll.pedido} pares`, cRoll.pct, { onclick: "toggleTreeNode(this)" })}
+          ${_treeRow("tree-row-color", color, `${cRoll.recibido} de ${cRoll.pedido} pares`, cRoll.pct, { onclick: "toggleTreeNode(this)", subtext: cRoll.subtext })}
           <div class="tree-children collapsed">${filasOp}</div>
         </div>`;
     }).join("");
 
     return `
       <div class="tree-node">
-        ${_treeRow("tree-row-pedido", modelo, `${mRoll.recibido} de ${mRoll.pedido} pares`, mRoll.pct, { onclick: "toggleTreeNode(this)" })}
+        ${_treeRow("tree-row-pedido", modelo, `${mRoll.recibido} de ${mRoll.pedido} pares`, mRoll.pct, { onclick: "toggleTreeNode(this)", subtext: mRoll.subtext })}
         <div class="tree-children collapsed">${nodosColor}</div>
       </div>`;
   }).join("");
