@@ -1793,15 +1793,24 @@ function renderArbolPedidos(data) {
     let pedidoListos = 0;
     const pedidoTotal = p.totalPares || 0;
 
+    let pCompletas = 0;
+    let pPendientes = 0;
+
     const nodosModelo = p.modelos.map((m, mi) => {
       const idM = `${idP}m${mi}`;
       let modeloListos = 0;
       const modeloTotal = m.totalPares || 0;
 
+      let mCompletas = 0;
+      let mPendientes = 0;
+
       const nodosColor = m.colores.map((c, ci) => {
         const idC = `${idM}c${ci}`;
         let colorListos = 0;
         const colorTotal = c.totalPares || 0;
+
+        let cCompletas = 0;
+        let cPendientes = 0;
 
         const filasOp = c.ops.map(o => {
           const badge = o.vencida
@@ -1811,6 +1820,12 @@ function renderArbolPedidos(data) {
               : "";
           const opListos = o.avance >= 100 ? o.pares : Math.round(o.pares * (o.avance / 100));
           colorListos += opListos;
+
+          if (o.avance >= 100) {
+            cCompletas++;
+          } else {
+            cPendientes++;
+          }
 
           return _treeRow(
             "tree-row-op",
@@ -1822,28 +1837,47 @@ function renderArbolPedidos(data) {
         }).join("");
 
         modeloListos += colorListos;
+        mCompletas += cCompletas;
+        mPendientes += cPendientes;
+
+        const cParts = [];
+        if (cCompletas > 0) cParts.push(`<span style="color:var(--ok);font-weight:600;">${cCompletas} OP ${cCompletas === 1 ? 'completa' : 'completas'}</span>`);
+        if (cPendientes > 0) cParts.push(`<span style="color:var(--warn);font-weight:600;">${cPendientes} OP ${cPendientes === 1 ? 'pendiente' : 'pendientes'}</span>`);
+        const cSubtext = cParts.join(', ');
 
         return `
           <div class="tree-node">
-            ${_treeRow("tree-row-color", c.color, `${colorListos} de ${colorTotal} pares`, c.avance, { onclick: `toggleTreeNode(this)` })}
+            ${_treeRow("tree-row-color", c.color, `${colorListos} de ${colorTotal} pares`, c.avance, { onclick: `toggleTreeNode(this)`, subtext: cSubtext })}
             <div class="tree-children collapsed">${filasOp}</div>
           </div>`;
       }).join("");
 
       pedidoListos += modeloListos;
+      pCompletas += mCompletas;
+      pPendientes += mPendientes;
+
+      const mParts = [];
+      if (mCompletas > 0) mParts.push(`<span style="color:var(--ok);font-weight:600;">${mCompletas} OP ${mCompletas === 1 ? 'completa' : 'completas'}</span>`);
+      if (mPendientes > 0) mParts.push(`<span style="color:var(--warn);font-weight:600;">${mPendientes} OP ${mPendientes === 1 ? 'pendiente' : 'pendientes'}</span>`);
+      const mSubtext = mParts.join(', ');
 
       return `
         <div class="tree-node">
-          ${_treeRow("tree-row-modelo", m.modelo, `${modeloListos} de ${modeloTotal} pares`, m.avance, { onclick: `toggleTreeNode(this)` })}
+          ${_treeRow("tree-row-modelo", m.modelo, `${modeloListos} de ${modeloTotal} pares`, m.avance, { onclick: `toggleTreeNode(this)`, subtext: mSubtext })}
           <div class="tree-children collapsed">${nodosColor}</div>
         </div>`;
     }).join("");
 
     globalListos += pedidoListos;
 
+    const pParts = [];
+    if (pCompletas > 0) pParts.push(`<span style="color:var(--ok);font-weight:600;">${pCompletas} OP ${pCompletas === 1 ? 'completa' : 'completas'}</span>`);
+    if (pPendientes > 0) pParts.push(`<span style="color:var(--warn);font-weight:600;">${pPendientes} OP ${pPendientes === 1 ? 'pendiente' : 'pendientes'}</span>`);
+    const pSubtext = pParts.join(', ');
+
     return `
       <div class="tree-node">
-        ${_treeRow("tree-row-pedido", `Pedido · ${p.fecha}`, `${pedidoListos} de ${pedidoTotal} pares`, p.avance, { onclick: `toggleTreeNode(this)` })}
+        ${_treeRow("tree-row-pedido", `Pedido · ${p.fecha}`, `${pedidoListos} de ${pedidoTotal} pares`, p.avance, { onclick: `toggleTreeNode(this)`, subtext: pSubtext })}
         <div class="tree-children collapsed">${nodosModelo}</div>
       </div>`;
   }).join("");
