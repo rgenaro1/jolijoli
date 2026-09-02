@@ -2994,21 +2994,50 @@ function _empaqueSetQuery(val) {
   _empaqueRenderTree();
 }
 
+function _empaqueFormatearFecha(f) {
+  if (!f) return "Sin Fecha";
+  f = String(f).trim();
+  if (f.includes("T")) {
+    const dt = new Date(f);
+    if (!isNaN(dt.getTime())) {
+      const d = String(dt.getDate()).padStart(2, "0");
+      const m = String(dt.getMonth() + 1).padStart(2, "0");
+      return `${d}/${m}/${dt.getFullYear()}`;
+    }
+  }
+  return f;
+}
+
+function _empaqueParseFecha(f) {
+  if (!f) return 0;
+  const parts = f.split("/");
+  if (parts.length === 3) {
+    return new Date(Number(parts[2]), Number(parts[1]) - 1, Number(parts[0])).getTime() || 0;
+  }
+  const dt = new Date(f).getTime();
+  return isNaN(dt) ? 0 : dt;
+}
+
 function _empaqueGetFiltrados() {
   const q = (_empaqueQuery || "").trim().toUpperCase();
   return _empaqueData.registros.filter(r => {
     if (_empaqueFiltro !== "all" && r.estado !== _empaqueFiltro) return false;
     if (!q) return true;
-    return r.modelo.includes(q) || r.color.includes(q) || String(r.op).includes(q);
+    const f = _empaqueFormatearFecha(r.fechaPedido).toUpperCase();
+    return r.modelo.includes(q) || r.color.includes(q) || String(r.op).includes(q) || f.includes(q);
   });
 }
 
 // Renderiza solo el árbol (llamado al filtrar/buscar, sin re-pintar los controles)
 function _empaqueRenderTree() {
   const filtrados = _empaqueGetFiltrados();
-  const byModelo = {};
-  filtrados.forEach(r => { (byModelo[r.modelo] = byModelo[r.modelo] || []).push(r); });
-  const modelos = Object.keys(byModelo).sort();
+
+  const byPedido = {};
+  filtrados.forEach(r => {
+    const f = _empaqueFormatearFecha(r.fechaPedido);
+    (byPedido[f] = byPedido[f] || []).push(r);
+  });
+  const pedidos = Object.keys(byPedido).sort((a, b) => _empaqueParseFecha(a) - _empaqueParseFecha(b));
 
   const rollup = (list) => {
     const pedido = list.reduce((s, r) => s + (r.totalPedido || 0), 0);
@@ -3049,65 +3078,81 @@ function _empaqueRenderTree() {
     return { pct, pend, count: list.length, pedido, recibido, subtext };
   };
 
-  const nodosModelo = modelos.map((modelo, mi) => {
-    const modeloRows = byModelo[modelo];
-    const mRoll = rollup(modeloRows);
-    const byColor = {};
-    modeloRows.forEach(r => { (byColor[r.color] = byColor[r.color] || []).push(r); });
-    const colores = Object.keys(byColor).sort();
+  const nodosPedido = pedidos.map((fecha) => {
+    const pedidoRows = byPedido[fecha];
+    const pRoll = rollup(pedidoRows);
 
-    const nodosColor = colores.map((color, ci) => {
-      const colorRows = byColor[color].sort((a, b) => a.op - b.op);
-      const cRoll = rollup(colorRows);
+    const byModelo = {};
+    pedidoRows.forEach(r => { (byModelo[r.modelo] = byModelo[r.modelo] || []).push(r); });
+    const modelos = Object.keys(byModelo).sort();
 
-      const filasOp = colorRows.map(r => {
-        const tallasHtml = r.tallas.map(t => {
-          if (t.pedido === 0) {
-            return `<tr><td>${t.talla}</td><td class="talla-sin" colspan="6">Sin pedido</td></tr>`;
-          }
-          const dif = (t.pedido || 0) - (t.totalRecibido || 0);
-          const difStyle = dif > 0
-            ? 'style="color:var(--danger);font-weight:700;"'
-            : dif < 0
-              ? 'style="color:var(--ok);font-weight:600;"'
-              : 'style="color:var(--muted);"';
+    const nodosModelo = modelos.map((modelo) => {
+      const modeloRows = byModelo[modelo];
+      const mRoll = rollup(modeloRows);
 
-          return `<tr>
-            <td>${t.talla}</td><td>${t.pedido}</td>
-            <td>${t.recibidoA}</td><td>${t.recibidoB}</td><td>${t.recibidoC}</td>
-            <td><b>${t.totalRecibido}</b></td>
-            <td ${difStyle}>${dif}</td>
-          </tr>`;
+      const byColor = {};
+      modeloRows.forEach(r => { (byColor[r.color] = byColor[r.color] || []).push(r); });
+      const colores = Object.keys(byColor).sort();
+
+      const nodosColor = colores.map((color) => {
+        const colorRows = byColor[color].sort((a, b) => a.op - b.op);
+        const cRoll = rollup(colorRows);
+
+        const filasOp = colorRows.map(r => {
+          const tallasHtml = r.tallas.map(t => {
+            if (t.pedido === 0) {
+              return `<tr><td>${t.talla}</td><td class="talla-sin" colspan="6">Sin pedido</td></tr>`;
+            }
+            const dif = (t.pedido || 0) - (t.totalRecibido || 0);
+            const difStyle = dif > 0
+              ? 'style="color:var(--danger);font-weight:700;"'
+              : dif < 0
+                ? 'style="color:var(--ok);font-weight:600;"'
+                : 'style="color:var(--muted);"';
+
+            return `<tr>
+              <td>${t.talla}</td><td>${t.pedido}</td>
+              <td>${t.recibidoA}</td><td>${t.recibidoB}</td><td>${t.recibidoC}</td>
+              <td><b>${t.totalRecibido}</b></td>
+              <td ${difStyle}>${dif}</td>
+            </tr>`;
+          }).join("");
+
+          return `
+            <div class="tree-node">
+              ${_treeRow("tree-row-op", `OP ${r.op} <span style="color:var(--muted);font-weight:400;">· pedido ${r.fechaPedido || "—"}</span>`, `${r.totalRecibido} de ${r.totalPedido} pares`, r.pct, { onclick: "toggleTreeNode(this)" })}
+              <div class="tree-children collapsed">
+                <table class="talla-table">
+                  <tr><th>Talla</th><th>Pedido</th><th>A</th><th>B</th><th>C</th><th>Total</th><th>Diferencia</th></tr>
+                  ${tallasHtml}
+                </table>
+              </div>
+            </div>`;
         }).join("");
 
         return `
           <div class="tree-node">
-            ${_treeRow("tree-row-op", `OP ${r.op} <span style="color:var(--muted);font-weight:400;">· pedido ${r.fechaPedido || "—"}</span>`, `${r.totalRecibido} de ${r.totalPedido} pares`, r.pct, { onclick: "toggleTreeNode(this)" })}
-            <div class="tree-children collapsed">
-              <table class="talla-table">
-                <tr><th>Talla</th><th>Pedido</th><th>A</th><th>B</th><th>C</th><th>Total</th><th>Diferencia</th></tr>
-                ${tallasHtml}
-              </table>
-            </div>
+            ${_treeRow("tree-row-color", color, `${cRoll.recibido} de ${cRoll.pedido} pares`, cRoll.pct, { onclick: "toggleTreeNode(this)", subtext: cRoll.subtext })}
+            <div class="tree-children collapsed">${filasOp}</div>
           </div>`;
       }).join("");
 
       return `
         <div class="tree-node">
-          ${_treeRow("tree-row-color", color, `${cRoll.recibido} de ${cRoll.pedido} pares`, cRoll.pct, { onclick: "toggleTreeNode(this)", subtext: cRoll.subtext })}
-          <div class="tree-children collapsed">${filasOp}</div>
+          ${_treeRow("tree-row-modelo", modelo, `${mRoll.recibido} de ${mRoll.pedido} pares`, mRoll.pct, { onclick: "toggleTreeNode(this)", subtext: mRoll.subtext })}
+          <div class="tree-children collapsed">${nodosColor}</div>
         </div>`;
     }).join("");
 
     return `
       <div class="tree-node">
-        ${_treeRow("tree-row-pedido", modelo, `${mRoll.recibido} de ${mRoll.pedido} pares`, mRoll.pct, { onclick: "toggleTreeNode(this)", subtext: mRoll.subtext })}
-        <div class="tree-children collapsed">${nodosColor}</div>
+        ${_treeRow("tree-row-pedido", `Pedido · ${fecha}`, `${pRoll.recibido} de ${pRoll.pedido} pares`, pRoll.pct, { onclick: "toggleTreeNode(this)", subtext: pRoll.subtext })}
+        <div class="tree-children collapsed">${nodosModelo}</div>
       </div>`;
   }).join("");
 
-  document.getElementById("empaqueTree").innerHTML = modelos.length > 0
-    ? nodosModelo
+  document.getElementById("empaqueTree").innerHTML = pedidos.length > 0
+    ? nodosPedido
     : `<div class="estado-msg">No hay resultados para este filtro/búsqueda.</div>`;
 }
 
