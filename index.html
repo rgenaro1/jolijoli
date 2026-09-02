@@ -3019,6 +3019,7 @@ function _empaqueParseFecha(f) {
 }
 
 function _empaqueGetFiltrados() {
+  if (!_empaqueData || !_empaqueData.registros) return [];
   const q = (_empaqueQuery || "").trim().toUpperCase();
   return _empaqueData.registros.filter(r => {
     if (_empaqueFiltro !== "all" && r.estado !== _empaqueFiltro) return false;
