@@ -2127,8 +2127,9 @@ function _colorAvance(pct) {
 function _treeRow(nivelClase, label, pares, avance, extra) {
   const qtyText = typeof pares === "number" ? `${pares} pares` : pares;
   const subtextHtml = extra && extra.subtext ? `<span class="tree-subtext">${extra.subtext}</span>` : "";
+  const openClass = extra && extra.open ? " open" : "";
   return `
-    <div class="tree-row ${nivelClase}" ${extra && extra.onclick ? `onclick="${extra.onclick}"` : ""}>
+    <div class="tree-row ${nivelClase}${openClass}" ${extra && extra.onclick ? `onclick="${extra.onclick}"` : ""}>
       ${extra && extra.chevron !== false ? `
         <svg class="tree-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
       ` : `<span class="tree-chevron-spacer"></span>`}
@@ -3242,6 +3243,8 @@ function _empaqueGetFiltrados() {
 // Renderiza solo el árbol (llamado al filtrar/buscar, sin re-pintar los controles)
 function _empaqueRenderTree() {
   const filtrados = _empaqueGetFiltrados();
+  const isSearching = (_empaqueQuery || "").trim().length > 0;
+  const childCls = isSearching ? "tree-children" : "tree-children collapsed";
 
   const byPedido = {};
   filtrados.forEach(r => {
@@ -3345,22 +3348,22 @@ function _empaqueRenderTree() {
 
         return `
           <div class="tree-node">
-            ${_treeRow("tree-row-color", color, `${cRoll.recibido} de ${cRoll.pedido} pares`, cRoll.pct, { onclick: "toggleTreeNode(this)", subtext: cRoll.subtext })}
-            <div class="tree-children collapsed">${filasOp}</div>
+            ${_treeRow("tree-row-color", color, `${cRoll.recibido} de ${cRoll.pedido} pares`, cRoll.pct, { onclick: "toggleTreeNode(this)", subtext: cRoll.subtext, open: isSearching })}
+            <div class="${childCls}">${filasOp}</div>
           </div>`;
       }).join("");
 
       return `
         <div class="tree-node">
-          ${_treeRow("tree-row-modelo", modelo, `${mRoll.recibido} de ${mRoll.pedido} pares`, mRoll.pct, { onclick: "toggleTreeNode(this)", subtext: mRoll.subtext })}
-          <div class="tree-children collapsed">${nodosColor}</div>
+          ${_treeRow("tree-row-modelo", modelo, `${mRoll.recibido} de ${mRoll.pedido} pares`, mRoll.pct, { onclick: "toggleTreeNode(this)", subtext: mRoll.subtext, open: isSearching })}
+          <div class="${childCls}">${nodosColor}</div>
         </div>`;
     }).join("");
 
     return `
       <div class="tree-node">
-        ${_treeRow("tree-row-pedido", `Pedido · ${fecha}`, `${pRoll.recibido} de ${pRoll.pedido} pares`, pRoll.pct, { onclick: "toggleTreeNode(this)", subtext: pRoll.subtext })}
-        <div class="tree-children collapsed">${nodosModelo}</div>
+        ${_treeRow("tree-row-pedido", `Pedido · ${fecha}`, `${pRoll.recibido} de ${pRoll.pedido} pares`, pRoll.pct, { onclick: "toggleTreeNode(this)", subtext: pRoll.subtext, open: isSearching })}
+        <div class="${childCls}">${nodosModelo}</div>
       </div>`;
   }).join("");
 
