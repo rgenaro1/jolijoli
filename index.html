@@ -1761,20 +1761,22 @@ const API_URL = "https://script.google.com/macros/s/AKfycbytKtv838e0hdQb8VfV-xtX
 //  Intenta leer /data/<archivo>.json (rápido, mismo dominio de GitHub Pages).
 //  Si no existe o falla, cae automáticamente a la API de Apps Script en vivo.
 // ═══════════════════════════════════════════════
-async function fetchConCache(nombreArchivo, urlLive) {
-  try {
-    // ?t=timestamp: "no-store" solo evita que el NAVEGADOR reuse una copia
-    // vieja; no evita que la CDN de GitHub Pages (Fastly) sirva una version
-    // cacheada desde algun nodo de borde aunque el archivo ya este actualizado
-    // en el repo. Al cambiar la URL en cada carga, la CDN no puede devolver
-    // una respuesta cacheada para esa URL exacta y va hasta el origen.
-    const resCache = await fetch(`./data/${nombreArchivo}.json?t=${Date.now()}`, { cache: "no-store" });
-    if (resCache.ok) {
-      const data = await resCache.json();
-      if (!data || !data.error) return data;
+async function fetchConCache(nombreArchivo, urlLive, forzarLive = false) {
+  if (!forzarLive) {
+    try {
+      // ?t=timestamp: "no-store" solo evita que el NAVEGADOR reuse una copia
+      // vieja; no evita que la CDN de GitHub Pages (Fastly) sirva una version
+      // cacheada desde algun nodo de borde aunque el archivo ya este actualizado
+      // en el repo. Al cambiar la URL en cada carga, la CDN no puede devolver
+      // una respuesta cacheada para esa URL exacta y va hasta el origen.
+      const resCache = await fetch(`./data/${nombreArchivo}.json?t=${Date.now()}`, { cache: "no-store" });
+      if (resCache.ok) {
+        const data = await resCache.json();
+        if (!data || !data.error) return data;
+      }
+    } catch (e) {
+      // sin caché disponible todavía (primer despliegue) — seguimos con la API en vivo
     }
-  } catch (e) {
-    // sin caché disponible todavía (primer despliegue) — seguimos con la API en vivo
   }
   const resLive = await fetch(urlLive);
   return resLive.json();
@@ -2059,13 +2061,13 @@ function buscar() {
 // ═══════════════════════════════════════════════
 //  CARGAR DASHBOARD
 // ═══════════════════════════════════════════════
-function cargarDashboard() {
+function cargarDashboard(forzarLive = false) {
   document.getElementById("result").innerHTML = `
     <div class="estado-msg"><div class="spinner"></div>Calculando indicadores...</div>`;
 
   Promise.all([
-    fetchConCache("dashboard", VIEWS.dashboard.buildUrl()),
-    fetchConCache("recepcionEmpaque", VIEWS.recepcionEmpaque.buildUrl()).catch(() => null)
+    fetchConCache("dashboard", VIEWS.dashboard.buildUrl(), forzarLive),
+    fetchConCache("recepcionEmpaque", VIEWS.recepcionEmpaque.buildUrl(), forzarLive).catch(() => null)
   ])
     .then(([dataDashboard, dataEmpaque]) => {
       if (dataDashboard && dataDashboard.error) {
@@ -2083,19 +2085,19 @@ function cargarDashboard() {
 
 // Reintenta la vista actual cuando no tiene formulario propio (dashboard / árbol / empaque)
 function recargarVistaActual() {
-  if (currentView === "dashboard") cargarDashboard();
-  else if (currentView === "arbol") cargarArbol();
-  else if (currentView === "recepcionEmpaque") cargarRecepcionEmpaque();
+  if (currentView === "dashboard") cargarDashboard(true);
+  else if (currentView === "arbol") cargarArbol(true);
+  else if (currentView === "recepcionEmpaque") cargarRecepcionEmpaque(true);
 }
 
 // ═══════════════════════════════════════════════
 //  CARGAR ÁRBOL DE PEDIDOS
 // ═══════════════════════════════════════════════
-function cargarArbol() {
+function cargarArbol(forzarLive = false) {
   document.getElementById("result").innerHTML = `
     <div class="estado-msg"><div class="spinner"></div>Construyendo árbol de pedidos...</div>`;
 
-  fetchConCache("arbolPedidos", VIEWS.arbol.buildUrl())
+  fetchConCache("arbolPedidos", VIEWS.arbol.buildUrl(), forzarLive)
     .then(data => {
       if (data.error) {
         document.getElementById("result").innerHTML = `
@@ -3115,13 +3117,13 @@ function _badgeEstadoProd(estado) {
   return `<span class="badge-estado-prod" style="background:${bg};color:${color};border:1px solid ${border};">${icon} ${estado}</span>`;
 }
 
-function cargarRecepcionEmpaque() {
+function cargarRecepcionEmpaque(forzarLive = false) {
   document.getElementById("result").innerHTML = `
     <div class="estado-msg"><div class="spinner"></div>Cruzando pedido vs. recepción...</div>`;
 
   Promise.all([
-    fetchConCache("recepcionEmpaque", VIEWS.recepcionEmpaque.buildUrl()),
-    fetchConCache("arbolPedidos", VIEWS.arbol.buildUrl()).catch(() => null)
+    fetchConCache("recepcionEmpaque", VIEWS.recepcionEmpaque.buildUrl(), forzarLive),
+    fetchConCache("arbolPedidos", VIEWS.arbol.buildUrl(), forzarLive).catch(() => null)
   ])
     .then(([data, arbolData]) => {
       if (data && data.error) {
