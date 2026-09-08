@@ -1612,8 +1612,43 @@
     .content { padding: 20px 16px 40px; }
     .topbar-title { font-size: 22px; }
   }
+
+  @media print {
+    .sidebar, .sidebar-overlay, #form-bar, #btnDescargarPdf, header {
+      display: none !important;
+    }
+    .layout, .content, main {
+      margin: 0 !important;
+      padding: 0 !important;
+      max-width: 100% !important;
+      width: 100% !important;
+    }
+    body {
+      background: #ffffff !important;
+      color: #000000 !important;
+    }
+    .card {
+      box-shadow: none !important;
+      border: 1px solid #e2e8f0 !important;
+      page-break-inside: avoid;
+    }
+    table {
+      page-break-inside: auto;
+    }
+    tr {
+      page-break-inside: avoid;
+    }
+  }
 </style>
 
+<script src="assets/html2pdf.bundle.min.js"></script>
+<script>
+  if (typeof html2pdf === 'undefined') {
+    const s = document.createElement('script');
+    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';
+    (document.head || document.documentElement).appendChild(s);
+  }
+</script>
 </head>
 <body>
 
@@ -2700,7 +2735,107 @@ function irAVista(viewKey) {
 // ═══════════════════════════════════════════════
 //  RENDER: REPORTE SEMANAL
 // ═══════════════════════════════════════════════
+let _semanalData = null;
+
+function descargarReporteSemanalPDF() {
+  const btn = document.getElementById("btnDescargarPdf");
+  const originalHtml = btn ? btn.innerHTML : "";
+  if (btn) {
+    btn.disabled = true;
+    btn.style.opacity = "0.7";
+    btn.innerHTML = `
+      <svg class="spinner" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="border:none;animation:spin 1s linear infinite;display:inline-block;vertical-align:middle;margin-right:6px;"><circle cx="12" cy="12" r="10" stroke-opacity=".25"/><path d="M12 2a10 10 0 0 1 10 10"/></svg>
+      Generando PDF...`;
+  }
+
+  const contenedor = document.getElementById("result");
+  if (!contenedor) return;
+
+  // Clonar el contenido para formatearlo para PDF
+  const clon = contenedor.cloneNode(true);
+
+  // Remover el botón de descarga dentro del clon para que no salga en el PDF
+  const btnEnClon = clon.querySelector("#btnDescargarPdf");
+  if (btnEnClon) {
+    const parentContainer = btnEnClon.parentElement;
+    if (parentContainer) parentContainer.remove();
+  }
+
+  // Contenedor principal con membrete
+  const pdfWrapper = document.createElement("div");
+  pdfWrapper.style.padding = "24px";
+  pdfWrapper.style.background = "#ffffff";
+  pdfWrapper.style.color = "#12151b";
+  pdfWrapper.style.fontFamily = "'Inter', -apple-system, sans-serif";
+
+  const fechaEmision = new Date().toLocaleDateString("es-PE", { day: "2-digit", month: "2-digit", year: "numeric" });
+  const horaEmision = new Date().toLocaleTimeString("es-PE", { hour: "2-digit", minute: "2-digit" });
+  const periodoTexto = _semanalData && _semanalData.periodo ? `${_semanalData.periodo.inicio} al ${_semanalData.periodo.fin}` : "Periodo actual";
+
+  const membreteHtml = `
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;border-bottom:2px solid #0d9488;padding-bottom:12px;margin-bottom:20px;">
+      <div>
+        <div style="font-size:22px;font-weight:800;color:#12151b;letter-spacing:-.03em;">JOLI JOLI</div>
+        <div style="font-size:11px;font-weight:600;color:#0d9488;text-transform:uppercase;letter-spacing:.06em;margin-top:2px;">Calzado Femenino · Reporte Semanal de Producción</div>
+      </div>
+      <div style="text-align:right;font-size:11px;color:#6b7280;line-height:1.4;">
+        <div><b>Semana:</b> ${periodoTexto}</div>
+        <div><b>Generado:</b> ${fechaEmision} ${horaEmision}</div>
+      </div>
+    </div>
+  `;
+
+  pdfWrapper.innerHTML = membreteHtml;
+  pdfWrapper.appendChild(clon);
+
+  // Asegurar que tarjetas y tablas se vean nítidas con bordes en papel
+  pdfWrapper.querySelectorAll(".card").forEach(c => {
+    c.style.boxShadow = "none";
+    c.style.border = "1px solid #e2e8f0";
+    c.style.background = "#ffffff";
+    c.style.marginBottom = "16px";
+    c.style.pageBreakInside = "avoid";
+    c.style.breakInside = "avoid";
+  });
+
+  pdfWrapper.querySelectorAll("table, tr, .chart-area").forEach(el => {
+    el.style.pageBreakInside = "avoid";
+    el.style.breakInside = "avoid";
+  });
+
+  const nombreArchivo = `Reporte_Semanal_JoliJoli_${(_semanalData && _semanalData.periodo ? _semanalData.periodo.inicio.replace(/\//g, '-') + '_al_' + _semanalData.periodo.fin.replace(/\//g, '-') : 'Produccion')}.pdf`;
+
+  const opt = {
+    margin: [10, 10, 10, 10],
+    filename: nombreArchivo,
+    image: { type: "jpeg", quality: 0.98 },
+    html2canvas: { scale: 2, useCORS: true, logging: false, scrollY: 0 },
+    jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+    pagebreak: { mode: ["avoid-all", "css", "legacy"] }
+  };
+
+  const restaurarBtn = () => {
+    if (btn) {
+      btn.disabled = false;
+      btn.style.opacity = "1";
+      btn.innerHTML = originalHtml;
+    }
+  };
+
+  if (typeof html2pdf !== "undefined") {
+    html2pdf().set(opt).from(pdfWrapper).save().then(restaurarBtn).catch(err => {
+      console.error("Error al exportar PDF con html2pdf:", err);
+      window.print();
+      restaurarBtn();
+    });
+  } else {
+    window.print();
+    restaurarBtn();
+  }
+}
+
 function renderSemanal(data) {
+  _semanalData = data;
   const leyenda = data.porEtapaYDia.map(e => `
     <span class="leyenda-item">
       <span class="dot" style="background:${COLORES_ETAPA[e.key]}"></span>${e.label}
@@ -2764,10 +2899,22 @@ function renderSemanal(data) {
     </div>` : "";
 
   document.getElementById("result").innerHTML = `
-    <div class="card">
-      <div class="titulo">📊 Reporte Semanal de Producción</div>
-      <div style="font-size:12px;color:#777;margin-top:4px;">
-        Periodo: ${data.periodo.inicio} — ${data.periodo.fin} · ${data.dias.length} día(s) con registro
+    <div class="card" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+      <div>
+        <div class="titulo">📊 Reporte Semanal de Producción</div>
+        <div style="font-size:12px;color:#777;margin-top:4px;">
+          Periodo: ${data.periodo.inicio} — ${data.periodo.fin} · ${data.dias.length} día(s) con registro
+        </div>
+      </div>
+      <div>
+        <button id="btnDescargarPdf" onclick="descargarReporteSemanalPDF()" style="display:inline-flex;align-items:center;gap:8px;padding:9px 16px;font-size:13px;font-weight:600;background:var(--accent);color:#fff;border:none;border-radius:9px;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,.08);transition:opacity .15s;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          Descargar Reporte en PDF
+        </button>
       </div>
     </div>
     <div class="card">
@@ -2973,9 +3120,10 @@ function cargarRecepcionEmpaque() {
 
   Promise.all([
     fetchConCache("recepcionEmpaque", VIEWS.recepcionEmpaque.buildUrl()),
-    fetchConCache("arbolPedidos", VIEWS.arbol.buildUrl()).catch(() => null)
+    fetchConCache("arbolPedidos", VIEWS.arbol.buildUrl()).catch(() => null),
+    fetchConCache("dashboard", VIEWS.dashboard.buildUrl()).catch(() => null)
   ])
-    .then(([data, arbolData]) => {
+    .then(([data, arbolData, dashData]) => {
       if (data && data.error) {
         document.getElementById("result").innerHTML = `
           <div class="estado-msg error">⚠️ ${data.error}</div>`;
@@ -2996,6 +3144,16 @@ function cargarRecepcionEmpaque() {
             });
           });
         });
+      }
+
+      // Dato de hoy / última jornada trabajada (fecha, pares, docenas)
+      let hoyFecha = "";
+      let hoyDocenas = 0;
+      let hoyPares = 0;
+      if (dashData && dashData.ultimoDia) {
+        hoyFecha = dashData.ultimoDia.fecha || "";
+        hoyDocenas = dashData.ultimoDia.alistado || 0;
+        hoyPares = Math.round(hoyDocenas * 12);
       }
 
       // Filtrar a partir de la OP 3354 en adelante y que tengan fecha de pedido asignada
@@ -3033,7 +3191,10 @@ function cargarRecepcionEmpaque() {
         totalPedido,
         totalRecibido,
         pctGlobal,
-        totalDescartadoC
+        totalDescartadoC,
+        hoyFecha,
+        hoyDocenas,
+        hoyPares
       };
       _empaqueFiltro = "all";
       _empaqueQuery = "";
@@ -3224,15 +3385,25 @@ function _empaqueRenderTree() {
 
 function renderRecepcionEmpaque() {
   const data = _empaqueData;
+  if (!data) return;
+
+  const hoyBloqueHtml = data.hoyFecha ? `
+    <div style="border-left:1px solid var(--border);padding-left:24px;">
+      <div class="kpi-lbl">Hoy (${data.hoyFecha})</div>
+      <div class="kpi-val" style="color:var(--gold);">${data.hoyPares} <span style="font-size:15px;font-weight:500;color:var(--muted);">pares</span></div>
+      <div style="font-size:11.5px;color:var(--muted);font-weight:500;margin-top:2px;">(aprox. ${data.hoyDocenas} docenas)</div>
+    </div>
+  ` : "";
 
   document.getElementById("result").innerHTML = `
-    <div class="card" style="margin-bottom:18px;display:flex;gap:32px;flex-wrap:wrap;">
+    <div class="card" style="margin-bottom:18px;display:flex;gap:32px;flex-wrap:wrap;align-items:center;">
       <div><div class="kpi-lbl">OPs (≥ 3354)</div><div class="kpi-val">${data.totalOps}</div></div>
       <div><div class="kpi-lbl">Pendientes</div><div class="kpi-val" style="color:var(--warn);">${data.opsPendientes}</div></div>
       <div><div class="kpi-lbl">Completas</div><div class="kpi-val" style="color:var(--ok);">${data.opsCompletas}</div></div>
       <div><div class="kpi-lbl">Pares Recibidos / Total</div><div class="kpi-val">${data.totalRecibido} <span style="font-size:15px;font-weight:500;color:var(--muted);">/ ${data.totalPedido}</span></div></div>
       <div><div class="kpi-lbl">Avance Global</div><div class="kpi-val" style="color:${_colorAvance(data.pctGlobal)}">${data.pctGlobal}%</div></div>
       <div><div class="kpi-lbl">Descartado (Clase C)</div><div class="kpi-val" style="color:var(--danger);">${data.totalDescartadoC}</div></div>
+      ${hoyBloqueHtml}
     </div>
 
     <div class="card" style="margin-bottom:18px;">
