@@ -3120,10 +3120,9 @@ function cargarRecepcionEmpaque() {
 
   Promise.all([
     fetchConCache("recepcionEmpaque", VIEWS.recepcionEmpaque.buildUrl()),
-    fetchConCache("arbolPedidos", VIEWS.arbol.buildUrl()).catch(() => null),
-    fetchConCache("dashboard", VIEWS.dashboard.buildUrl()).catch(() => null)
+    fetchConCache("arbolPedidos", VIEWS.arbol.buildUrl()).catch(() => null)
   ])
-    .then(([data, arbolData, dashData]) => {
+    .then(([data, arbolData]) => {
       if (data && data.error) {
         document.getElementById("result").innerHTML = `
           <div class="estado-msg error">⚠️ ${data.error}</div>`;
@@ -3144,16 +3143,6 @@ function cargarRecepcionEmpaque() {
             });
           });
         });
-      }
-
-      // Dato de hoy / última jornada trabajada (fecha, pares, docenas)
-      let hoyFecha = "";
-      let hoyDocenas = 0;
-      let hoyPares = 0;
-      if (dashData && dashData.ultimoDia) {
-        hoyFecha = dashData.ultimoDia.fecha || "";
-        hoyDocenas = dashData.ultimoDia.alistado || 0;
-        hoyPares = Math.round(hoyDocenas * 12);
       }
 
       // Filtrar a partir de la OP 3354 en adelante y que tengan fecha de pedido asignada
@@ -3191,10 +3180,7 @@ function cargarRecepcionEmpaque() {
         totalPedido,
         totalRecibido,
         pctGlobal,
-        totalDescartadoC,
-        hoyFecha,
-        hoyDocenas,
-        hoyPares
+        totalDescartadoC
       };
       _empaqueFiltro = "all";
       _empaqueQuery = "";
@@ -3387,23 +3373,14 @@ function renderRecepcionEmpaque() {
   const data = _empaqueData;
   if (!data) return;
 
-  const hoyBloqueHtml = data.hoyFecha ? `
-    <div style="border-left:1px solid var(--border);padding-left:24px;">
-      <div class="kpi-lbl">Hoy (${data.hoyFecha})</div>
-      <div class="kpi-val" style="color:var(--gold);">${data.hoyPares} <span style="font-size:15px;font-weight:500;color:var(--muted);">pares</span></div>
-      <div style="font-size:11.5px;color:var(--muted);font-weight:500;margin-top:2px;">(aprox. ${data.hoyDocenas} docenas)</div>
-    </div>
-  ` : "";
-
   document.getElementById("result").innerHTML = `
-    <div class="card" style="margin-bottom:18px;display:flex;gap:32px;flex-wrap:wrap;align-items:center;">
+    <div class="card" style="margin-bottom:18px;display:flex;gap:32px;flex-wrap:wrap;">
       <div><div class="kpi-lbl">OPs (≥ 3354)</div><div class="kpi-val">${data.totalOps}</div></div>
       <div><div class="kpi-lbl">Pendientes</div><div class="kpi-val" style="color:var(--warn);">${data.opsPendientes}</div></div>
       <div><div class="kpi-lbl">Completas</div><div class="kpi-val" style="color:var(--ok);">${data.opsCompletas}</div></div>
       <div><div class="kpi-lbl">Pares Recibidos / Total</div><div class="kpi-val">${data.totalRecibido} <span style="font-size:15px;font-weight:500;color:var(--muted);">/ ${data.totalPedido}</span></div></div>
       <div><div class="kpi-lbl">Avance Global</div><div class="kpi-val" style="color:${_colorAvance(data.pctGlobal)}">${data.pctGlobal}%</div></div>
       <div><div class="kpi-lbl">Descartado (Clase C)</div><div class="kpi-val" style="color:var(--danger);">${data.totalDescartadoC}</div></div>
-      ${hoyBloqueHtml}
     </div>
 
     <div class="card" style="margin-bottom:18px;">
