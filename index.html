@@ -1772,7 +1772,11 @@ async function fetchConCache(nombreArchivo, urlLive, forzarLive = false) {
       const resCache = await fetch(`./data/${nombreArchivo}.json?t=${Date.now()}`, { cache: "no-store" });
       if (resCache.ok) {
         const data = await resCache.json();
-        if (!data || !data.error) return data;
+        const esValido = data && !data.error && data.ok !== false;
+        const tieneRefError = nombreArchivo === "recepcionEmpaque" && (
+          !data.registros || data.registros.length <= 1 || (data.registros[0] && String(data.registros[0].op).includes("#REF"))
+        );
+        if (esValido && !tieneRefError) return data;
       }
     } catch (e) {
       // sin caché disponible todavía (primer despliegue) — seguimos con la API en vivo
@@ -1950,13 +1954,18 @@ document.getElementById("mobile-menu-btn").addEventListener("click", _abrirMenuM
 _overlayEl.addEventListener("click", _cerrarMenuMovil);
 
 // ═══════════════════════════════════════════════
-//  NAVEGACIÓN (SIDEBAR)
+//  NAVEGACIÓN (SIDEBAR Y HASH EN URL)
 // ═══════════════════════════════════════════════
-document.getElementById("tabs").addEventListener("click", (e) => {
-  const item = e.target.closest(".nav-item");
-  if (!item) return;
-  currentView = item.dataset.view;
+function navegarA(viewKey) {
+  if (!VIEWS[viewKey]) viewKey = "dashboard";
+  currentView = viewKey;
 
+  // Actualizar hash en la URL sin saltar el scroll
+  if (location.hash.replace("#", "") !== viewKey) {
+    history.replaceState(null, "", `#${viewKey}`);
+  }
+
+  const item = document.querySelector(`.nav-item[data-view="${viewKey}"]`);
   document.querySelectorAll(".nav-item").forEach(t => t.classList.toggle("active", t === item));
   _cerrarMenuMovil(); // en móvil, al elegir un reporte se cierra el cajón automáticamente
 
@@ -1980,6 +1989,17 @@ document.getElementById("tabs").addEventListener("click", (e) => {
     document.getElementById("result").innerHTML = `
       <div class="estado-msg">Completa los campos y presiona Buscar.</div>`;
   }
+}
+
+document.getElementById("tabs").addEventListener("click", (e) => {
+  const item = e.target.closest(".nav-item");
+  if (!item) return;
+  navegarA(item.dataset.view);
+});
+
+window.addEventListener("hashchange", () => {
+  const v = location.hash.replace("#", "");
+  if (v && v !== currentView && VIEWS[v]) navegarA(v);
 });
 
 function renderFormBar() {
@@ -4007,10 +4027,10 @@ function confirmarPIN() {
 }
 
 // ═══════════════════════════════════════════════
-//  INICIO — CARGAR DASHBOARD AUTOMÁTICAMENTE
+//  INICIO — CARGAR VISTA INICIAL (RESPETA F5)
 // ═══════════════════════════════════════════════
-renderFormBar();
-cargarDashboard();
+const vistaInicial = (location.hash ? location.hash.replace("#", "") : "") || "dashboard";
+navegarA(vistaInicial);
 </script>
 
 </body>
