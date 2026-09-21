@@ -1649,6 +1649,14 @@
     (document.head || document.documentElement).appendChild(s);
   }
 </script>
+<script src="assets/xlsx.full.min.js"></script>
+<script>
+  if (typeof XLSX === 'undefined') {
+    const s = document.createElement('script');
+    s.src = 'https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js';
+    (document.head || document.documentElement).appendChild(s);
+  }
+</script>
 </head>
 <body>
 
@@ -2006,11 +2014,21 @@ function renderFormBar() {
   const view = VIEWS[currentView];
 
   if (view.fields.length === 0) {
-    // Vista sin formulario (dashboard / árbol): mostrar botón de refrescar
+    // Vista sin formulario (dashboard / árbol / empaque): mostrar botón de refrescar y exportar
+    let extraBtn = "";
+    if (currentView === "recepcionEmpaque") {
+      extraBtn = `
+        <button class="btn-buscar" style="background:#107c41;color:#fff;display:inline-flex;align-items:center;gap:6px;" onclick="descargarReporteExcelEmpaque()" title="Descargar Reporte Excel">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Descargar Excel
+        </button>
+      `;
+    }
     document.getElementById("form-bar").innerHTML = `
       <div style="font-size:12px;color:var(--muted);flex:1;">
         Datos calculados en tiempo real desde tu hoja de producción.
       </div>
+      ${extraBtn}
       <button class="btn-buscar" onclick="recargarVistaActual()">🔄 Actualizar</button>
     `;
     return;
@@ -3196,6 +3214,7 @@ function cargarRecepcionEmpaque(forzarLive = false) {
 
       _empaqueData = {
         ...data,
+        todosLosRegistros: data.registros || [],
         registros: registrosValidos,
         totalOps,
         opsPendientes,
@@ -3409,15 +3428,55 @@ function renderRecepcionEmpaque() {
     </div>
 
     <div class="card" style="margin-bottom:18px;">
-      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
-        <div style="flex:1 1 220px;position:relative;">
-          <input type="text" placeholder="Buscar modelo, color u OP..." oninput="_empaqueSetQuery(this.value)"
-            style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:9px;font-size:13px;background:var(--paper);">
+      <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:space-between;">
+        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;flex:1 1 320px;">
+          <div style="flex:1 1 220px;position:relative;">
+            <input type="text" placeholder="Buscar modelo, color u OP..." oninput="_empaqueSetQuery(this.value)"
+              style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:9px;font-size:13px;background:var(--paper);">
+          </div>
+          <div id="empaqueChips" style="display:flex;gap:6px;flex-wrap:wrap;">
+            <button class="filter-chip" data-f="all" aria-pressed="true" onclick="_empaqueSetFiltro(this)">Todos</button>
+            <button class="filter-chip" data-f="Pendiente" aria-pressed="false" onclick="_empaqueSetFiltro(this)">Pendiente</button>
+            <button class="filter-chip" data-f="Completo" aria-pressed="false" onclick="_empaqueSetFiltro(this)">Completo</button>
+          </div>
         </div>
-        <div id="empaqueChips" style="display:flex;gap:6px;flex-wrap:wrap;">
-          <button class="filter-chip" data-f="all" aria-pressed="true" onclick="_empaqueSetFiltro(this)">Todos</button>
-          <button class="filter-chip" data-f="Pendiente" aria-pressed="false" onclick="_empaqueSetFiltro(this)">Pendiente</button>
-          <button class="filter-chip" data-f="Completo" aria-pressed="false" onclick="_empaqueSetFiltro(this)">Completo</button>
+
+        <div style="display:flex;align-items:center;position:relative;" id="excelBtnContainer">
+          <button id="btnDescargarExcelEmpaque" onclick="descargarReporteExcelEmpaque()" title="Descargar reporte estándar (OP ≥ 3354 con fecha)" style="display:inline-flex;align-items:center;gap:8px;padding:9px 16px;font-size:13px;font-weight:600;background:#107c41;color:#fff;border:none;border-radius:9px 0 0 9px;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,.1);transition:background .15s;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="7 10 12 15 17 10"/>
+              <line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+            Descargar Reporte Excel
+          </button>
+          <button id="btnExcelOpciones" onclick="_toggleExcelMenu(event)" title="Más opciones de descarga" style="display:inline-flex;align-items:center;justify-content:center;padding:9px 11px;font-size:11px;font-weight:700;background:#0d6937;color:#fff;border:none;border-left:1px solid rgba(255,255,255,.25);border-radius:0 9px 9px 0;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,.1);transition:background .15s;">
+            ▼
+          </button>
+          <div id="excelMenuDropdown" style="display:none;position:absolute;top:calc(100% + 6px);right:0;background:#fff;border:1px solid var(--border);border-radius:10px;box-shadow:0 10px 25px rgba(0,0,0,.15);min-width:280px;z-index:200;padding:6px;font-size:13px;">
+            <div style="padding:7px 12px;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;">Opciones de Descarga</div>
+            <button onclick="descargarReporteExcelEmpaque({opMin:3354});_cerrarExcelMenu();" style="display:flex;width:100%;text-align:left;align-items:center;gap:8px;padding:9px 12px;border:none;background:transparent;border-radius:6px;cursor:pointer;font-size:13px;color:var(--ink);" onmouseover="this.style.background='var(--paper)'" onmouseout="this.style.background='transparent'">
+              <span style="font-size:16px;">📊</span>
+              <div>
+                <div style="font-weight:600;">Reporte Estándar (OP ≥ 3354)</div>
+                <div style="font-size:11px;color:var(--muted);">Agrupado por modelo y color con fecha</div>
+              </div>
+            </button>
+            <button onclick="descargarReporteExcelEmpaque({opMin:3384});_cerrarExcelMenu();" style="display:flex;width:100%;text-align:left;align-items:center;gap:8px;padding:9px 12px;border:none;background:transparent;border-radius:6px;cursor:pointer;font-size:13px;color:var(--ink);" onmouseover="this.style.background='var(--paper)'" onmouseout="this.style.background='transparent'">
+              <span style="font-size:16px;">📋</span>
+              <div>
+                <div style="font-weight:600;">Filtrar desde OP ≥ 3384</div>
+                <div style="font-size:11px;color:var(--muted);">Lote a partir de la orden 3384</div>
+              </div>
+            </button>
+            <button onclick="_descargarExcelPersonalizado();_cerrarExcelMenu();" style="display:flex;width:100%;text-align:left;align-items:center;gap:8px;padding:9px 12px;border:none;background:transparent;border-radius:6px;cursor:pointer;font-size:13px;color:var(--ink);" onmouseover="this.style.background='var(--paper)'" onmouseout="this.style.background='transparent'">
+              <span style="font-size:16px;">⚙️</span>
+              <div>
+                <div style="font-weight:600;">Definir OP inicial personalizada...</div>
+                <div style="font-size:11px;color:var(--muted);">Elige el número de OP desde donde iniciar</div>
+              </div>
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -3426,6 +3485,327 @@ function renderRecepcionEmpaque() {
   `;
 
   _empaqueRenderTree();
+}
+
+// ═══════════════════════════════════════════════
+//  EXPORTAR REPORTE EXCEL - CONTROL DE EMPAQUE
+// ═══════════════════════════════════════════════
+
+function _toggleExcelMenu(event) {
+  if (event) event.stopPropagation();
+  const menu = document.getElementById("excelMenuDropdown");
+  if (!menu) return;
+  menu.style.display = menu.style.display === "none" || menu.style.display === "" ? "block" : "none";
+}
+
+function _cerrarExcelMenu() {
+  const menu = document.getElementById("excelMenuDropdown");
+  if (menu) menu.style.display = "none";
+}
+
+document.addEventListener("click", (e) => {
+  const container = document.getElementById("excelBtnContainer");
+  if (container && !container.contains(e.target)) {
+    _cerrarExcelMenu();
+  }
+});
+
+function _descargarExcelPersonalizado() {
+  const val = prompt("Ingrese el número de OP inicial para el reporte:", "3354");
+  if (val === null) return;
+  const num = parseInt(val, 10);
+  if (isNaN(num)) {
+    alert("Por favor ingrese un número de OP válido.");
+    return;
+  }
+  descargarReporteExcelEmpaque({ opMin: num });
+}
+
+function descargarReporteExcelEmpaque(opciones = {}) {
+  if (typeof XLSX === "undefined") {
+    alert("La librería de Excel (SheetJS) aún está cargando. Por favor reintente en unos segundos.");
+    return;
+  }
+
+  if (!_empaqueData || (!_empaqueData.registros && !_empaqueData.todosLosRegistros)) {
+    alert("Los datos de empaque aún no han cargado. Por favor espera unos momentos.");
+    return;
+  }
+
+  const btn = document.getElementById("btnDescargarExcelEmpaque");
+  const origHtml = btn ? btn.innerHTML : "";
+  if (btn) {
+    btn.disabled = true;
+    btn.style.opacity = "0.75";
+    btn.innerHTML = `
+      <svg class="spinner" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="border:none;animation:spin 1s linear infinite;display:inline-block;vertical-align:middle;margin-right:6px;"><circle cx="12" cy="12" r="10" stroke-opacity=".25"/><path d="M12 2a10 10 0 0 1 10 10"/></svg>
+      Generando Excel...`;
+  }
+
+  setTimeout(() => {
+    try {
+      const registros = _empaqueData.todosLosRegistros || _empaqueData.registros || [];
+      const wb = _generarReporteExcelEmpaqueWorkbook(registros, opciones);
+      const fechaHoy = new Date().toISOString().slice(0, 10);
+      const opMin = opciones.opMin !== undefined ? opciones.opMin : 3354;
+      const nombreArchivo = `Reporte_Empaque_Pedido_vs_Entregado_${opMin}_${fechaHoy}.xlsx`;
+
+      _descargarWorkbook(wb, nombreArchivo);
+    } catch (err) {
+      alert("Error al generar el reporte Excel: " + err.message);
+      console.error("Error al exportar Excel:", err);
+    } finally {
+      if (btn) {
+        btn.disabled = false;
+        btn.style.opacity = "1";
+        btn.innerHTML = origHtml;
+      }
+    }
+  }, 50);
+}
+
+function _descargarWorkbook(wb, filename) {
+  try {
+    XLSX.writeFile(wb, filename);
+  } catch (err) {
+    const wbout = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+    const blob = new Blob([wbout], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => {
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }, 100);
+  }
+}
+
+function _parseFechaPedido(f) {
+  if (!f) return new Date(0);
+  const parts = String(f).trim().split("/");
+  if (parts.length === 3) {
+    return new Date(Number(parts[2]), Number(parts[1]) - 1, Number(parts[0]));
+  }
+  return new Date(0);
+}
+
+function _generarReporteExcelEmpaqueWorkbook(registrosRaw, opciones = {}) {
+  const opMin = opciones.opMin !== undefined ? Number(opciones.opMin) : 3354;
+  const soloConFecha = opciones.soloConFecha !== false;
+
+  const validos = (registrosRaw || []).filter(r => {
+    const op = Number(r.op);
+    const fp = (r.fechaPedido || "").trim();
+    const opOk = isNaN(opMin) || op >= opMin;
+    const fechaOk = !soloConFecha || (fp !== "" && fp !== "-");
+    return opOk && fechaOk;
+  });
+
+  if (validos.length === 0) {
+    throw new Error(`No hay registros con OP ≥ ${opMin} y fecha de pedido asignada.`);
+  }
+
+  const wb = XLSX.utils.book_new();
+
+  // ─────────────────────────────────────────────
+  // 1. Resumen Modelo y Color
+  // ─────────────────────────────────────────────
+  const grupos = {};
+  validos.forEach(r => {
+    const f = (r.fechaPedido || "").trim();
+    const m = (r.modelo || "").trim().toUpperCase();
+    const c = (r.color || "").trim().toUpperCase();
+    const key = f + "||" + m + "||" + c;
+    if (!grupos[key]) {
+      grupos[key] = {
+        fecha: f,
+        fechaDate: _parseFechaPedido(f),
+        modelo: m,
+        color: c,
+        pedido: 0,
+        recibido: 0
+      };
+    }
+    grupos[key].pedido += (Number(r.totalPedido) || 0);
+    grupos[key].recibido += (Number(r.totalRecibido) || 0);
+  });
+
+  const listaGrupos = Object.values(grupos);
+  listaGrupos.sort((a, b) => {
+    if (a.fechaDate.getTime() !== b.fechaDate.getTime()) {
+      return a.fechaDate.getTime() - b.fechaDate.getTime();
+    }
+    if (a.modelo !== b.modelo) return a.modelo.localeCompare(b.modelo);
+    return a.color.localeCompare(b.color);
+  });
+
+  const ws1Data = [
+    ["Fecha pedido", "Modelo", "Color", "Cantidad pedida", "Cantidad entregada", "Diferencia", "% Avance"]
+  ];
+
+  listaGrupos.forEach((g, idx) => {
+    const rowNum = idx + 2;
+    const dif = g.pedido - g.recibido;
+    const pct = g.pedido > 0 ? g.recibido / g.pedido : 0;
+    ws1Data.push([
+      g.fecha,
+      g.modelo,
+      g.color,
+      { t: "n", v: g.pedido, z: "#,##0" },
+      { t: "n", v: g.recibido, z: "#,##0" },
+      { t: "n", v: dif, f: "D" + rowNum + "-E" + rowNum, z: "#,##0" },
+      { t: "n", v: pct, f: "IF(D" + rowNum + ">0,E" + rowNum + "/D" + rowNum + ",0)", z: "0.0%" }
+    ]);
+  });
+
+  const lastR1 = listaGrupos.length + 1;
+  const totR1 = lastR1 + 1;
+  const totPed1 = listaGrupos.reduce((s, g) => s + g.pedido, 0);
+  const totRec1 = listaGrupos.reduce((s, g) => s + g.recibido, 0);
+
+  ws1Data.push([
+    "TOTAL GENERAL",
+    "",
+    "",
+    { t: "n", v: totPed1, f: "SUM(D2:D" + lastR1 + ")", z: "#,##0" },
+    { t: "n", v: totRec1, f: "SUM(E2:E" + lastR1 + ")", z: "#,##0" },
+    { t: "n", v: totPed1 - totRec1, f: "D" + totR1 + "-E" + totR1, z: "#,##0" },
+    { t: "n", v: totPed1 > 0 ? totRec1 / totPed1 : 0, f: "IF(D" + totR1 + ">0,E" + totR1 + "/D" + totR1 + ",0)", z: "0.0%" }
+  ]);
+
+  const ws1 = XLSX.utils.aoa_to_sheet(ws1Data);
+  ws1["!cols"] = [
+    { wch: 15 },
+    { wch: 20 },
+    { wch: 18 },
+    { wch: 18 },
+    { wch: 18 },
+    { wch: 14 },
+    { wch: 12 }
+  ];
+  XLSX.utils.book_append_sheet(wb, ws1, "Resumen Modelo y Color");
+
+  // ─────────────────────────────────────────────
+  // 2. Detalle por OP
+  // ─────────────────────────────────────────────
+  const opsSorted = [...validos].sort((a, b) => Number(a.op) - Number(b.op));
+  const ws2Data = [
+    ["OP", "Fecha pedido", "Modelo", "Color", "Cantidad pedida", "Cantidad entregada", "Diferencia", "% Avance", "Estado"]
+  ];
+
+  opsSorted.forEach((r, idx) => {
+    const rowNum = idx + 2;
+    const ped = Number(r.totalPedido) || 0;
+    const rec = Number(r.totalRecibido) || 0;
+    const dif = ped - rec;
+    const pct = ped > 0 ? rec / ped : 0;
+    ws2Data.push([
+      Number(r.op),
+      r.fechaPedido || "",
+      (r.modelo || "").trim().toUpperCase(),
+      (r.color || "").trim().toUpperCase(),
+      { t: "n", v: ped, z: "#,##0" },
+      { t: "n", v: rec, z: "#,##0" },
+      { t: "n", v: dif, f: "E" + rowNum + "-F" + rowNum, z: "#,##0" },
+      { t: "n", v: pct, f: "IF(E" + rowNum + ">0,F" + rowNum + "/E" + rowNum + ",0)", z: "0.0%" },
+      r.estado || ""
+    ]);
+  });
+
+  const lastR2 = opsSorted.length + 1;
+  const totR2 = lastR2 + 1;
+  const totPed2 = opsSorted.reduce((s, r) => s + (Number(r.totalPedido) || 0), 0);
+  const totRec2 = opsSorted.reduce((s, r) => s + (Number(r.totalRecibido) || 0), 0);
+
+  ws2Data.push([
+    "TOTAL GENERAL",
+    "",
+    "",
+    "",
+    { t: "n", v: totPed2, f: "SUM(E2:E" + lastR2 + ")", z: "#,##0" },
+    { t: "n", v: totRec2, f: "SUM(F2:F" + lastR2 + ")", z: "#,##0" },
+    { t: "n", v: totPed2 - totRec2, f: "E" + totR2 + "-F" + totR2, z: "#,##0" },
+    { t: "n", v: totPed2 > 0 ? totRec2 / totPed2 : 0, f: "IF(E" + totR2 + ">0,F" + totR2 + "/E" + totR2 + ",0)", z: "0.0%" },
+    ""
+  ]);
+
+  const ws2 = XLSX.utils.aoa_to_sheet(ws2Data);
+  ws2["!cols"] = [
+    { wch: 10 },
+    { wch: 15 },
+    { wch: 20 },
+    { wch: 18 },
+    { wch: 18 },
+    { wch: 18 },
+    { wch: 14 },
+    { wch: 12 },
+    { wch: 14 }
+  ];
+  XLSX.utils.book_append_sheet(wb, ws2, "Detalle por OP");
+
+  // ─────────────────────────────────────────────
+  // 3. Consolidado por Modelo
+  // ─────────────────────────────────────────────
+  const porModelo = {};
+  validos.forEach(r => {
+    const m = (r.modelo || "").trim().toUpperCase();
+    if (!porModelo[m]) {
+      porModelo[m] = { modelo: m, pedido: 0, recibido: 0 };
+    }
+    porModelo[m].pedido += (Number(r.totalPedido) || 0);
+    porModelo[m].recibido += (Number(r.totalRecibido) || 0);
+  });
+
+  const listaModelos = Object.values(porModelo);
+  listaModelos.sort((a, b) => {
+    if (b.pedido !== a.pedido) return b.pedido - a.pedido;
+    return a.modelo.localeCompare(b.modelo);
+  });
+
+  const ws3Data = [
+    ["Modelo", "Cantidad pedida", "Cantidad entregada", "Diferencia", "% Avance"]
+  ];
+
+  listaModelos.forEach((m, idx) => {
+    const rowNum = idx + 2;
+    const dif = m.pedido - m.recibido;
+    const pct = m.pedido > 0 ? m.recibido / m.pedido : 0;
+    ws3Data.push([
+      m.modelo,
+      { t: "n", v: m.pedido, z: "#,##0" },
+      { t: "n", v: m.recibido, z: "#,##0" },
+      { t: "n", v: dif, f: "B" + rowNum + "-C" + rowNum, z: "#,##0" },
+      { t: "n", v: pct, f: "IF(B" + rowNum + ">0,C" + rowNum + "/B" + rowNum + ",0)", z: "0.0%" }
+    ]);
+  });
+
+  const lastR3 = listaModelos.length + 1;
+  const totR3 = lastR3 + 1;
+  const totPed3 = listaModelos.reduce((s, m) => s + m.pedido, 0);
+  const totRec3 = listaModelos.reduce((s, m) => s + m.recibido, 0);
+
+  ws3Data.push([
+    "TOTAL GENERAL",
+    { t: "n", v: totPed3, f: "SUM(B2:B" + lastR3 + ")", z: "#,##0" },
+    { t: "n", v: totRec3, f: "SUM(C2:C" + lastR3 + ")", z: "#,##0" },
+    { t: "n", v: totPed3 - totRec3, f: "B" + totR3 + "-C" + totR3, z: "#,##0" },
+    { t: "n", v: totPed3 > 0 ? totRec3 / totPed3 : 0, f: "IF(B" + totR3 + ">0,C" + totR3 + "/B" + totR3 + ",0)", z: "0.0%" }
+  ]);
+
+  const ws3 = XLSX.utils.aoa_to_sheet(ws3Data);
+  ws3["!cols"] = [
+    { wch: 22 },
+    { wch: 18 },
+    { wch: 18 },
+    { wch: 14 },
+    { wch: 12 }
+  ];
+  XLSX.utils.book_append_sheet(wb, ws3, "Consolidado por Modelo");
+
+  return wb;
 }
 
 
