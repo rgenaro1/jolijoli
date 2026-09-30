@@ -1790,7 +1790,10 @@ async function fetchConCache(nombreArchivo, urlLive, forzarLive = false) {
       // sin caché disponible todavía (primer despliegue) — seguimos con la API en vivo
     }
   }
-  const resLive = await fetch(urlLive);
+  const urlLiveBuster = urlLive.includes("?")
+    ? `${urlLive}&_t=${Date.now()}`
+    : `${urlLive}?_t=${Date.now()}`;
+  const resLive = await fetch(urlLiveBuster, { cache: "no-store" });
   return resLive.json();
 }
 
