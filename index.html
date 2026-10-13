@@ -2045,9 +2045,20 @@ function renderFormBar() {
     </div>
   `).join("");
 
+  let extraFormBtn = "";
+  if (currentView === "semanal") {
+    extraFormBtn = `
+      <button class="btn-buscar" style="background:#107c41;color:#fff;display:inline-flex;align-items:center;gap:6px;" onclick="descargarReporteSemanalExcel()" title="Descargar Reporte Semanal en Excel">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Descargar Excel
+      </button>
+    `;
+  }
+
   document.getElementById("form-bar").innerHTML = `
     ${fieldsHtml}
     <button class="btn-buscar" onclick="buscar()">🔍 Buscar</button>
+    ${extraFormBtn}
   `;
 }
 
@@ -2798,8 +2809,8 @@ function descargarReporteSemanalPDF() {
   // Clonar el contenido para formatearlo para PDF
   const clon = contenedor.cloneNode(true);
 
-  // Remover el botón de descarga dentro del clon para que no salga en el PDF
-  const btnEnClon = clon.querySelector("#btnDescargarPdf");
+  // Remover los botones de descarga dentro del clon para que no salgan en el PDF
+  const btnEnClon = clon.querySelector("#btnDescargarPdf") || clon.querySelector("#btnDescargarExcelSemanal");
   if (btnEnClon) {
     const parentContainer = btnEnClon.parentElement;
     if (parentContainer) parentContainer.remove();
@@ -2878,6 +2889,237 @@ function descargarReporteSemanalPDF() {
   }
 }
 
+function descargarReporteSemanalExcel() {
+  if (typeof XLSX === "undefined") {
+    alert("La librería de Excel (SheetJS) aún está cargando. Por favor reintente en unos segundos.");
+    return;
+  }
+
+  if (!_semanalData) {
+    alert("Los datos del Reporte Semanal aún no se han cargado. Haz clic en 'Buscar' para cargar el periodo.");
+    return;
+  }
+
+  const btn = document.getElementById("btnDescargarExcelSemanal");
+  const origHtml = btn ? btn.innerHTML : "";
+  if (btn) {
+    btn.disabled = true;
+    btn.style.opacity = "0.75";
+    btn.innerHTML = `
+      <svg class="spinner" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="border:none;animation:spin 1s linear infinite;display:inline-block;vertical-align:middle;margin-right:6px;"><circle cx="12" cy="12" r="10" stroke-opacity=".25"/><path d="M12 2a10 10 0 0 1 10 10"/></svg>
+      Generando Excel...`;
+  }
+
+  setTimeout(() => {
+    try {
+      const wb = _generarReporteSemanalWorkbook(_semanalData);
+      const periodoStr = _semanalData.periodo ? `${_semanalData.periodo.inicio.replace(/\//g, '-')}_al_${_semanalData.periodo.fin.replace(/\//g, '-')}` : new Date().toISOString().slice(0, 10);
+      const nombreArchivo = `Reporte_Semanal_Produccion_JoliJoli_${periodoStr}.xlsx`;
+
+      _descargarWorkbook(wb, nombreArchivo);
+    } catch (err) {
+      alert("Error al generar el reporte Excel semanal: " + err.message);
+      console.error("Error al exportar Excel semanal:", err);
+    } finally {
+      if (btn) {
+        btn.disabled = false;
+        btn.style.opacity = "1";
+        btn.innerHTML = origHtml;
+      }
+    }
+  }, 50);
+}
+
+function _generarReporteSemanalWorkbook(data) {
+  if (!data) throw new Error("No hay datos disponibles para exportar.");
+  const wb = XLSX.utils.book_new();
+
+  const periodoTexto = data.periodo ? `${data.periodo.inicio} al ${data.periodo.fin}` : "Periodo actual";
+
+  // ─────────────────────────────────────────────
+  // 1. Hoja: Avance por Etapa y Día (incluye KPIs)
+  // ─────────────────────────────────────────────
+  const ws1Data = [];
+
+  ws1Data.push(["JOLI JOLI - REPORTE SEMANAL DE PRODUCCIÓN"]);
+  ws1Data.push([`Periodo: ${periodoTexto} (${(data.dias || []).length} días con registro)`]);
+  ws1Data.push([]); // Línea en blanco
+
+  // Sección KPIs
+  ws1Data.push(["INDICADORES CLAVE (KPIs)", "VALOR", "DETALLE / UNIDAD"]);
+  const kpis = data.kpis || {};
+  ws1Data.push(["Producción Terminada", { t: "n", v: kpis.produccionTerminada || 0, z: "#,##0" }, "Docenas (salida de Alistado)"]);
+  ws1Data.push(["Promedio Diario", { t: "n", v: kpis.promedioDiario || 0, z: "#,##0" }, "Docenas / día"]);
+  ws1Data.push(["Mayor Avance (Etapa líder)", kpis.etapaLider || "—", `${kpis.etapaLiderTotal || 0} docenas`]);
+  ws1Data.push(["Día Más Activo", kpis.mejorDia || "—", `${kpis.mejorDiaTotal || 0} docenas`]);
+  ws1Data.push([]); // Línea en blanco
+
+  // Sección Producción por Etapa y Día
+  ws1Data.push(["PRODUCCIÓN POR ETAPA Y DÍA (Docenas)"]);
+  const dias = data.dias || [];
+  const headerEtapas = ["Etapa", ...dias, "Total"];
+  ws1Data.push(headerEtapas);
+
+  const startRowEtapas = ws1Data.length + 1; // 1-based index in Excel
+
+  (data.porEtapaYDia || []).forEach((e, idx) => {
+    const fila = [e.label];
+    (e.valores || []).forEach((val) => {
+      fila.push({ t: "n", v: val, z: "#,##0" });
+    });
+    const rowNum = startRowEtapas + idx;
+    if (dias.length > 0) {
+      const startColLetter = "B";
+      const endColLetter = XLSX.utils.encode_col(dias.length);
+      fila.push({
+        t: "n",
+        v: e.total,
+        f: `SUM(${startColLetter}${rowNum}:${endColLetter}${rowNum})`,
+        z: "#,##0"
+      });
+    } else {
+      fila.push({ t: "n", v: e.total || 0, z: "#,##0" });
+    }
+    ws1Data.push(fila);
+  });
+
+  // Fila Total de Etapas
+  const totalRowIndex = ws1Data.length + 1;
+  const lastEtapaRowIndex = totalRowIndex - 1;
+  const filaTotalEtapas = ["Avance total etapas"];
+
+  dias.forEach((d, dIdx) => {
+    const colLetter = XLSX.utils.encode_col(1 + dIdx);
+    const totDia = (data.totalesPorDia && data.totalesPorDia[dIdx] !== undefined) ? data.totalesPorDia[dIdx] : 0;
+    if (lastEtapaRowIndex >= startRowEtapas) {
+      filaTotalEtapas.push({
+        t: "n",
+        v: totDia,
+        f: `SUM(${colLetter}${startRowEtapas}:${colLetter}${lastEtapaRowIndex})`,
+        z: "#,##0"
+      });
+    } else {
+      filaTotalEtapas.push({ t: "n", v: totDia, z: "#,##0" });
+    }
+  });
+
+  const granTotal = (data.totalesPorDia || []).reduce((a, b) => a + b, 0);
+  if (dias.length > 0 && lastEtapaRowIndex >= startRowEtapas) {
+    const totalColLetter = XLSX.utils.encode_col(dias.length + 1);
+    filaTotalEtapas.push({
+      t: "n",
+      v: granTotal,
+      f: `SUM(${totalColLetter}${startRowEtapas}:${totalColLetter}${lastEtapaRowIndex})`,
+      z: "#,##0"
+    });
+  } else {
+    filaTotalEtapas.push({ t: "n", v: granTotal, z: "#,##0" });
+  }
+  ws1Data.push(filaTotalEtapas);
+
+  const ws1 = XLSX.utils.aoa_to_sheet(ws1Data);
+
+  // Ancho de columnas ws1
+  const colsWs1 = [{ wch: 28 }];
+  dias.forEach(() => colsWs1.push({ wch: 14 }));
+  colsWs1.push({ wch: 14 });
+  ws1["!cols"] = colsWs1;
+
+  XLSX.utils.book_append_sheet(wb, ws1, "Avance por Etapa y Día");
+
+  // ─────────────────────────────────────────────
+  // 2. Hoja: Detalle por Modelo y Color
+  // ─────────────────────────────────────────────
+  const ws2Data = [];
+  ws2Data.push(["JOLI JOLI - DETALLE POR MODELO Y COLOR"]);
+  ws2Data.push([`Periodo: ${periodoTexto}`]);
+  ws2Data.push([]); // Línea en blanco
+
+  ws2Data.push(["Modelo", "Color", "Corte", "Habilitado", "Perfilado", "Armado", "Alistado", "Total"]);
+  const startRowDetalle = ws2Data.length + 1;
+
+  const detalle = data.detalleModeloColor || [];
+  let totCorte = 0, totHabilitado = 0, totPerfilado = 0, totArmado = 0, totAlistado = 0, totGlobal = 0;
+
+  detalle.forEach((d, idx) => {
+    const rowNum = startRowDetalle + idx;
+    const c = Number(d.corte) || 0;
+    const h = Number(d.habilitado) || 0;
+    const p = Number(d.perfilado) || 0;
+    const ar = Number(d.armado) || 0;
+    const al = Number(d.alistado) || 0;
+    const t = Number(d.total) || (c + h + p + ar + al);
+
+    totCorte += c;
+    totHabilitado += h;
+    totPerfilado += p;
+    totArmado += ar;
+    totAlistado += al;
+    totGlobal += t;
+
+    ws2Data.push([
+      d.modelo || "",
+      d.color || "",
+      { t: "n", v: c, z: "#,##0" },
+      { t: "n", v: h, z: "#,##0" },
+      { t: "n", v: p, z: "#,##0" },
+      { t: "n", v: ar, z: "#,##0" },
+      { t: "n", v: al, z: "#,##0" },
+      { t: "n", v: t, f: `SUM(C${rowNum}:G${rowNum})`, z: "#,##0" }
+    ]);
+  });
+
+  const lastRowDetalle = ws2Data.length;
+  if (detalle.length > 0) {
+    ws2Data.push([
+      "TOTAL GENERAL",
+      "",
+      { t: "n", v: totCorte, f: `SUM(C${startRowDetalle}:C${lastRowDetalle})`, z: "#,##0" },
+      { t: "n", v: totHabilitado, f: `SUM(D${startRowDetalle}:D${lastRowDetalle})`, z: "#,##0" },
+      { t: "n", v: totPerfilado, f: `SUM(E${startRowDetalle}:E${lastRowDetalle})`, z: "#,##0" },
+      { t: "n", v: totArmado, f: `SUM(F${startRowDetalle}:F${lastRowDetalle})`, z: "#,##0" },
+      { t: "n", v: totAlistado, f: `SUM(G${startRowDetalle}:G${lastRowDetalle})`, z: "#,##0" },
+      { t: "n", v: totGlobal, f: `SUM(H${startRowDetalle}:H${lastRowDetalle})`, z: "#,##0" }
+    ]);
+  }
+
+  const ws2 = XLSX.utils.aoa_to_sheet(ws2Data);
+  ws2["!cols"] = [
+    { wch: 22 },
+    { wch: 22 },
+    { wch: 12 },
+    { wch: 14 },
+    { wch: 12 },
+    { wch: 12 },
+    { wch: 12 },
+    { wch: 14 }
+  ];
+  XLSX.utils.book_append_sheet(wb, ws2, "Detalle Modelo y Color");
+
+  // ─────────────────────────────────────────────
+  // 3. Hoja: Sin Fecha de Pedido (si existen)
+  // ─────────────────────────────────────────────
+  if (data.sinFechaPedido && data.sinFechaPedido.length > 0) {
+    const ws3Data = [];
+    ws3Data.push(["REGISTROS SIN FECHA DE PEDIDO (EXCLUIDOS DEL DETALLE)"]);
+    ws3Data.push([`Periodo: ${periodoTexto}`]);
+    ws3Data.push([]);
+    ws3Data.push(["Modelo", "Color", "Etapas Registradas"]);
+    data.sinFechaPedido.forEach((item) => {
+      ws3Data.push([
+        item.modelo || "",
+        item.color || "",
+        Array.isArray(item.etapas) ? item.etapas.join(", ") : (item.etapas || "")
+      ]);
+    });
+    const ws3 = XLSX.utils.aoa_to_sheet(ws3Data);
+    ws3["!cols"] = [{ wch: 24 }, { wch: 24 }, { wch: 38 }];
+    XLSX.utils.book_append_sheet(wb, ws3, "Sin Fecha Pedido");
+  }
+
+  return wb;
+}
+
 function renderSemanal(data) {
   _semanalData = data;
   const leyenda = data.porEtapaYDia.map(e => `
@@ -2950,14 +3192,22 @@ function renderSemanal(data) {
           Periodo: ${data.periodo.inicio} — ${data.periodo.fin} · ${data.dias.length} día(s) con registro
         </div>
       </div>
-      <div>
-        <button id="btnDescargarPdf" onclick="descargarReporteSemanalPDF()" style="display:inline-flex;align-items:center;gap:8px;padding:9px 16px;font-size:13px;font-weight:600;background:var(--accent);color:#fff;border:none;border-radius:9px;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,.08);transition:opacity .15s;">
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+        <button id="btnDescargarPdf" onclick="descargarReporteSemanalPDF()" style="display:inline-flex;align-items:center;gap:8px;padding:9px 16px;font-size:13px;font-weight:600;background:var(--accent);color:#fff;border:none;border-radius:9px;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,.08);transition:opacity .15s;" title="Descargar Reporte Semanal en PDF">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
             <polyline points="7 10 12 15 17 10"/>
             <line x1="12" y1="15" x2="12" y2="3"/>
           </svg>
-          Descargar Reporte en PDF
+          Descargar PDF
+        </button>
+        <button id="btnDescargarExcelSemanal" onclick="descargarReporteSemanalExcel()" style="display:inline-flex;align-items:center;gap:8px;padding:9px 16px;font-size:13px;font-weight:600;background:#107c41;color:#fff;border:none;border-radius:9px;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,.08);transition:opacity .15s;" title="Descargar Reporte Semanal en Excel">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          Descargar Excel
         </button>
       </div>
     </div>
