@@ -1352,6 +1352,277 @@
 
   .editor-field input.changed { border-color: var(--gold); background: var(--gold-light); }
 
+  /* ═══════════════════════════════════════
+     TABLA DE EDICIÓN MASIVA DE OPS
+  ═══════════════════════════════════════ */
+  .editor-batch-container {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0,0,0,.04);
+    margin-top: 14px;
+  }
+  .editor-batch-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 13px 18px;
+    background: #fbfcfd;
+    border-bottom: 1px solid var(--border);
+  }
+  .editor-batch-title-area {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .editor-batch-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+  .batch-pill {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 9px;
+    border-radius: 12px;
+    background: var(--paper);
+    color: var(--muted);
+    border: 1px solid var(--border);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .batch-pill.active {
+    background: #fef3c7;
+    color: #92400e;
+    border-color: #fde68a;
+  }
+  .batch-pill.success {
+    background: #ecfdf5;
+    color: #065f46;
+    border-color: #a7f3d0;
+  }
+  .editor-batch-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .editor-quickfill-box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    background: #f8fafc;
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+    font-size: 12px;
+  }
+  .quickfill-select, .quickfill-input {
+    padding: 6px 10px;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    font-size: 12px;
+    background: #fff;
+    color: var(--ink);
+    outline: none;
+    font-family: inherit;
+  }
+  .quickfill-select:focus, .quickfill-input:focus {
+    border-color: var(--accent);
+  }
+  .btn-quickfill-apply {
+    background: #0f766e;
+    color: #fff;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 7px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity .15s;
+  }
+  .btn-quickfill-apply:hover { opacity: .9; }
+  .btn-quickfill-today {
+    background: #e2e8f0;
+    color: #334155;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 7px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .btn-quickfill-today:hover { background: #cbd5e1; }
+  .editor-table-wrap {
+    width: 100%;
+    overflow-x: auto;
+    max-height: 72vh;
+    position: relative;
+  }
+  .editor-batch-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 12px;
+  }
+  .editor-batch-table th, .editor-batch-table td {
+    padding: 7px 8px;
+    border-bottom: 1px solid var(--border);
+    border-right: 1px solid #edf1f3;
+    white-space: nowrap;
+    vertical-align: middle;
+  }
+  .editor-batch-table thead tr:first-child th {
+    position: sticky;
+    top: 0;
+    z-index: 12;
+  }
+  .editor-batch-table thead tr:nth-child(2) th {
+    position: sticky;
+    top: 29px;
+    z-index: 11;
+  }
+  .super-header {
+    font-size: 10.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    text-align: center;
+    padding: 6px 8px;
+  }
+  .super-info   { background: #f1f5f9; color: #475569; }
+  .super-corte  { background: #eff6ff; color: #1e40af; }
+  .super-hab    { background: #ecfdf5; color: #065f46; }
+  .super-perf   { background: #fffbeb; color: #92400e; }
+  .super-arm    { background: #faf5ff; color: #6b21a8; }
+  .super-alist  { background: #f0fdfa; color: #0f766e; }
+  .super-talla  { background: #fdf2f8; color: #9d174d; }
+  .super-action { background: #f8fafc; color: #64748b; }
+
+  .sub-th {
+    background: #f8fafc;
+    color: var(--ink);
+    font-size: 11px;
+    font-weight: 600;
+    text-align: center;
+  }
+
+  /* Sticky columns for row index, OP, Modelo, Color */
+  .col-sticky-idx {
+    position: sticky;
+    left: 0;
+    z-index: 6;
+    background: #fff;
+    width: 44px;
+    text-align: center;
+    border-right: 1px solid var(--border) !important;
+  }
+  .col-sticky-op {
+    position: sticky;
+    left: 44px;
+    z-index: 6;
+    background: #fff;
+    font-weight: 700;
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--accent);
+    border-right: 1px solid var(--border) !important;
+  }
+  .col-sticky-mod {
+    position: sticky;
+    left: 114px;
+    z-index: 6;
+    background: #fff;
+    font-weight: 600;
+    border-right: 1px solid var(--border) !important;
+  }
+  .col-sticky-col {
+    position: sticky;
+    left: 214px;
+    z-index: 6;
+    background: #fff;
+    border-right: 2px solid #cbd5e1 !important;
+  }
+  th.col-sticky-idx, th.col-sticky-op, th.col-sticky-mod, th.col-sticky-col {
+    z-index: 20 !important;
+    background: #f8fafc !important;
+  }
+
+  .batch-row:hover td { background-color: #f8fafc; }
+  .batch-row:hover .col-sticky-idx,
+  .batch-row:hover .col-sticky-op,
+  .batch-row:hover .col-sticky-mod,
+  .batch-row:hover .col-sticky-col {
+    background-color: #f8fafc;
+  }
+
+  .batch-row.is-modified td { background-color: #fffdf5; }
+  .batch-row.is-modified .col-sticky-idx,
+  .batch-row.is-modified .col-sticky-op,
+  .batch-row.is-modified .col-sticky-mod,
+  .batch-row.is-modified .col-sticky-col {
+    background-color: #fffdf5;
+  }
+
+  .batch-cell-input {
+    width: 100%;
+    padding: 6px 8px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 11.5px;
+    font-family: inherit;
+    background: #fff;
+    color: var(--ink);
+    box-sizing: border-box;
+    transition: all .12s ease;
+  }
+  .batch-cell-input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(13,148,136,.18);
+    background: #fff;
+  }
+  .batch-cell-input.changed {
+    border-color: #d97706 !important;
+    background-color: #fef3c7 !important;
+    font-weight: 600;
+    color: #92400e !important;
+  }
+  .batch-cell-num {
+    text-align: center;
+    width: 52px;
+  }
+  .batch-cell-date {
+    width: 104px;
+    text-align: center;
+  }
+  .batch-row-status {
+    font-size: 11px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .batch-progress-bar {
+    width: 100%;
+    height: 8px;
+    background: #e2e8f0;
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 12px 0;
+  }
+  .batch-progress-inner {
+    height: 100%;
+    background: var(--accent);
+    width: 0%;
+    transition: width .2s ease;
+  }
+
   /* PIN modal */
   .pin-overlay {
     position: fixed;
@@ -4311,28 +4582,76 @@ function _getCampoValor(registro, c) {
   return String(v ?? "");
 }
 
+window._editorBatchData = null; // Almacén global para edición masiva de OPs
+
+function _parsearOpsInput(inputStr) {
+  if (!inputStr) return [];
+  // Expandir rangos de tipo 3354-3360 o 3354 - 3360
+  let s = String(inputStr).replace(/(\d+)\s*-\s*(\d+)/g, function(_, a, b) {
+    const n1 = parseInt(a, 10), n2 = parseInt(b, 10);
+    if (isNaN(n1) || isNaN(n2)) return a + ' ' + b;
+    const start = Math.min(n1, n2);
+    const end = Math.min(Math.max(n1, n2), start + 60); // Cap preventivo de 60 por rango
+    const list = [];
+    for (let i = start; i <= end; i++) list.push(i);
+    return list.join(' ');
+  });
+  const tokens = s.split(/[\s,;\n\r\t]+/).map(t => t.trim()).filter(Boolean);
+  const unicos = [];
+  const seen = new Set();
+  for (const t of tokens) {
+    if (!seen.has(t)) {
+      seen.add(t);
+      unicos.push(t);
+    }
+  }
+  return unicos;
+}
+
+function _limpiarBusquedaEditor() {
+  const opEl = document.getElementById("ed-op");
+  const modEl = document.getElementById("ed-modelo");
+  const colEl = document.getElementById("ed-color");
+  if (opEl) opEl.value = "";
+  if (modEl) modEl.value = "";
+  if (colEl) colEl.value = "";
+  const resEl = document.getElementById("editor-result");
+  if (resEl) resEl.innerHTML = "";
+  if (opEl) opEl.focus();
+}
+
 function renderEditor() {
   document.getElementById("form-bar").innerHTML = "";
   document.getElementById("result").innerHTML = `
     <div class="card" style="margin-bottom:16px;">
-      <h3 style="margin-bottom:14px;">Buscar Orden de Producción</h3>
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
+        <div>
+          <h3 style="margin:0 0 4px 0;">Buscar Orden(es) de Producción</h3>
+          <div style="font-size:12px;color:var(--muted);">
+            Puedes ingresar varias OPs separadas por comas, espacios o rangos (ej: <code>3354-3360, 3375, 3380</code>) o buscar por Modelo y Color.
+          </div>
+        </div>
+      </div>
       <div class="editor-search">
-        <div class="form-group">
-          <label>N° de OP</label>
-          <input type="text" id="ed-op" placeholder="Ej: 3354"
+        <div class="form-group" style="flex:2;min-width:260px;">
+          <label>N° de OP(s) — individual, lista o rango</label>
+          <input type="text" id="ed-op" placeholder="Ej: 3354-3360 o 3354, 3358, 3362"
             onkeypress="if(event.key==='Enter') buscarOPEditor()">
         </div>
-        <div class="form-group">
+        <div class="form-group" style="flex:1;min-width:140px;">
           <label>Modelo</label>
           <input type="text" id="ed-modelo" placeholder="Ej: CANDELA"
             onkeypress="if(event.key==='Enter') buscarOPEditor()">
         </div>
-        <div class="form-group">
+        <div class="form-group" style="flex:1;min-width:140px;">
           <label>Color</label>
           <input type="text" id="ed-color" placeholder="Ej: NEGRO"
             onkeypress="if(event.key==='Enter') buscarOPEditor()">
         </div>
-        <button class="btn-buscar" onclick="buscarOPEditor()">🔍 Buscar</button>
+        <div style="display:flex;gap:6px;align-self:flex-end;">
+          <button class="btn-buscar" onclick="buscarOPEditor()">🔍 Buscar</button>
+          <button class="btn-secondary" onclick="_limpiarBusquedaEditor()" title="Limpiar campos">🧹</button>
+        </div>
       </div>
     </div>
     <div id="editor-result"></div>
@@ -4340,42 +4659,112 @@ function renderEditor() {
   document.getElementById("ed-op").focus();
 }
 
-function buscarOPEditor() {
-  const op     = document.getElementById("ed-op")?.value.trim() || "";
+async function buscarOPEditor() {
+  const opRaw  = document.getElementById("ed-op")?.value.trim() || "";
   const modelo = document.getElementById("ed-modelo")?.value.trim() || "";
   const color  = document.getElementById("ed-color")?.value.trim() || "";
 
-  if (!op && !modelo) {
+  const ops = _parsearOpsInput(opRaw);
+
+  if (ops.length === 0 && !modelo) {
     document.getElementById("editor-result").innerHTML = `
-      <div class="estado-msg error">⚠️ Ingresa al menos el número de OP o el modelo.</div>`;
+      <div class="estado-msg error">⚠️ Ingresa al menos un número de OP o un modelo.</div>`;
     return;
   }
 
-  document.getElementById("editor-result").innerHTML = `
+  const resultEl = document.getElementById("editor-result");
+
+  // CASO 1: Múltiples OPs ingresadas explícitamente
+  if (ops.length > 1) {
+    resultEl.innerHTML = `
+      <div class="estado-msg">
+        <div class="spinner"></div>
+        <span>Buscando ${ops.length} órdenes de producción en paralelo...</span>
+      </div>`;
+
+    try {
+      const promesas = ops.map(op =>
+        fetch(`${API_URL}?reporte=buscarOP&op=${encodeURIComponent(op)}`)
+          .then(r => r.json())
+          .catch(err => ({ error: err.message, op }))
+      );
+
+      const respuestas = await Promise.all(promesas);
+
+      let todosResultados = [];
+      let noEncontradas = [];
+      let camposDef = CAMPOS_DEF_DEFAULT;
+
+      respuestas.forEach((resp, idx) => {
+        const buscada = ops[idx];
+        if (resp && resp.resultados && resp.resultados.length > 0) {
+          if (resp.campos) camposDef = resp.campos;
+          resp.resultados.forEach(r => {
+            const rMod = (r.modelo || (r.campos && r.campos[1]) || "").toString().toUpperCase();
+            const rCol = (r.color || (r.campos && r.campos[2]) || "").toString().toUpperCase();
+            if (modelo && !rMod.includes(modelo.toUpperCase())) return;
+            if (color && !rCol.includes(color.toUpperCase())) return;
+            todosResultados.push(r);
+          });
+        } else {
+          noEncontradas.push(buscada);
+        }
+      });
+
+      // Deduplicar resultados por OP
+      const opsVistas = new Set();
+      todosResultados = todosResultados.filter(r => {
+        const opVal = String(r.op || (r.campos && r.campos[0]) || "");
+        if (!opVal || opsVistas.has(opVal)) return false;
+        opsVistas.add(opVal);
+        return true;
+      });
+
+      if (todosResultados.length === 0) {
+        resultEl.innerHTML = `
+          <div class="estado-msg error">
+            ⚠️ No se encontró ninguna de las ${ops.length} OPs especificadas (${ops.join(', ')}).
+          </div>`;
+        return;
+      }
+
+      let aviso = "";
+      if (noEncontradas.length > 0) {
+        aviso = `⚠️ No se encontraron ${noEncontradas.length} OP(s): ${noEncontradas.slice(0, 10).join(', ')}${noEncontradas.length > 10 ? '...' : ''}`;
+      }
+
+      renderTablaMasivaEditor(todosResultados, camposDef, aviso);
+    } catch (err) {
+      resultEl.innerHTML = `<div class="estado-msg error">⚠️ Error al buscar OPs: ${err.message}</div>`;
+    }
+    return;
+  }
+
+  // CASO 2: Una sola OP o búsqueda por Modelo/Color
+  resultEl.innerHTML = `
     <div class="estado-msg"><div class="spinner"></div>Buscando...</div>`;
 
+  const singleOp = ops.length === 1 ? ops[0] : "";
   const url = `${API_URL}?reporte=buscarOP` +
-    (op     ? `&op=${encodeURIComponent(op)}`         : "") +
-    (modelo ? `&modelo=${encodeURIComponent(modelo)}` : "") +
-    (color  ? `&color=${encodeURIComponent(color)}`   : "");
+    (singleOp ? `&op=${encodeURIComponent(singleOp)}`     : "") +
+    (modelo   ? `&modelo=${encodeURIComponent(modelo)}` : "") +
+    (color    ? `&color=${encodeURIComponent(color)}`   : "");
 
   fetch(url)
     .then(r => r.json())
     .then(data => {
       if (data.error) {
-        document.getElementById("editor-result").innerHTML = `
-          <div class="estado-msg error">⚠️ ${data.error}</div>`;
+        resultEl.innerHTML = `<div class="estado-msg error">⚠️ ${data.error}</div>`;
         return;
       }
       mostrarResultadosOP(data);
     })
     .catch(err => {
-      document.getElementById("editor-result").innerHTML = `
-        <div class="estado-msg error">⚠️ Error: ${err.message}</div>`;
+      resultEl.innerHTML = `<div class="estado-msg error">⚠️ Error: ${err.message}</div>`;
     });
 }
 
-function mostrarResultadosOP(data) {
+function mostrarResultadosOP(data, aviso) {
   if (!data.resultados || data.resultados.length === 0) {
     document.getElementById("editor-result").innerHTML = `
       <div class="estado-msg">No se encontraron órdenes de producción con esos criterios.</div>`;
@@ -4383,41 +4772,616 @@ function mostrarResultadosOP(data) {
   }
 
   const camposDef = data.campos || CAMPOS_DEF_DEFAULT;
+  renderTablaMasivaEditor(data.resultados, camposDef, aviso);
+}
 
-  if (data.resultados.length === 1) {
-    // Un solo resultado: abrir directamente el formulario
-    mostrarFormEditor(data.resultados[0], camposDef);
+// ═══════════════════════════════════════════════
+//  TABLA DE EDICIÓN MASIVA DE OPS
+// ═══════════════════════════════════════════════
+const COLUMNAS_EDITABLES_CONFIG = [
+  { key: "col_O",  col: "O",  colIdx: 15, tipo: "fecha", label: "Corte (O)", fallbackKey: "fechaCorte" },
+  { key: "col_T",  col: "T",  colIdx: 20, tipo: "fecha", label: "Corte Fin (T)" },
+  { key: "col_U",  col: "U",  colIdx: 21, tipo: "fecha", label: "Habilitado (U)", fallbackKey: "fechaHabilitado" },
+  { key: "col_AA", col: "AA", colIdx: 27, tipo: "fecha", label: "Perfilado (AA)", fallbackKey: "fechaPerfilado" },
+  { key: "col_AF", col: "AF", colIdx: 32, tipo: "fecha", label: "Perfilado Fin (AF)" },
+  { key: "col_AM", col: "AM", colIdx: 39, tipo: "fecha", label: "Armado (AM)", fallbackKey: "fechaArmado" },
+  { key: "col_AN", col: "AN", colIdx: 40, tipo: "fecha", label: "Alistado (AN)" },
+  { key: "col_AR", col: "AR", colIdx: 44, tipo: "fecha", label: "Alistado Fin (AR)" },
+  { key: "t35",    col: "AS", colIdx: 45, tipo: "numero", label: "T35" },
+  { key: "t36",    col: "AT", colIdx: 46, tipo: "numero", label: "T36" },
+  { key: "t37",    col: "AU", colIdx: 47, tipo: "numero", label: "T37" },
+  { key: "t38",    col: "AV", colIdx: 48, tipo: "numero", label: "T38" },
+  { key: "t39",    col: "AW", colIdx: 49, tipo: "numero", label: "T39" },
+  { key: "t40",    col: "AX", colIdx: 50, tipo: "numero", label: "T40" }
+];
+
+function renderTablaMasivaEditor(resultados, camposDef, aviso) {
+  const campos = camposDef || CAMPOS_DEF_DEFAULT;
+  window._editorBatchData = {
+    resultados: resultados,
+    camposDef: campos,
+    cambiosPorOp: {}
+  };
+
+  const estadoColores = {
+    "CORTE":                { bg:"#e8f0fe", color:"#1a56db" },
+    "HABILITADO":           { bg:"#e8f5e9", color:"#2f7d5f" },
+    "PERFILADO":            { bg:"#fff8e1", color:"#b45309" },
+    "ALMACEN DE PERFILADO": { bg:"#fff8e1", color:"#b45309" },
+    "ARMADO":               { bg:"#ede7f6", color:"#6d28d9" },
+    "AREA DE ARMADO":       { bg:"#ede7f6", color:"#6d28d9" },
+    "ALISTADO":             { bg:"#e0f7fa", color:"#0d7377" },
+    "AREA DE ALISTADO":     { bg:"#e0f7fa", color:"#0d7377" },
+    "PRODUCTO TERMINADO":   { bg:"#f3e8ff", color:"#7c3aed" }
+  };
+
+  const filasHtml = resultados.map((r, idx) => {
+    const op      = String(r.op || (r.campos && r.campos[0]) || `OP-${idx+1}`);
+    const modelo  = r.modelo || (r.campos && r.campos[1]) || "—";
+    const color   = r.color  || (r.campos && r.campos[2]) || "—";
+    const fPedido = _formatearFechaValor(r.fechaPedido || (r.campos && r.campos[3]));
+    const estado  = (r.estado || (r.campos && r.campos[13]) || "—").toString().toUpperCase();
+    const ec      = estadoColores[estado] || { bg:"#f1f5f9", color:"#64748b" };
+
+    const inputsHtml = COLUMNAS_EDITABLES_CONFIG.map(c => {
+      const val = _getCampoValor(r, c);
+      if (c.tipo === "numero") {
+        return `
+          <td>
+            <input type="number" min="0" class="batch-cell-input batch-cell-num"
+              data-op="${op}" data-col="${c.col}" data-colidx="${c.colIdx}" data-key="${c.key}" data-tipo="numero"
+              data-original="${val}" value="${val}"
+              oninput="marcarCambiadoBatchCell(this)">
+          </td>`;
+      } else {
+        return `
+          <td>
+            <input type="text" class="batch-cell-input batch-cell-date"
+              data-op="${op}" data-col="${c.col}" data-colidx="${c.colIdx}" data-key="${c.key}" data-tipo="fecha"
+              data-original="${val}" value="${val}" placeholder="dd/MM/yyyy"
+              oninput="marcarCambiadoBatchCell(this)">
+          </td>`;
+      }
+    }).join("");
+
+    let totalPares = 0;
+    ["t35","t36","t37","t38","t39","t40"].forEach(tk => {
+      const v = parseInt(_getCampoValor(r, { key: tk, col: "", colIdx: 0, tipo: "numero" }), 10);
+      if (!isNaN(v) && v > 0) totalPares += v;
+    });
+
+    return `
+      <tr id="batch-row-${op}" class="batch-row">
+        <td class="col-sticky-idx">
+          <span>${idx + 1}</span>
+          <div id="batch-row-status-${op}" class="batch-row-status"></div>
+        </td>
+        <td class="col-sticky-op">
+          <a href="javascript:void(0)" onclick="abrirFichaDesdeTabla('${op}')" title="Ver ficha individual">${op} ↗</a>
+        </td>
+        <td class="col-sticky-mod" title="${modelo}">${modelo}</td>
+        <td class="col-sticky-col" title="${color}">${color}</td>
+        <td style="text-align:center;">
+          <span style="font-size:10.5px;font-weight:700;padding:2px 7px;border-radius:10px;background:${ec.bg};color:${ec.color};display:inline-block;">
+            ${estado}
+          </span>
+        </td>
+        <td style="text-align:center;color:var(--muted);font-size:11.5px;">${fPedido || '—'}</td>
+        ${inputsHtml}
+        <td style="text-align:center;">
+          <span id="batch-total-${op}" data-original-total="${totalPares}" style="font-weight:600;font-size:12px;">${totalPares}</span>
+        </td>
+        <td style="text-align:center;">
+          <button class="btn-secondary" style="font-size:11px;padding:3px 7px;" onclick="_descartarCambiosFila('${op}')" title="Descartar cambios de esta fila">↺</button>
+          <button class="btn-secondary" style="font-size:11px;padding:3px 8px;margin-left:4px;" onclick="abrirFichaDesdeTabla('${op}')" title="Abrir ficha completa">📝</button>
+        </td>
+      </tr>`;
+  }).join("");
+
+  let avisoHtml = "";
+  if (aviso) {
+    avisoHtml = `
+      <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:9px 14px;margin-bottom:12px;font-size:12.5px;color:#92400e;">
+        ${aviso}
+      </div>`;
+  }
+
+  document.getElementById("editor-result").innerHTML = `
+    ${avisoHtml}
+    <div class="editor-batch-container">
+      <div class="editor-batch-toolbar">
+        <div class="editor-batch-title-area">
+          <div class="editor-batch-title">📋 Edición Masiva de Órdenes de Producción</div>
+          <span class="batch-pill" id="batch-stats-loaded">${resultados.length} OPs cargadas</span>
+          <span class="batch-pill" id="batch-stats-changes">0 cambios pendientes</span>
+        </div>
+        <div class="editor-batch-actions">
+          <button class="btn-secondary" id="btn-batch-discard" style="display:none;font-size:12px;padding:6px 11px;" onclick="_descartarCambiosMasivos()">
+            ↺ Descartar todo
+          </button>
+          <button class="btn-save" id="btn-batch-save" style="font-size:12px;padding:7px 14px;opacity:0.6;" disabled onclick="iniciarGuardadoMasivo()">
+            💾 Guardar cambios
+          </button>
+        </div>
+      </div>
+
+      <!-- Barra de Relleno Rápido -->
+      <div class="editor-quickfill-box">
+        <span style="font-weight:700;color:var(--ink);">⚡ Relleno Rápido:</span>
+        <span style="color:var(--muted);">Columna:</span>
+        <select id="quickfill-col" class="quickfill-select">
+          <option value="col_O">Corte Inicio (Col O)</option>
+          <option value="col_T">Corte Fin (Col T)</option>
+          <option value="col_U">Habilitado (Col U)</option>
+          <option value="col_AA">Perfilado Inicio (Col AA)</option>
+          <option value="col_AF">Perfilado Fin (Col AF)</option>
+          <option value="col_AM">Armado (Col AM)</option>
+          <option value="col_AN">Alistado Inicio (Col AN)</option>
+          <option value="col_AR">Alistado Fin (Col AR)</option>
+        </select>
+        <span style="color:var(--muted);">Valor:</span>
+        <input type="text" id="quickfill-val" class="quickfill-input" placeholder="dd/MM/yyyy" style="width:105px;">
+        <button type="button" class="btn-quickfill-today" onclick="_ponerFechaHoyQuickFill()" title="Insertar fecha de hoy">📅 Hoy</button>
+        <button type="button" class="btn-quickfill-apply" onclick="_aplicarRellenoRapido(false)">⚡ Aplicar a todas</button>
+        <button type="button" class="btn-secondary" style="font-size:11.5px;padding:5px 9px;" onclick="_aplicarRellenoRapido(true)" title="Solo a las celdas que actualmente estén vacías">⚡ Solo vacías</button>
+      </div>
+
+      <!-- Tabla interactiva con columnas fijas -->
+      <div class="editor-table-wrap">
+        <table class="editor-batch-table">
+          <thead>
+            <tr>
+              <th colspan="4" class="super-header super-info">Identificación</th>
+              <th colspan="2" class="super-header super-info">Estado & Pedido</th>
+              <th colspan="2" class="super-header super-corte">Corte (O, T)</th>
+              <th colspan="1" class="super-header super-hab">Habilitado (U)</th>
+              <th colspan="2" class="super-header super-perf">Perfilado (AA, AF)</th>
+              <th colspan="1" class="super-header super-arm">Armado (AM)</th>
+              <th colspan="2" class="super-header super-alist">Alistado (AN, AR)</th>
+              <th colspan="7" class="super-header super-talla">Cantidades por Talla (AS — AX)</th>
+              <th colspan="1" class="super-header super-action">Acciones</th>
+            </tr>
+            <tr>
+              <th class="sub-th col-sticky-idx">#</th>
+              <th class="sub-th col-sticky-op">OP</th>
+              <th class="sub-th col-sticky-mod">Modelo</th>
+              <th class="sub-th col-sticky-col">Color</th>
+              <th class="sub-th" style="min-width:110px;">Estado</th>
+              <th class="sub-th" style="min-width:85px;">F. Pedido</th>
+              <th class="sub-th">Inicio (O)</th>
+              <th class="sub-th">Fin (T)</th>
+              <th class="sub-th">Habilitado (U)</th>
+              <th class="sub-th">Inicio (AA)</th>
+              <th class="sub-th">Fin (AF)</th>
+              <th class="sub-th">Armado (AM)</th>
+              <th class="sub-th">Inicio (AN)</th>
+              <th class="sub-th">Fin (AR)</th>
+              <th class="sub-th">35</th>
+              <th class="sub-th">36</th>
+              <th class="sub-th">37</th>
+              <th class="sub-th">38</th>
+              <th class="sub-th">39</th>
+              <th class="sub-th">40</th>
+              <th class="sub-th" style="min-width:55px;">Total</th>
+              <th class="sub-th" style="min-width:75px;">Opciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${filasHtml}
+          </tbody>
+        </table>
+      </div>
+
+      <div id="batch-msg" style="padding:10px 18px;font-size:13px;border-top:1px solid var(--border);background:#fff;"></div>
+    </div>`;
+
+  _setupTableKeyboardNav();
+}
+
+function _setupTableKeyboardNav() {
+  const table = document.querySelector(".editor-batch-table");
+  if (!table) return;
+  table.addEventListener("keydown", function(e) {
+    if (!e.target.classList.contains("batch-cell-input")) return;
+    const input = e.target;
+    const key = input.dataset.key;
+    const tr = input.closest("tr");
+    if (!tr) return;
+
+    if (e.key === "Enter" || e.key === "ArrowDown") {
+      e.preventDefault();
+      const nextTr = tr.nextElementSibling;
+      if (nextTr) {
+        const nextInput = nextTr.querySelector(`.batch-cell-input[data-key="${key}"]`);
+        if (nextInput) { nextInput.focus(); nextInput.select(); }
+      }
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      const prevTr = tr.previousElementSibling;
+      if (prevTr) {
+        const prevInput = prevTr.querySelector(`.batch-cell-input[data-key="${key}"]`);
+        if (prevInput) { prevInput.focus(); prevInput.select(); }
+      }
+    }
+  });
+}
+
+function _ponerFechaHoyQuickFill() {
+  const hoy = new Date();
+  const d = String(hoy.getDate()).padStart(2, "0");
+  const m = String(hoy.getMonth() + 1).padStart(2, "0");
+  const y = hoy.getFullYear();
+  const valEl = document.getElementById("quickfill-val");
+  if (valEl) valEl.value = `${d}/${m}/${y}`;
+}
+
+function _aplicarRellenoRapido(soloVacias) {
+  const colKey = document.getElementById("quickfill-col")?.value;
+  const valor = document.getElementById("quickfill-val")?.value.trim() || "";
+  if (!colKey) return;
+  if (!valor && !confirm("¿Deseas vaciar este campo en todas las filas?")) return;
+
+  const inputs = document.querySelectorAll(`.batch-cell-input[data-key="${colKey}"]`);
+  let aplicados = 0;
+  inputs.forEach(input => {
+    if (soloVacias && input.value.trim() !== "") return;
+    if (input.value !== valor) {
+      input.value = valor;
+      marcarCambiadoBatchCell(input);
+      aplicados++;
+    }
+  });
+
+  const msgEl = document.getElementById("batch-msg");
+  if (msgEl) {
+    msgEl.innerHTML = `<span style="color:#0f766e;font-weight:600;">⚡ Se aplicó "${valor || '(vacío)'}" a ${aplicados} fila(s).</span>`;
+  }
+}
+
+function marcarCambiadoBatchCell(el) {
+  const op = el.dataset.op;
+  const colKey = el.dataset.key;
+  const colLetter = el.dataset.col;
+  const colIdx = parseInt(el.dataset.colidx, 10);
+  const original = (el.dataset.original || "").trim();
+  const current = (el.value || "").trim();
+
+  if (!window._editorBatchData) return;
+  if (!window._editorBatchData.cambiosPorOp[op]) {
+    window._editorBatchData.cambiosPorOp[op] = {};
+  }
+
+  if (current !== original) {
+    el.classList.add("changed");
+    window._editorBatchData.cambiosPorOp[op][colKey] = {
+      col: colLetter,
+      colIdx: colIdx,
+      key: colKey,
+      valor: current
+    };
+  } else {
+    el.classList.remove("changed");
+    delete window._editorBatchData.cambiosPorOp[op][colKey];
+    if (Object.keys(window._editorBatchData.cambiosPorOp[op]).length === 0) {
+      delete window._editorBatchData.cambiosPorOp[op];
+    }
+  }
+
+  if (colKey.startsWith("t")) {
+    actualizarTotalParesFila(op);
+  }
+
+  actualizarEstadoFila(op);
+  actualizarContadorCambiosMasivos();
+}
+
+function actualizarTotalParesFila(op) {
+  const tallas = ["t35", "t36", "t37", "t38", "t39", "t40"];
+  let sum = 0;
+  tallas.forEach(t => {
+    const el = document.querySelector(`.batch-cell-input[data-op="${op}"][data-key="${t}"]`);
+    if (el) {
+      const v = parseInt(el.value, 10);
+      if (!isNaN(v) && v > 0) sum += v;
+    }
+  });
+  const totalEl = document.getElementById(`batch-total-${op}`);
+  if (totalEl) {
+    totalEl.textContent = sum;
+    const origTotal = parseInt(totalEl.dataset.originalTotal, 10) || 0;
+    if (sum !== origTotal) {
+      totalEl.style.color = "#d97706";
+      totalEl.style.fontWeight = "700";
+    } else {
+      totalEl.style.color = "var(--ink)";
+      totalEl.style.fontWeight = "600";
+    }
+  }
+}
+
+function actualizarEstadoFila(op) {
+  const tr = document.getElementById(`batch-row-${op}`);
+  const statusEl = document.getElementById(`batch-row-status-${op}`);
+  const cambios = (window._editorBatchData && window._editorBatchData.cambiosPorOp[op]) || {};
+  const numCambios = Object.keys(cambios).length;
+
+  if (numCambios > 0) {
+    if (tr) tr.classList.add("is-modified");
+    if (statusEl) {
+      statusEl.innerHTML = `<span title="${numCambios} campo(s) modificados" style="color:#d97706;font-size:12px;">✏️ ${numCambios}</span>`;
+    }
+  } else {
+    if (tr) tr.classList.remove("is-modified");
+    if (statusEl) {
+      statusEl.innerHTML = "";
+    }
+  }
+}
+
+function actualizarContadorCambiosMasivos() {
+  if (!window._editorBatchData) return;
+  const opsConCambios = Object.keys(window._editorBatchData.cambiosPorOp).filter(op =>
+    Object.keys(window._editorBatchData.cambiosPorOp[op]).length > 0
+  );
+  let totalCampos = 0;
+  opsConCambios.forEach(op => {
+    totalCampos += Object.keys(window._editorBatchData.cambiosPorOp[op]).length;
+  });
+
+  const changesPill = document.getElementById("batch-stats-changes");
+  if (changesPill) {
+    if (totalCampos > 0) {
+      changesPill.className = "batch-pill active";
+      changesPill.innerHTML = `✏️ ${totalCampos} cambio(s) en ${opsConCambios.length} OP(s)`;
+    } else {
+      changesPill.className = "batch-pill";
+      changesPill.innerHTML = `0 cambios pendientes`;
+    }
+  }
+
+  const btnSave = document.getElementById("btn-batch-save");
+  if (btnSave) {
+    if (totalCampos > 0) {
+      btnSave.disabled = false;
+      btnSave.style.opacity = "1";
+      btnSave.innerHTML = `💾 Guardar ${totalCampos} cambio(s)`;
+    } else {
+      btnSave.disabled = true;
+      btnSave.style.opacity = "0.6";
+      btnSave.innerHTML = `💾 Guardar cambios`;
+    }
+  }
+
+  const btnDiscard = document.getElementById("btn-batch-discard");
+  if (btnDiscard) {
+    btnDiscard.style.display = totalCampos > 0 ? "inline-flex" : "none";
+  }
+}
+
+function _descartarCambiosFila(op) {
+  const tr = document.getElementById(`batch-row-${op}`);
+  if (!tr) return;
+  const inputs = tr.querySelectorAll(".batch-cell-input");
+  inputs.forEach(el => {
+    el.value = el.dataset.original || "";
+    el.classList.remove("changed");
+  });
+  if (window._editorBatchData && window._editorBatchData.cambiosPorOp[op]) {
+    delete window._editorBatchData.cambiosPorOp[op];
+  }
+  actualizarTotalParesFila(op);
+  actualizarEstadoFila(op);
+  actualizarContadorCambiosMasivos();
+}
+
+function _descartarCambiosMasivos() {
+  if (!window._editorBatchData) return;
+  const totalOps = Object.keys(window._editorBatchData.cambiosPorOp || {}).length;
+  if (totalOps === 0) return;
+  if (!confirm(`¿Deseas descartar todas las modificaciones pendientes?`)) return;
+  Object.keys(window._editorBatchData.cambiosPorOp).forEach(op => {
+    _descartarCambiosFila(op);
+  });
+}
+
+function abrirFichaDesdeTabla(op) {
+  if (!window._editorBatchData) return;
+  const reg = window._editorBatchData.resultados.find(r => String(r.op || (r.campos && r.campos[0])) === String(op));
+  if (!reg) return;
+  mostrarFormEditor(reg, window._editorBatchData.camposDef);
+}
+
+function volverATablaMasiva() {
+  if (window._editorBatchData && window._editorBatchData.resultados && window._editorBatchData.resultados.length > 0) {
+    renderTablaMasivaEditor(window._editorBatchData.resultados, window._editorBatchData.camposDef);
+  } else {
+    renderEditor();
+  }
+}
+
+// ═══════════════════════════════════════════════
+//  GUARDADO MASIVO CON PIN Y PROGRESO EN VIVO
+// ═══════════════════════════════════════════════
+function iniciarGuardadoMasivo() {
+  if (!window._editorBatchData) return;
+
+  const opsConCambios = Object.keys(window._editorBatchData.cambiosPorOp).filter(op =>
+    Object.keys(window._editorBatchData.cambiosPorOp[op]).length > 0
+  );
+
+  if (opsConCambios.length === 0) {
+    const msgEl = document.getElementById("batch-msg");
+    if (msgEl) msgEl.innerHTML = `<span style="color:var(--muted);">Sin cambios para guardar.</span>`;
     return;
   }
 
-  // Múltiples resultados: mostrar lista para elegir
-  const tarjetas = data.resultados.map((r, idx) => {
-    const op     = r.op     || (r.campos && r.campos[0])  || "—";
-    const modelo = r.modelo || (r.campos && r.campos[1])  || "—";
-    const color  = r.color  || (r.campos && r.campos[2])  || "—";
-    const estado = r.estado || (r.campos && r.campos[13]) || "—";
-    return `
-      <div class="op-result-card">
-        <div>
-          <div class="op-card-title">OP ${op} — ${modelo} ${color}</div>
-          <div class="op-card-sub">Fila ${r.fila} · Estado: ${estado}</div>
-        </div>
-        <button class="btn-edit-op" onclick='seleccionarOP(${idx})'>Editar →</button>
-      </div>`;
-  }).join("");
+  let totalCampos = 0;
+  opsConCambios.forEach(op => {
+    totalCampos += Object.keys(window._editorBatchData.cambiosPorOp[op]).length;
+  });
 
-  window._editorData = { ...data, campos: camposDef };
-
-  document.getElementById("editor-result").innerHTML = `
-    <div style="font-size:12px;color:var(--muted);margin-bottom:10px;">
-      ${data.total || data.resultados.length} resultado(s) encontrado(s). Selecciona el que quieres editar:
-    </div>
-    <div class="op-result-list">${tarjetas}</div>`;
+  mostrarPinModalMasivo(opsConCambios, totalCampos);
 }
 
+function mostrarPinModalMasivo(opsConCambios, totalCampos) {
+  const overlay = document.createElement("div");
+  overlay.className = "pin-overlay";
+  overlay.id = "pin-overlay";
+  overlay.innerHTML = `
+    <div class="pin-modal" style="max-width:440px;">
+      <div class="pin-title">🔐 Guardar Cambios en Lote</div>
+      <div class="pin-sub" style="margin-bottom:12px;">
+        Se actualizarán <strong>${opsConCambios.length} Orden(es) de Producción</strong> (${totalCampos} campos en total):
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--accent);margin-top:6px;max-height:60px;overflow-y:auto;background:#f8fafc;padding:6px;border-radius:6px;border:1px solid #e2e8f0;">
+          ${opsConCambios.join(', ')}
+        </div>
+      </div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:8px;">Ingresa el PIN de seguridad:</div>
+      <input type="password" class="pin-input" id="pin-input" maxlength="8"
+        placeholder="••••"
+        onkeypress="if(event.key==='Enter') confirmarPINMasivo()">
+      <div id="batch-progress-container" style="display:none;margin-top:12px;">
+        <div class="batch-progress-bar"><div class="batch-progress-inner" id="batch-progress-inner"></div></div>
+        <div id="batch-progress-label" style="font-size:11.5px;color:var(--muted);text-align:center;">Guardando...</div>
+      </div>
+      <div class="pin-error" id="pin-error"></div>
+      <div class="pin-actions" id="pin-actions-btns">
+        <button class="pin-cancel" onclick="cerrarPinModal()">Cancelar</button>
+        <button class="pin-confirm" onclick="confirmarPINMasivo()">Confirmar y Guardar</button>
+      </div>
+    </div>`;
+  document.body.appendChild(overlay);
+  setTimeout(() => document.getElementById("pin-input")?.focus(), 50);
+
+  overlay._opsConCambios = opsConCambios;
+}
+
+async function confirmarPINMasivo() {
+  const overlay = document.getElementById("pin-overlay");
+  if (!overlay) return;
+  const pin = document.getElementById("pin-input")?.value || "";
+  const ops = overlay._opsConCambios || [];
+  const errorEl = document.getElementById("pin-error");
+  const confirmBtn = overlay.querySelector(".pin-confirm");
+  const cancelBtn = overlay.querySelector(".pin-cancel");
+  const progressBox = document.getElementById("batch-progress-container");
+  const progressBar = document.getElementById("batch-progress-inner");
+  const progressLabel = document.getElementById("batch-progress-label");
+
+  if (!pin) {
+    if (errorEl) errorEl.textContent = "Ingresa el PIN.";
+    return;
+  }
+
+  if (confirmBtn) confirmBtn.disabled = true;
+  if (cancelBtn) cancelBtn.disabled = true;
+  if (errorEl) errorEl.textContent = "";
+  if (progressBox) progressBox.style.display = "block";
+
+  let guardadasOk = 0;
+  let errores = [];
+
+  for (let i = 0; i < ops.length; i++) {
+    const op = ops[i];
+    const reg = window._editorBatchData.resultados.find(r => String(r.op || (r.campos && r.campos[0])) === String(op));
+    if (!reg) continue;
+
+    const fila = reg.fila;
+    const cambiosObj = window._editorBatchData.cambiosPorOp[op] || {};
+
+    const payloadCambios = {};
+    Object.values(cambiosObj).forEach(c => {
+      if (c.col) payloadCambios[c.col] = c.valor;
+      if (c.colIdx !== undefined) payloadCambios[c.colIdx] = c.valor;
+      payloadCambios[c.key] = c.valor;
+    });
+
+    const pct = Math.round(((i) / ops.length) * 100);
+    if (progressBar) progressBar.style.width = `${pct}%`;
+    if (progressLabel) progressLabel.textContent = `Guardando OP ${op} (${i + 1} de ${ops.length})...`;
+
+    const statusEl = document.getElementById(`batch-row-status-${op}`);
+    if (statusEl) statusEl.innerHTML = `<span style="color:var(--accent);font-size:11px;">⏳ Guardando...</span>`;
+
+    try {
+      const resp = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({
+          pin,
+          op: op,
+          fila: fila,
+          filaNum: fila,
+          cambios: payloadCambios,
+          campos: payloadCambios,
+          camposNuevos: payloadCambios
+        })
+      });
+
+      const text = await resp.text();
+      let resJson;
+      try {
+        resJson = JSON.parse(text);
+      } catch (e) {
+        resJson = { error: "Respuesta no válida: " + text.slice(0, 80) };
+      }
+
+      if (resJson.error) {
+        if (resJson.error.toLowerCase().includes("pin")) {
+          // Detener de inmediato si el PIN es incorrecto
+          if (errorEl) errorEl.textContent = resJson.error;
+          if (confirmBtn) { confirmBtn.disabled = false; confirmBtn.textContent = "Reintentar"; }
+          if (cancelBtn) cancelBtn.disabled = false;
+          if (statusEl) statusEl.innerHTML = `<span style="color:#dc2626;font-size:11px;">❌ PIN erróneo</span>`;
+          return;
+        } else {
+          errores.push(`OP ${op}: ${resJson.error}`);
+          if (statusEl) statusEl.innerHTML = `<span style="color:#dc2626;font-size:11px;" title="${resJson.error}">❌ Error</span>`;
+        }
+      } else {
+        guardadasOk++;
+        const tr = document.getElementById(`batch-row-${op}`);
+        if (tr) {
+          tr.classList.remove("is-modified");
+          tr.querySelectorAll(".batch-cell-input").forEach(el => {
+            el.dataset.original = el.value;
+            el.classList.remove("changed");
+          });
+        }
+        if (statusEl) statusEl.innerHTML = `<span style="color:#059669;font-weight:700;font-size:11px;">✅ Guardado</span>`;
+        delete window._editorBatchData.cambiosPorOp[op];
+      }
+    } catch (netErr) {
+      errores.push(`OP ${op}: Error de red ${netErr.message}`);
+      if (statusEl) statusEl.innerHTML = `<span style="color:#dc2626;font-size:11px;">❌ Red</span>`;
+    }
+  }
+
+  if (progressBar) progressBar.style.width = "100%";
+  if (progressLabel) progressLabel.textContent = `¡Proceso completado!`;
+
+  setTimeout(() => {
+    cerrarPinModal();
+    actualizarContadorCambiosMasivos();
+
+    const msgEl = document.getElementById("batch-msg");
+    if (msgEl) {
+      if (errores.length === 0) {
+        msgEl.innerHTML = `<span style="color:#059669;font-weight:700;font-size:13px;">✅ Se guardaron con éxito todas las ${guardadasOk} OPs modificadas.</span>`;
+      } else {
+        msgEl.innerHTML = `<span style="color:#059669;font-weight:600;">✅ ${guardadasOk} OPs guardadas.</span> <span style="color:#dc2626;">⚠️ Errores en ${errores.length} OPs: ${errores.join(', ')}</span>`;
+      }
+    }
+  }, 600);
+}
+
+// ═══════════════════════════════════════════════
+//  FICHA INDIVIDUAL DE OP
+// ═══════════════════════════════════════════════
 function seleccionarOP(idx) {
-  const data = window._editorData;
-  mostrarFormEditor(data.resultados[idx], data.campos || CAMPOS_DEF_DEFAULT);
+  if (window._editorBatchData && window._editorBatchData.resultados[idx]) {
+    mostrarFormEditor(window._editorBatchData.resultados[idx], window._editorBatchData.camposDef || CAMPOS_DEF_DEFAULT);
+  }
 }
 
 function mostrarFormEditor(registro, camposDef) {
@@ -4429,7 +5393,6 @@ function mostrarFormEditor(registro, camposDef) {
   const color  = registro.color  || (registro.campos && registro.campos[2])  || "—";
   const estado = registro.estado || (registro.campos && registro.campos[13]) || "—";
 
-  // Color del badge según estado
   const estadoColores = {
     "CORTE":                { bg:"#e8f0fe", color:"#1a56db" },
     "HABILITADO":           { bg:"#e8f5e9", color:"#2f7d5f" },
@@ -4443,7 +5406,6 @@ function mostrarFormEditor(registro, camposDef) {
   };
   const ec = estadoColores[estado.toUpperCase()] || { bg:"#f1f5f9", color:"#64748b" };
 
-  // Agrupar campos por sección
   const secciones = {};
   campos.forEach(c => {
     const sec = c.seccion || "General";
@@ -4514,7 +5476,7 @@ function mostrarFormEditor(registro, camposDef) {
           </div>
         </div>
         <div class="editor-actions">
-          <button class="btn-secondary" onclick="renderEditor()">← Volver</button>
+          <button class="btn-secondary" onclick="volverATablaMasiva()">← Volver a la tabla</button>
           <button class="btn-save" id="btn-guardar" onclick="iniciarGuardado()">
             💾 Guardar cambios
           </button>
@@ -4541,7 +5503,7 @@ function iniciarGuardado() {
   const cambios = {};
 
   camposDef.forEach(c => {
-    if (c.readOnly) return; // Columnas A a N son solo lectura
+    if (c.readOnly) return;
     const fieldId = `ef-${c.col || c.key || c.colIdx}`;
     const el = document.getElementById(fieldId);
     if (!el) return;
@@ -4602,7 +5564,6 @@ function confirmarPIN() {
   confirmBtn.textContent = "Guardando...";
   errorEl.textContent = "";
 
-  // Se usa 'text/plain;charset=utf-8' para evitar el preflight OPTIONS de CORS en Google Apps Script
   fetch(API_URL, {
     method: "POST",
     headers: { "Content-Type": "text/plain;charset=utf-8" },
@@ -4643,6 +5604,16 @@ function confirmarPIN() {
           el.classList.remove("changed");
         }
       });
+
+      if (window._editorBatchData && window._editorBatchData.resultados) {
+        const regIdx = window._editorBatchData.resultados.findIndex(r => String(r.op || (r.campos && r.campos[0])) === String(editorDatosActuales.registro.op));
+        if (regIdx >= 0) {
+          Object.assign(window._editorBatchData.resultados[regIdx], cambios);
+          if (window._editorBatchData.cambiosPorOp[editorDatosActuales.registro.op]) {
+            delete window._editorBatchData.cambiosPorOp[editorDatosActuales.registro.op];
+          }
+        }
+      }
 
       let msg = `✅ ${data.cambiosAplicados || 'Cambios'} guardado(s) correctamente en la fila ${data.fila || editorDatosActuales.registro.fila}.`;
       if (data.advertencias?.length) {
