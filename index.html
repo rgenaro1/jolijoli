@@ -1623,6 +1623,269 @@
     transition: width .2s ease;
   }
 
+  /* ═══════════════════════════════════════
+     TARJETAS VISUALES DE PRODUCCIÓN (UI AMIGABLE)
+  ═══════════════════════════════════════ */
+  .editor-cards-container {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 16px;
+    background: #f8fafc;
+  }
+  .editor-op-card {
+    background: #ffffff;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px 18px;
+    box-shadow: 0 1px 4px rgba(0,0,0,.03);
+    transition: all .2s ease;
+  }
+  .editor-op-card:hover {
+    border-color: #cbd5e1;
+    box-shadow: 0 4px 12px rgba(0,0,0,.05);
+  }
+  .editor-op-card.is-modified {
+    border-color: #f59e0b !important;
+    background-color: #fffdf8 !important;
+    box-shadow: 0 0 0 1px rgba(245,158,11,.25);
+  }
+  .card-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    border-bottom: 1px solid #f1f5f9;
+    padding-bottom: 12px;
+  }
+  .card-left-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .card-op-badge {
+    background: #0f766e;
+    color: #ffffff;
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 700;
+    font-size: 13px;
+    padding: 4px 10px;
+    border-radius: 8px;
+    letter-spacing: .02em;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .card-titles {
+    display: flex;
+    flex-direction: column;
+  }
+  .card-model-title {
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--ink);
+    line-height: 1.2;
+  }
+  .card-sub-info {
+    font-size: 12px;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 2px;
+  }
+  .card-color-dot {
+    display: inline-block;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #475569;
+    border: 1px solid #cbd5e1;
+  }
+  .card-right-badges {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .card-status-badge {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 20px;
+    letter-spacing: .03em;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .card-pairs-badge {
+    font-size: 11.5px;
+    font-weight: 700;
+    background: #f1f5f9;
+    color: #334155;
+    padding: 3px 10px;
+    border-radius: 20px;
+    border: 1px solid #e2e8f0;
+  }
+  .card-stepper-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 10px;
+    margin-top: 14px;
+  }
+  .stage-box {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 10px;
+    transition: all .15s ease;
+  }
+  .stage-box.stage-active {
+    background: #fffbeb;
+    border-color: #fde68a;
+    box-shadow: 0 0 0 1px rgba(217,119,6,.2);
+  }
+  .stage-box.stage-done {
+    background: #f0fdf4;
+    border-color: #bbf7d0;
+  }
+  .stage-box-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 7px;
+    font-size: 11.5px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .stage-tag {
+    font-size: 9.5px;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 6px;
+    text-transform: uppercase;
+  }
+  .stage-tag.done { background: #dcfce7; color: #166534; }
+  .stage-tag.active { background: #fef3c7; color: #92400e; }
+  .stage-tag.pending { background: #e2e8f0; color: #64748b; }
+  .stage-field {
+    margin-top: 6px;
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .stage-field label {
+    display: block;
+    margin-bottom: 2px;
+    font-size: 10.5px;
+    font-weight: 600;
+    color: #64748b;
+  }
+  .stage-input-wrap {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+  }
+  .stage-date-input {
+    flex: 1;
+    min-width: 0;
+    padding: 5px 6px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 11.5px;
+    font-family: 'IBM Plex Mono', monospace;
+    text-align: center;
+    background: #fff;
+    color: var(--ink);
+    box-sizing: border-box;
+    transition: all .12s ease;
+  }
+  .stage-date-input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(13,148,136,.18);
+  }
+  .stage-date-input.changed {
+    border-color: #d97706 !important;
+    background-color: #fef3c7 !important;
+    font-weight: 600;
+    color: #92400e !important;
+  }
+  .btn-hoy-mini {
+    background: #e2e8f0;
+    color: #334155;
+    border: none;
+    padding: 5px 7px;
+    border-radius: 5px;
+    font-size: 10.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background .12s;
+  }
+  .btn-hoy-mini:hover {
+    background: #cbd5e1;
+  }
+  .card-tallas-bar {
+    margin-top: 12px;
+    background: #f8fafc;
+    border: 1px solid #edf2f7;
+    border-radius: 10px;
+    padding: 8px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    font-size: 12px;
+  }
+  .card-tallas-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .talla-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    padding: 2px 5px;
+    font-size: 11.5px;
+  }
+  .talla-chip span {
+    font-weight: 700;
+    color: #64748b;
+    font-size: 10.5px;
+  }
+  .talla-input {
+    width: 34px;
+    border: none;
+    text-align: center;
+    font-weight: 700;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11.5px;
+    color: var(--ink);
+    background: transparent;
+    outline: none;
+    padding: 2px 0;
+  }
+  .talla-input.changed {
+    background: #fef3c7 !important;
+    color: #92400e !important;
+  }
+  .card-total-box {
+    font-weight: 700;
+    font-size: 12px;
+    color: var(--ink);
+    background: #ffffff;
+    padding: 3px 8px;
+    border-radius: 6px;
+    border: 1px solid #e2e8f0;
+  }
+
+
   /* PIN modal */
   .pin-overlay {
     position: fixed;
@@ -4586,7 +4849,7 @@ window._editorBatchData = null; // Almacén global para edición masiva de OPs
 
 function _parsearOpsInput(inputStr) {
   if (!inputStr) return [];
-  // Expandir rangos de tipo 3354-3360 o 3354 - 3360
+  // Expandir rangos tipo 3354-3360 o 3354 - 3360
   let s = String(inputStr).replace(/(\d+)\s*-\s*(\d+)/g, function(_, a, b) {
     const n1 = parseInt(a, 10), n2 = parseInt(b, 10);
     if (isNaN(n1) || isNaN(n2)) return a + ' ' + b;
@@ -4733,7 +4996,7 @@ async function buscarOPEditor() {
         aviso = `⚠️ No se encontraron ${noEncontradas.length} OP(s): ${noEncontradas.slice(0, 10).join(', ')}${noEncontradas.length > 10 ? '...' : ''}`;
       }
 
-      renderTablaMasivaEditor(todosResultados, camposDef, aviso);
+      renderEdicionMasivaOPs(todosResultados, camposDef, aviso);
     } catch (err) {
       resultEl.innerHTML = `<div class="estado-msg error">⚠️ Error al buscar OPs: ${err.message}</div>`;
     }
@@ -4772,11 +5035,11 @@ function mostrarResultadosOP(data, aviso) {
   }
 
   const camposDef = data.campos || CAMPOS_DEF_DEFAULT;
-  renderTablaMasivaEditor(data.resultados, camposDef, aviso);
+  renderEdicionMasivaOPs(data.resultados, camposDef, aviso);
 }
 
 // ═══════════════════════════════════════════════
-//  TABLA DE EDICIÓN MASIVA DE OPS
+//  EDICIÓN MASIVA DE OPS (TARJETAS VISUALES / TABLA)
 // ═══════════════════════════════════════════════
 const COLUMNAS_EDITABLES_CONFIG = [
   { key: "col_O",  col: "O",  colIdx: 15, tipo: "fecha", label: "Corte (O)", fallbackKey: "fechaCorte" },
@@ -4796,26 +5059,462 @@ const COLUMNAS_EDITABLES_CONFIG = [
 ];
 
 function renderTablaMasivaEditor(resultados, camposDef, aviso) {
+  renderEdicionMasivaOPs(resultados, camposDef, aviso);
+}
+
+function renderEdicionMasivaOPs(resultados, camposDef, aviso) {
   const campos = camposDef || CAMPOS_DEF_DEFAULT;
   window._editorBatchData = {
     resultados: resultados,
     camposDef: campos,
-    cambiosPorOp: {}
+    cambiosPorOp: {},
+    vistaActual: (window._editorBatchData && window._editorBatchData.vistaActual) || 'cards'
   };
 
   const estadoColores = {
-    "CORTE":                { bg:"#e8f0fe", color:"#1a56db" },
-    "HABILITADO":           { bg:"#e8f5e9", color:"#2f7d5f" },
-    "PERFILADO":            { bg:"#fff8e1", color:"#b45309" },
-    "ALMACEN DE PERFILADO": { bg:"#fff8e1", color:"#b45309" },
-    "ARMADO":               { bg:"#ede7f6", color:"#6d28d9" },
-    "AREA DE ARMADO":       { bg:"#ede7f6", color:"#6d28d9" },
-    "ALISTADO":             { bg:"#e0f7fa", color:"#0d7377" },
-    "AREA DE ALISTADO":     { bg:"#e0f7fa", color:"#0d7377" },
-    "PRODUCTO TERMINADO":   { bg:"#f3e8ff", color:"#7c3aed" }
+    "CORTE":                { bg:"#e8f0fe", color:"#1a56db", dot:"#1a56db" },
+    "HABILITADO":           { bg:"#e8f5e9", color:"#2f7d5f", dot:"#2f7d5f" },
+    "PERFILADO":            { bg:"#fff8e1", color:"#b45309", dot:"#b45309" },
+    "ALMACEN DE PERFILADO": { bg:"#fff8e1", color:"#b45309", dot:"#b45309" },
+    "ARMADO":               { bg:"#ede7f6", color:"#6d28d9", dot:"#6d28d9" },
+    "AREA DE ARMADO":       { bg:"#ede7f6", color:"#6d28d9", dot:"#6d28d9" },
+    "ALISTADO":             { bg:"#e0f7fa", color:"#0d7377", dot:"#0d7377" },
+    "AREA DE ALISTADO":     { bg:"#e0f7fa", color:"#0d7377", dot:"#0d7377" },
+    "PRODUCTO TERMINADO":   { bg:"#f3e8ff", color:"#7c3aed", dot:"#7c3aed" }
   };
 
-  const filasHtml = resultados.map((r, idx) => {
+  const tarjetasHtml = _construirTarjetasHtml(resultados, estadoColores);
+  const tablaHtml    = _construirTablaHtml(resultados, estadoColores);
+
+  let avisoHtml = "";
+  if (aviso) {
+    avisoHtml = `
+      <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:10px 14px;margin-bottom:12px;font-size:12.5px;color:#92400e;">
+        ${aviso}
+      </div>`;
+  }
+
+  const vista = window._editorBatchData.vistaActual;
+
+  document.getElementById("editor-result").innerHTML = `
+    ${avisoHtml}
+    <div class="editor-batch-container">
+      <!-- Barra Superior -->
+      <div class="editor-batch-toolbar">
+        <div class="editor-batch-title-area">
+          <div class="editor-batch-title">📋 Edición Masiva de Órdenes de Producción</div>
+          <span class="batch-pill" id="batch-stats-loaded">${resultados.length} OPs cargadas</span>
+          <span class="batch-pill" id="batch-stats-changes">0 cambios pendientes</span>
+
+          <!-- Selector de Modo de Vista -->
+          <div class="view-toggle-box" style="display:inline-flex;background:#e2e8f0;padding:2px;border-radius:8px;font-size:11.5px;font-weight:600;margin-left:6px;">
+            <button id="toggle-view-cards" onclick="_cambiarModoVistaBatch('cards')" style="padding:4px 10px;border:none;border-radius:6px;cursor:pointer;background:${vista==='cards'?'#fff':'transparent'};color:${vista==='cards'?'var(--ink)':'var(--muted)'};box-shadow:${vista==='cards'?'0 1px 3px rgba(0,0,0,.08)':'none'};font-weight:700;">
+              🎴 Tarjetas Visuales
+            </button>
+            <button id="toggle-view-table" onclick="_cambiarModoVistaBatch('table')" style="padding:4px 10px;border:none;border-radius:6px;cursor:pointer;background:${vista==='table'?'#fff':'transparent'};color:${vista==='table'?'var(--ink)':'var(--muted)'};box-shadow:${vista==='table'?'0 1px 3px rgba(0,0,0,.08)':'none'};font-weight:700;">
+              📊 Tabla
+            </button>
+          </div>
+        </div>
+
+        <div class="editor-batch-actions">
+          <button class="btn-secondary" id="btn-batch-discard" style="display:none;font-size:12px;padding:6px 11px;" onclick="_descartarCambiosMasivos()">
+            ↺ Descartar todo
+          </button>
+          <button class="btn-save" id="btn-batch-save" style="font-size:12px;padding:7px 14px;opacity:0.6;" disabled onclick="iniciarGuardadoMasivo()">
+            💾 Guardar cambios
+          </button>
+        </div>
+      </div>
+
+      <!-- Barra de Relleno Rápido -->
+      <div class="editor-quickfill-box">
+        <span style="font-weight:700;color:var(--ink);">⚡ Relleno Rápido:</span>
+        <span style="color:var(--muted);">Etapa:</span>
+        <select id="quickfill-col" class="quickfill-select">
+          <option value="col_O">✂️ Corte Inicio (Col O)</option>
+          <option value="col_T">✂️ Corte Fin (Col T)</option>
+          <option value="col_U">🏷️ Habilitado (Col U)</option>
+          <option value="col_AA">🧵 Perfilado Inicio (Col AA)</option>
+          <option value="col_AF">🧵 Perfilado Fin (Col AF)</option>
+          <option value="col_AM">👞 Armado (Col AM)</option>
+          <option value="col_AN">📦 Alistado Inicio (Col AN)</option>
+          <option value="col_AR">📦 Alistado Fin (Col AR)</option>
+        </select>
+        <span style="color:var(--muted);">Fecha:</span>
+        <input type="text" id="quickfill-val" class="quickfill-input" placeholder="dd/MM/yyyy" style="width:105px;">
+        <button type="button" class="btn-quickfill-today" onclick="_ponerFechaHoyQuickFill()" title="Insertar fecha de hoy">📅 Hoy</button>
+        <button type="button" class="btn-quickfill-apply" onclick="_aplicarRellenoRapido(false)">⚡ Aplicar a todas</button>
+        <button type="button" class="btn-secondary" style="font-size:11.5px;padding:5px 9px;" onclick="_aplicarRellenoRapido(true)" title="Solo a las celdas que actualmente estén vacías">⚡ Solo vacías</button>
+      </div>
+
+      <!-- Contenedor 1: VISTA DE TARJETAS VISUALES (Amigable e Intuitiva) -->
+      <div id="batch-view-cards" class="editor-cards-container" style="display:${vista==='cards'?'flex':'none'};">
+        ${tarjetasHtml}
+      </div>
+
+      <!-- Contenedor 2: VISTA TABULAR COMPACTA -->
+      <div id="batch-view-table" class="editor-table-wrap" style="display:${vista==='table'?'block':'none'};">
+        <table class="editor-batch-table">
+          <thead>
+            <tr>
+              <th colspan="4" class="super-header super-info">Identificación</th>
+              <th colspan="2" class="super-header super-info">Estado & Pedido</th>
+              <th colspan="2" class="super-header super-corte">Corte (O, T)</th>
+              <th colspan="1" class="super-header super-hab">Habilitado (U)</th>
+              <th colspan="2" class="super-header super-perf">Perfilado (AA, AF)</th>
+              <th colspan="1" class="super-header super-arm">Armado (AM)</th>
+              <th colspan="2" class="super-header super-alist">Alistado (AN, AR)</th>
+              <th colspan="7" class="super-header super-talla">Cantidades por Talla (AS — AX)</th>
+              <th colspan="1" class="super-header super-action">Acciones</th>
+            </tr>
+            <tr>
+              <th class="sub-th col-sticky-idx">#</th>
+              <th class="sub-th col-sticky-op">OP</th>
+              <th class="sub-th col-sticky-mod">Modelo</th>
+              <th class="sub-th col-sticky-col">Color</th>
+              <th class="sub-th" style="min-width:110px;">Estado</th>
+              <th class="sub-th" style="min-width:85px;">F. Pedido</th>
+              <th class="sub-th">Inicio (O)</th>
+              <th class="sub-th">Fin (T)</th>
+              <th class="sub-th">Habilitado (U)</th>
+              <th class="sub-th">Inicio (AA)</th>
+              <th class="sub-th">Fin (AF)</th>
+              <th class="sub-th">Armado (AM)</th>
+              <th class="sub-th">Inicio (AN)</th>
+              <th class="sub-th">Fin (AR)</th>
+              <th class="sub-th">35</th>
+              <th class="sub-th">36</th>
+              <th class="sub-th">37</th>
+              <th class="sub-th">38</th>
+              <th class="sub-th">39</th>
+              <th class="sub-th">40</th>
+              <th class="sub-th" style="min-width:55px;">Total</th>
+              <th class="sub-th" style="min-width:75px;">Opciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${tablaHtml}
+          </tbody>
+        </table>
+      </div>
+
+      <div id="batch-msg" style="padding:10px 18px;font-size:13px;border-top:1px solid var(--border);background:#fff;"></div>
+    </div>`;
+
+  _setupTableKeyboardNav();
+}
+
+function _cambiarModoVistaBatch(modo) {
+  if (!window._editorBatchData) return;
+  window._editorBatchData.vistaActual = modo;
+  const cardsEl = document.getElementById("batch-view-cards");
+  const tableEl = document.getElementById("batch-view-table");
+  const btnCards = document.getElementById("toggle-view-cards");
+  const btnTable = document.getElementById("toggle-view-table");
+
+  if (modo === 'cards') {
+    if (cardsEl) cardsEl.style.display = 'flex';
+    if (tableEl) tableEl.style.display = 'none';
+    if (btnCards) {
+      btnCards.style.background = '#fff';
+      btnCards.style.color = 'var(--ink)';
+      btnCards.style.boxShadow = '0 1px 3px rgba(0,0,0,.08)';
+    }
+    if (btnTable) {
+      btnTable.style.background = 'transparent';
+      btnTable.style.color = 'var(--muted)';
+      btnTable.style.boxShadow = 'none';
+    }
+  } else {
+    if (cardsEl) cardsEl.style.display = 'none';
+    if (tableEl) tableEl.style.display = 'block';
+    if (btnTable) {
+      btnTable.style.background = '#fff';
+      btnTable.style.color = 'var(--ink)';
+      btnTable.style.boxShadow = '0 1px 3px rgba(0,0,0,.08)';
+    }
+    if (btnCards) {
+      btnCards.style.background = 'transparent';
+      btnCards.style.color = 'var(--muted)';
+      btnCards.style.boxShadow = 'none';
+    }
+  }
+}
+
+// ═══════════════════════════════════════════════
+//  CONSTRUCTOR DE TARJETAS VISUALES
+// ═══════════════════════════════════════════════
+function _construirTarjetasHtml(resultados, estadoColores) {
+  return resultados.map((r, idx) => {
+    const op      = String(r.op || (r.campos && r.campos[0]) || `OP-${idx+1}`);
+    const modelo  = r.modelo || (r.campos && r.campos[1]) || "—";
+    const color   = r.color  || (r.campos && r.campos[2]) || "—";
+    const fPedido = _formatearFechaValor(r.fechaPedido || (r.campos && r.campos[3]));
+    const estado  = (r.estado || (r.campos && r.campos[13]) || "—").toString().toUpperCase();
+    const ec      = estadoColores[estado] || { bg:"#f1f5f9", color:"#64748b", dot:"#94a3b8" };
+
+    // Valores de etapas
+    const vCorteIni = _getCampoValor(r, { key: "col_O",  col: "O",  colIdx: 15, tipo: "fecha", fallbackKey: "fechaCorte" });
+    const vCorteFin = _getCampoValor(r, { key: "col_T",  col: "T",  colIdx: 20, tipo: "fecha" });
+    const vHab      = _getCampoValor(r, { key: "col_U",  col: "U",  colIdx: 21, tipo: "fecha", fallbackKey: "fechaHabilitado" });
+    const vPerfIni  = _getCampoValor(r, { key: "col_AA", col: "AA", colIdx: 27, tipo: "fecha", fallbackKey: "fechaPerfilado" });
+    const vPerfFin  = _getCampoValor(r, { key: "col_AF", col: "AF", colIdx: 32, tipo: "fecha" });
+    const vArmado   = _getCampoValor(r, { key: "col_AM", col: "AM", colIdx: 39, tipo: "fecha", fallbackKey: "fechaArmado" });
+    const vAlistIni = _getCampoValor(r, { key: "col_AN", col: "AN", colIdx: 40, tipo: "fecha" });
+    const vAlistFin = _getCampoValor(r, { key: "col_AR", col: "AR", colIdx: 44, tipo: "fecha" });
+
+    // Determinar estado de cada etapa (Listo / En curso / Pendiente)
+    const isCorteDone = !!vCorteFin;
+    const isCorteActive = estado.includes("CORTE");
+
+    const isHabDone = !!vHab;
+    const isHabActive = estado.includes("HABILITADO");
+
+    const isPerfDone = !!vPerfFin;
+    const isPerfActive = estado.includes("PERFILADO");
+
+    const isArmDone = !!vArmado;
+    const isArmActive = estado.includes("ARMADO");
+
+    const isAlistDone = !!vAlistFin;
+    const isAlistActive = estado.includes("ALISTADO") || estado.includes("TERMINADO");
+
+    // Tallas iniciales y total
+    const tallasKeys = ["t35", "t36", "t37", "t38", "t39", "t40"];
+    const tallasVals = {};
+    let totalPares = 0;
+    tallasKeys.forEach((tk, tIdx) => {
+      const v = parseInt(_getCampoValor(r, { key: tk, col: ["AS","AT","AU","AV","AW","AX"][tIdx], colIdx: 45 + tIdx, tipo: "numero" }), 10);
+      const num = (!isNaN(v) && v > 0) ? v : "";
+      tallasVals[tk] = num;
+      if (num !== "") totalPares += num;
+    });
+
+    return `
+      <div class="editor-op-card" id="batch-card-${op}" data-op="${op}">
+        <!-- Fila de Encabezado de la Ficha -->
+        <div class="card-header-row">
+          <div class="card-left-info">
+            <span class="card-op-badge">OP ${op}</span>
+            <div class="card-titles">
+              <span class="card-model-title">${modelo}</span>
+              <div class="card-sub-info">
+                <span class="card-color-dot" style="background:${ec.dot};"></span>
+                <span style="font-weight:600;color:var(--ink);">${color}</span>
+                <span>•</span>
+                <span>Pedido: ${fPedido || '—'}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-right-badges">
+            <span class="card-status-badge" style="background:${ec.bg};color:${ec.color};">
+              ● ${estado}
+            </span>
+            <span class="card-pairs-badge">
+              👠 <strong id="card-header-total-${op}">${totalPares}</strong> Pares
+            </span>
+            <span id="batch-card-status-${op}" class="batch-row-status"></span>
+
+            <button class="btn-secondary" style="font-size:11.5px;padding:4px 8px;" onclick="_descartarCambiosFila('${op}')" title="Descartar cambios de esta OP">↺</button>
+            <button class="btn-secondary" style="font-size:11.5px;padding:4px 9px;" onclick="abrirFichaDesdeTabla('${op}')" title="Ver ficha individual">📝 Ficha</button>
+          </div>
+        </div>
+
+        <!-- Stepper Visual de 5 Etapas de Producción -->
+        <div class="card-stepper-grid">
+          <!-- Etapa 1: Corte -->
+          <div class="stage-box ${isCorteDone ? 'stage-done' : (isCorteActive ? 'stage-active' : '')}">
+            <div class="stage-box-header">
+              <span>✂️ Corte</span>
+              <span class="stage-tag ${isCorteDone ? 'done' : (isCorteActive ? 'active' : 'pending')}">
+                ${isCorteDone ? 'Listo' : (isCorteActive ? 'En curso' : 'Pendiente')}
+              </span>
+            </div>
+            <div class="stage-field">
+              <label>Inicio (O):</label>
+              <div class="stage-input-wrap">
+                <input type="text" class="batch-cell-input stage-date-input"
+                  data-op="${op}" data-col="O" data-colidx="15" data-key="col_O" data-tipo="fecha"
+                  data-original="${vCorteIni}" value="${vCorteIni}" placeholder="dd/MM/yyyy"
+                  oninput="marcarCambiadoBatchCell(this)">
+                <button type="button" class="btn-hoy-mini" onclick="_ponerHoyEnCampo('${op}', 'col_O')" title="Poner fecha de hoy">Hoy</button>
+              </div>
+            </div>
+            <div class="stage-field">
+              <label>Fin (T):</label>
+              <div class="stage-input-wrap">
+                <input type="text" class="batch-cell-input stage-date-input"
+                  data-op="${op}" data-col="T" data-colidx="20" data-key="col_T" data-tipo="fecha"
+                  data-original="${vCorteFin}" value="${vCorteFin}" placeholder="dd/MM/yyyy"
+                  oninput="marcarCambiadoBatchCell(this)">
+                <button type="button" class="btn-hoy-mini" onclick="_ponerHoyEnCampo('${op}', 'col_T')" title="Poner fecha de hoy">Hoy</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Etapa 2: Habilitado -->
+          <div class="stage-box ${isHabDone ? 'stage-done' : (isHabActive ? 'stage-active' : '')}">
+            <div class="stage-box-header">
+              <span>🏷️ Habilitado</span>
+              <span class="stage-tag ${isHabDone ? 'done' : (isHabActive ? 'active' : 'pending')}">
+                ${isHabDone ? 'Listo' : (isHabActive ? 'En curso' : 'Pendiente')}
+              </span>
+            </div>
+            <div class="stage-field" style="margin-top:12px;">
+              <label>Fecha (U):</label>
+              <div class="stage-input-wrap">
+                <input type="text" class="batch-cell-input stage-date-input"
+                  data-op="${op}" data-col="U" data-colidx="21" data-key="col_U" data-tipo="fecha"
+                  data-original="${vHab}" value="${vHab}" placeholder="dd/MM/yyyy"
+                  oninput="marcarCambiadoBatchCell(this)">
+                <button type="button" class="btn-hoy-mini" onclick="_ponerHoyEnCampo('${op}', 'col_U')" title="Poner fecha de hoy">Hoy</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Etapa 3: Perfilado -->
+          <div class="stage-box ${isPerfDone ? 'stage-done' : (isPerfActive ? 'stage-active' : '')}">
+            <div class="stage-box-header">
+              <span>🧵 Perfilado</span>
+              <span class="stage-tag ${isPerfDone ? 'done' : (isPerfActive ? 'active' : 'pending')}">
+                ${isPerfDone ? 'Listo' : (isPerfActive ? 'En curso' : 'Pendiente')}
+              </span>
+            </div>
+            <div class="stage-field">
+              <label>Inicio (AA):</label>
+              <div class="stage-input-wrap">
+                <input type="text" class="batch-cell-input stage-date-input"
+                  data-op="${op}" data-col="AA" data-colidx="27" data-key="col_AA" data-tipo="fecha"
+                  data-original="${vPerfIni}" value="${vPerfIni}" placeholder="dd/MM/yyyy"
+                  oninput="marcarCambiadoBatchCell(this)">
+                <button type="button" class="btn-hoy-mini" onclick="_ponerHoyEnCampo('${op}', 'col_AA')" title="Poner fecha de hoy">Hoy</button>
+              </div>
+            </div>
+            <div class="stage-field">
+              <label>Fin (AF):</label>
+              <div class="stage-input-wrap">
+                <input type="text" class="batch-cell-input stage-date-input"
+                  data-op="${op}" data-col="AF" data-colidx="32" data-key="col_AF" data-tipo="fecha"
+                  data-original="${vPerfFin}" value="${vPerfFin}" placeholder="dd/MM/yyyy"
+                  oninput="marcarCambiadoBatchCell(this)">
+                <button type="button" class="btn-hoy-mini" onclick="_ponerHoyEnCampo('${op}', 'col_AF')" title="Poner fecha de hoy">Hoy</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Etapa 4: Armado -->
+          <div class="stage-box ${isArmDone ? 'stage-done' : (isArmActive ? 'stage-active' : '')}">
+            <div class="stage-box-header">
+              <span>👞 Armado</span>
+              <span class="stage-tag ${isArmDone ? 'done' : (isArmActive ? 'active' : 'pending')}">
+                ${isArmDone ? 'Listo' : (isArmActive ? 'En curso' : 'Pendiente')}
+              </span>
+            </div>
+            <div class="stage-field" style="margin-top:12px;">
+              <label>Fecha (AM):</label>
+              <div class="stage-input-wrap">
+                <input type="text" class="batch-cell-input stage-date-input"
+                  data-op="${op}" data-col="AM" data-colidx="39" data-key="col_AM" data-tipo="fecha"
+                  data-original="${vArmado}" value="${vArmado}" placeholder="dd/MM/yyyy"
+                  oninput="marcarCambiadoBatchCell(this)">
+                <button type="button" class="btn-hoy-mini" onclick="_ponerHoyEnCampo('${op}', 'col_AM')" title="Poner fecha de hoy">Hoy</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Etapa 5: Alistado -->
+          <div class="stage-box ${isAlistDone ? 'stage-done' : (isAlistActive ? 'stage-active' : '')}">
+            <div class="stage-box-header">
+              <span>📦 Alistado</span>
+              <span class="stage-tag ${isAlistDone ? 'done' : (isAlistActive ? 'active' : 'pending')}">
+                ${isAlistDone ? 'Listo' : (isAlistActive ? 'En curso' : 'Pendiente')}
+              </span>
+            </div>
+            <div class="stage-field">
+              <label>Inicio (AN):</label>
+              <div class="stage-input-wrap">
+                <input type="text" class="batch-cell-input stage-date-input"
+                  data-op="${op}" data-col="AN" data-colidx="40" data-key="col_AN" data-tipo="fecha"
+                  data-original="${vAlistIni}" value="${vAlistIni}" placeholder="dd/MM/yyyy"
+                  oninput="marcarCambiadoBatchCell(this)">
+                <button type="button" class="btn-hoy-mini" onclick="_ponerHoyEnCampo('${op}', 'col_AN')" title="Poner fecha de hoy">Hoy</button>
+              </div>
+            </div>
+            <div class="stage-field">
+              <label>Fin (AR):</label>
+              <div class="stage-input-wrap">
+                <input type="text" class="batch-cell-input stage-date-input"
+                  data-op="${op}" data-col="AR" data-colidx="44" data-key="col_AR" data-tipo="fecha"
+                  data-original="${vAlistFin}" value="${vAlistFin}" placeholder="dd/MM/yyyy"
+                  oninput="marcarCambiadoBatchCell(this)">
+                <button type="button" class="btn-hoy-mini" onclick="_ponerHoyEnCampo('${op}', 'col_AR')" title="Poner fecha de hoy">Hoy</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Barra Integrada de Tallas -->
+        <div class="card-tallas-bar">
+          <span style="font-weight:700;color:var(--ink);">📏 Cantidades por Talla:</span>
+          <div class="card-tallas-group">
+            <div class="talla-chip">
+              <span>35:</span>
+              <input type="number" min="0" class="batch-cell-input talla-input"
+                data-op="${op}" data-col="AS" data-colidx="45" data-key="t35" data-tipo="numero"
+                data-original="${tallasVals.t35}" value="${tallasVals.t35}"
+                oninput="marcarCambiadoBatchCell(this)">
+            </div>
+            <div class="talla-chip">
+              <span>36:</span>
+              <input type="number" min="0" class="batch-cell-input talla-input"
+                data-op="${op}" data-col="AT" data-colidx="46" data-key="t36" data-tipo="numero"
+                data-original="${tallasVals.t36}" value="${tallasVals.t36}"
+                oninput="marcarCambiadoBatchCell(this)">
+            </div>
+            <div class="talla-chip">
+              <span>37:</span>
+              <input type="number" min="0" class="batch-cell-input talla-input"
+                data-op="${op}" data-col="AU" data-colidx="47" data-key="t37" data-tipo="numero"
+                data-original="${tallasVals.t37}" value="${tallasVals.t37}"
+                oninput="marcarCambiadoBatchCell(this)">
+            </div>
+            <div class="talla-chip">
+              <span>38:</span>
+              <input type="number" min="0" class="batch-cell-input talla-input"
+                data-op="${op}" data-col="AV" data-colidx="48" data-key="t38" data-tipo="numero"
+                data-original="${tallasVals.t38}" value="${tallasVals.t38}"
+                oninput="marcarCambiadoBatchCell(this)">
+            </div>
+            <div class="talla-chip">
+              <span>39:</span>
+              <input type="number" min="0" class="batch-cell-input talla-input"
+                data-op="${op}" data-col="AW" data-colidx="49" data-key="t39" data-tipo="numero"
+                data-original="${tallasVals.t39}" value="${tallasVals.t39}"
+                oninput="marcarCambiadoBatchCell(this)">
+            </div>
+            <div class="talla-chip">
+              <span>40:</span>
+              <input type="number" min="0" class="batch-cell-input talla-input"
+                data-op="${op}" data-col="AX" data-colidx="50" data-key="t40" data-tipo="numero"
+                data-original="${tallasVals.t40}" value="${tallasVals.t40}"
+                oninput="marcarCambiadoBatchCell(this)">
+            </div>
+          </div>
+          <div class="card-total-box">
+            Total: <span id="card-total-${op}" data-original-total="${totalPares}" style="color:var(--accent);">${totalPares}</span> pares
+          </div>
+        </div>
+      </div>`;
+  }).join("");
+}
+
+// ═══════════════════════════════════════════════
+//  CONSTRUCTOR DE TABLA
+// ═══════════════════════════════════════════════
+function _construirTablaHtml(resultados, estadoColores) {
+  return resultados.map((r, idx) => {
     const op      = String(r.op || (r.campos && r.campos[0]) || `OP-${idx+1}`);
     const modelo  = r.modelo || (r.campos && r.campos[1]) || "—";
     const color   = r.color  || (r.campos && r.campos[2]) || "—";
@@ -4877,105 +5576,6 @@ function renderTablaMasivaEditor(resultados, camposDef, aviso) {
         </td>
       </tr>`;
   }).join("");
-
-  let avisoHtml = "";
-  if (aviso) {
-    avisoHtml = `
-      <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:9px 14px;margin-bottom:12px;font-size:12.5px;color:#92400e;">
-        ${aviso}
-      </div>`;
-  }
-
-  document.getElementById("editor-result").innerHTML = `
-    ${avisoHtml}
-    <div class="editor-batch-container">
-      <div class="editor-batch-toolbar">
-        <div class="editor-batch-title-area">
-          <div class="editor-batch-title">📋 Edición Masiva de Órdenes de Producción</div>
-          <span class="batch-pill" id="batch-stats-loaded">${resultados.length} OPs cargadas</span>
-          <span class="batch-pill" id="batch-stats-changes">0 cambios pendientes</span>
-        </div>
-        <div class="editor-batch-actions">
-          <button class="btn-secondary" id="btn-batch-discard" style="display:none;font-size:12px;padding:6px 11px;" onclick="_descartarCambiosMasivos()">
-            ↺ Descartar todo
-          </button>
-          <button class="btn-save" id="btn-batch-save" style="font-size:12px;padding:7px 14px;opacity:0.6;" disabled onclick="iniciarGuardadoMasivo()">
-            💾 Guardar cambios
-          </button>
-        </div>
-      </div>
-
-      <!-- Barra de Relleno Rápido -->
-      <div class="editor-quickfill-box">
-        <span style="font-weight:700;color:var(--ink);">⚡ Relleno Rápido:</span>
-        <span style="color:var(--muted);">Columna:</span>
-        <select id="quickfill-col" class="quickfill-select">
-          <option value="col_O">Corte Inicio (Col O)</option>
-          <option value="col_T">Corte Fin (Col T)</option>
-          <option value="col_U">Habilitado (Col U)</option>
-          <option value="col_AA">Perfilado Inicio (Col AA)</option>
-          <option value="col_AF">Perfilado Fin (Col AF)</option>
-          <option value="col_AM">Armado (Col AM)</option>
-          <option value="col_AN">Alistado Inicio (Col AN)</option>
-          <option value="col_AR">Alistado Fin (Col AR)</option>
-        </select>
-        <span style="color:var(--muted);">Valor:</span>
-        <input type="text" id="quickfill-val" class="quickfill-input" placeholder="dd/MM/yyyy" style="width:105px;">
-        <button type="button" class="btn-quickfill-today" onclick="_ponerFechaHoyQuickFill()" title="Insertar fecha de hoy">📅 Hoy</button>
-        <button type="button" class="btn-quickfill-apply" onclick="_aplicarRellenoRapido(false)">⚡ Aplicar a todas</button>
-        <button type="button" class="btn-secondary" style="font-size:11.5px;padding:5px 9px;" onclick="_aplicarRellenoRapido(true)" title="Solo a las celdas que actualmente estén vacías">⚡ Solo vacías</button>
-      </div>
-
-      <!-- Tabla interactiva con columnas fijas -->
-      <div class="editor-table-wrap">
-        <table class="editor-batch-table">
-          <thead>
-            <tr>
-              <th colspan="4" class="super-header super-info">Identificación</th>
-              <th colspan="2" class="super-header super-info">Estado & Pedido</th>
-              <th colspan="2" class="super-header super-corte">Corte (O, T)</th>
-              <th colspan="1" class="super-header super-hab">Habilitado (U)</th>
-              <th colspan="2" class="super-header super-perf">Perfilado (AA, AF)</th>
-              <th colspan="1" class="super-header super-arm">Armado (AM)</th>
-              <th colspan="2" class="super-header super-alist">Alistado (AN, AR)</th>
-              <th colspan="7" class="super-header super-talla">Cantidades por Talla (AS — AX)</th>
-              <th colspan="1" class="super-header super-action">Acciones</th>
-            </tr>
-            <tr>
-              <th class="sub-th col-sticky-idx">#</th>
-              <th class="sub-th col-sticky-op">OP</th>
-              <th class="sub-th col-sticky-mod">Modelo</th>
-              <th class="sub-th col-sticky-col">Color</th>
-              <th class="sub-th" style="min-width:110px;">Estado</th>
-              <th class="sub-th" style="min-width:85px;">F. Pedido</th>
-              <th class="sub-th">Inicio (O)</th>
-              <th class="sub-th">Fin (T)</th>
-              <th class="sub-th">Habilitado (U)</th>
-              <th class="sub-th">Inicio (AA)</th>
-              <th class="sub-th">Fin (AF)</th>
-              <th class="sub-th">Armado (AM)</th>
-              <th class="sub-th">Inicio (AN)</th>
-              <th class="sub-th">Fin (AR)</th>
-              <th class="sub-th">35</th>
-              <th class="sub-th">36</th>
-              <th class="sub-th">37</th>
-              <th class="sub-th">38</th>
-              <th class="sub-th">39</th>
-              <th class="sub-th">40</th>
-              <th class="sub-th" style="min-width:55px;">Total</th>
-              <th class="sub-th" style="min-width:75px;">Opciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${filasHtml}
-          </tbody>
-        </table>
-      </div>
-
-      <div id="batch-msg" style="padding:10px 18px;font-size:13px;border-top:1px solid var(--border);background:#fff;"></div>
-    </div>`;
-
-  _setupTableKeyboardNav();
 }
 
 function _setupTableKeyboardNav() {
@@ -5015,11 +5615,25 @@ function _ponerFechaHoyQuickFill() {
   if (valEl) valEl.value = `${d}/${m}/${y}`;
 }
 
+function _ponerHoyEnCampo(op, colKey) {
+  const hoy = new Date();
+  const d = String(hoy.getDate()).padStart(2, "0");
+  const m = String(hoy.getMonth() + 1).padStart(2, "0");
+  const y = hoy.getFullYear();
+  const fechaHoy = `${d}/${m}/${y}`;
+
+  const inputs = document.querySelectorAll(`.batch-cell-input[data-op="${op}"][data-key="${colKey}"]`);
+  inputs.forEach(input => {
+    input.value = fechaHoy;
+    marcarCambiadoBatchCell(input);
+  });
+}
+
 function _aplicarRellenoRapido(soloVacias) {
   const colKey = document.getElementById("quickfill-col")?.value;
   const valor = document.getElementById("quickfill-val")?.value.trim() || "";
   if (!colKey) return;
-  if (!valor && !confirm("¿Deseas vaciar este campo en todas las filas?")) return;
+  if (!valor && !confirm("¿Deseas vaciar este campo en todas las OPs?")) return;
 
   const inputs = document.querySelectorAll(`.batch-cell-input[data-key="${colKey}"]`);
   let aplicados = 0;
@@ -5034,7 +5648,7 @@ function _aplicarRellenoRapido(soloVacias) {
 
   const msgEl = document.getElementById("batch-msg");
   if (msgEl) {
-    msgEl.innerHTML = `<span style="color:#0f766e;font-weight:600;">⚡ Se aplicó "${valor || '(vacío)'}" a ${aplicados} fila(s).</span>`;
+    msgEl.innerHTML = `<span style="color:#0f766e;font-weight:600;">⚡ Se aplicó "${valor || '(vacío)'}" a ${aplicados} campo(s).</span>`;
   }
 }
 
@@ -5051,8 +5665,14 @@ function marcarCambiadoBatchCell(el) {
     window._editorBatchData.cambiosPorOp[op] = {};
   }
 
+  // Sincronizar todos los inputs con el mismo op y key (en cards y en tabla)
+  const allMatchingInputs = document.querySelectorAll(`.batch-cell-input[data-op="${op}"][data-key="${colKey}"]`);
+
   if (current !== original) {
-    el.classList.add("changed");
+    allMatchingInputs.forEach(inp => {
+      inp.value = current;
+      inp.classList.add("changed");
+    });
     window._editorBatchData.cambiosPorOp[op][colKey] = {
       col: colLetter,
       colIdx: colIdx,
@@ -5060,7 +5680,10 @@ function marcarCambiadoBatchCell(el) {
       valor: current
     };
   } else {
-    el.classList.remove("changed");
+    allMatchingInputs.forEach(inp => {
+      inp.value = current;
+      inp.classList.remove("changed");
+    });
     delete window._editorBatchData.cambiosPorOp[op][colKey];
     if (Object.keys(window._editorBatchData.cambiosPorOp[op]).length === 0) {
       delete window._editorBatchData.cambiosPorOp[op];
@@ -5085,36 +5708,49 @@ function actualizarTotalParesFila(op) {
       if (!isNaN(v) && v > 0) sum += v;
     }
   });
-  const totalEl = document.getElementById(`batch-total-${op}`);
-  if (totalEl) {
-    totalEl.textContent = sum;
-    const origTotal = parseInt(totalEl.dataset.originalTotal, 10) || 0;
-    if (sum !== origTotal) {
-      totalEl.style.color = "#d97706";
-      totalEl.style.fontWeight = "700";
-    } else {
-      totalEl.style.color = "var(--ink)";
-      totalEl.style.fontWeight = "600";
-    }
+
+  // Actualizar en Tarjeta
+  const cardTotalEl = document.getElementById(`card-total-${op}`);
+  const cardHeaderTotalEl = document.getElementById(`card-header-total-${op}`);
+  if (cardTotalEl) {
+    cardTotalEl.textContent = sum;
+    const origTotal = parseInt(cardTotalEl.dataset.originalTotal, 10) || 0;
+    cardTotalEl.style.color = (sum !== origTotal) ? "#d97706" : "var(--accent)";
+  }
+  if (cardHeaderTotalEl) {
+    cardHeaderTotalEl.textContent = sum;
+  }
+
+  // Actualizar en Tabla
+  const tableTotalEl = document.getElementById(`batch-total-${op}`);
+  if (tableTotalEl) {
+    tableTotalEl.textContent = sum;
+    const origTotal = parseInt(tableTotalEl.dataset.originalTotal, 10) || 0;
+    tableTotalEl.style.color = (sum !== origTotal) ? "#d97706" : "var(--ink)";
+    tableTotalEl.style.fontWeight = (sum !== origTotal) ? "700" : "600";
   }
 }
 
 function actualizarEstadoFila(op) {
-  const tr = document.getElementById(`batch-row-${op}`);
-  const statusEl = document.getElementById(`batch-row-status-${op}`);
+  const cardEl = document.getElementById(`batch-card-${op}`);
+  const rowEl  = document.getElementById(`batch-row-${op}`);
+  const statusCardEl = document.getElementById(`batch-card-status-${op}`);
+  const statusRowEl  = document.getElementById(`batch-row-status-${op}`);
+
   const cambios = (window._editorBatchData && window._editorBatchData.cambiosPorOp[op]) || {};
   const numCambios = Object.keys(cambios).length;
 
   if (numCambios > 0) {
-    if (tr) tr.classList.add("is-modified");
-    if (statusEl) {
-      statusEl.innerHTML = `<span title="${numCambios} campo(s) modificados" style="color:#d97706;font-size:12px;">✏️ ${numCambios}</span>`;
-    }
+    if (cardEl) cardEl.classList.add("is-modified");
+    if (rowEl)  rowEl.classList.add("is-modified");
+    const badgeText = `<span title="${numCambios} campo(s) modificados" style="color:#d97706;font-size:11.5px;font-weight:700;">✏️ ${numCambios} cambio(s)</span>`;
+    if (statusCardEl) statusCardEl.innerHTML = badgeText;
+    if (statusRowEl)  statusRowEl.innerHTML = badgeText;
   } else {
-    if (tr) tr.classList.remove("is-modified");
-    if (statusEl) {
-      statusEl.innerHTML = "";
-    }
+    if (cardEl) cardEl.classList.remove("is-modified");
+    if (rowEl)  rowEl.classList.remove("is-modified");
+    if (statusCardEl) statusCardEl.innerHTML = "";
+    if (statusRowEl)  statusRowEl.innerHTML = "";
   }
 }
 
@@ -5159,9 +5795,7 @@ function actualizarContadorCambiosMasivos() {
 }
 
 function _descartarCambiosFila(op) {
-  const tr = document.getElementById(`batch-row-${op}`);
-  if (!tr) return;
-  const inputs = tr.querySelectorAll(".batch-cell-input");
+  const inputs = document.querySelectorAll(`.batch-cell-input[data-op="${op}"]`);
   inputs.forEach(el => {
     el.value = el.dataset.original || "";
     el.classList.remove("changed");
@@ -5193,7 +5827,7 @@ function abrirFichaDesdeTabla(op) {
 
 function volverATablaMasiva() {
   if (window._editorBatchData && window._editorBatchData.resultados && window._editorBatchData.resultados.length > 0) {
-    renderTablaMasivaEditor(window._editorBatchData.resultados, window._editorBatchData.camposDef);
+    renderEdicionMasivaOPs(window._editorBatchData.resultados, window._editorBatchData.camposDef);
   } else {
     renderEditor();
   }
@@ -5300,8 +5934,11 @@ async function confirmarPINMasivo() {
     if (progressBar) progressBar.style.width = `${pct}%`;
     if (progressLabel) progressLabel.textContent = `Guardando OP ${op} (${i + 1} de ${ops.length})...`;
 
-    const statusEl = document.getElementById(`batch-row-status-${op}`);
-    if (statusEl) statusEl.innerHTML = `<span style="color:var(--accent);font-size:11px;">⏳ Guardando...</span>`;
+    const statusCardEl = document.getElementById(`batch-card-status-${op}`);
+    const statusRowEl  = document.getElementById(`batch-row-status-${op}`);
+    const statusMsg = `<span style="color:var(--accent);font-size:11px;">⏳ Guardando...</span>`;
+    if (statusCardEl) statusCardEl.innerHTML = statusMsg;
+    if (statusRowEl)  statusRowEl.innerHTML = statusMsg;
 
     try {
       const resp = await fetch(API_URL, {
@@ -5332,28 +5969,39 @@ async function confirmarPINMasivo() {
           if (errorEl) errorEl.textContent = resJson.error;
           if (confirmBtn) { confirmBtn.disabled = false; confirmBtn.textContent = "Reintentar"; }
           if (cancelBtn) cancelBtn.disabled = false;
-          if (statusEl) statusEl.innerHTML = `<span style="color:#dc2626;font-size:11px;">❌ PIN erróneo</span>`;
+          const pinErrMsg = `<span style="color:#dc2626;font-size:11px;">❌ PIN erróneo</span>`;
+          if (statusCardEl) statusCardEl.innerHTML = pinErrMsg;
+          if (statusRowEl)  statusRowEl.innerHTML = pinErrMsg;
           return;
         } else {
           errores.push(`OP ${op}: ${resJson.error}`);
-          if (statusEl) statusEl.innerHTML = `<span style="color:#dc2626;font-size:11px;" title="${resJson.error}">❌ Error</span>`;
+          const errMsg = `<span style="color:#dc2626;font-size:11px;" title="${resJson.error}">❌ Error</span>`;
+          if (statusCardEl) statusCardEl.innerHTML = errMsg;
+          if (statusRowEl)  statusRowEl.innerHTML = errMsg;
         }
       } else {
         guardadasOk++;
-        const tr = document.getElementById(`batch-row-${op}`);
-        if (tr) {
-          tr.classList.remove("is-modified");
-          tr.querySelectorAll(".batch-cell-input").forEach(el => {
-            el.dataset.original = el.value;
-            el.classList.remove("changed");
-          });
-        }
-        if (statusEl) statusEl.innerHTML = `<span style="color:#059669;font-weight:700;font-size:11px;">✅ Guardado</span>`;
+        const cardEl = document.getElementById(`batch-card-${op}`);
+        const rowEl  = document.getElementById(`batch-row-${op}`);
+        if (cardEl) cardEl.classList.remove("is-modified");
+        if (rowEl)  rowEl.classList.remove("is-modified");
+
+        document.querySelectorAll(`.batch-cell-input[data-op="${op}"]`).forEach(el => {
+          el.dataset.original = el.value;
+          el.classList.remove("changed");
+        });
+
+        const okMsg = `<span style="color:#059669;font-weight:700;font-size:11px;">✅ Guardado</span>`;
+        if (statusCardEl) statusCardEl.innerHTML = okMsg;
+        if (statusRowEl)  statusRowEl.innerHTML = okMsg;
+
         delete window._editorBatchData.cambiosPorOp[op];
       }
     } catch (netErr) {
       errores.push(`OP ${op}: Error de red ${netErr.message}`);
-      if (statusEl) statusEl.innerHTML = `<span style="color:#dc2626;font-size:11px;">❌ Red</span>`;
+      const netErrMsg = `<span style="color:#dc2626;font-size:11px;">❌ Red</span>`;
+      if (statusCardEl) statusCardEl.innerHTML = netErrMsg;
+      if (statusRowEl)  statusRowEl.innerHTML = netErrMsg;
     }
   }
 
@@ -5476,7 +6124,7 @@ function mostrarFormEditor(registro, camposDef) {
           </div>
         </div>
         <div class="editor-actions">
-          <button class="btn-secondary" onclick="volverATablaMasiva()">← Volver a la tabla</button>
+          <button class="btn-secondary" onclick="volverATablaMasiva()">← Volver</button>
           <button class="btn-save" id="btn-guardar" onclick="iniciarGuardado()">
             💾 Guardar cambios
           </button>
