@@ -4249,6 +4249,13 @@ function renderRecepcionEmpaque() {
                 <div style="font-size:11px;color:var(--muted);">Agrupado por modelo y color con fecha</div>
               </div>
             </button>
+            <button onclick="descargarReporteExcelEmpaque({opMin:3750, soloSandalias:true});_cerrarExcelMenu();" style="display:flex;width:100%;text-align:left;align-items:center;gap:8px;padding:9px 12px;border:none;background:transparent;border-radius:6px;cursor:pointer;font-size:13px;color:var(--ink);" onmouseover="this.style.background='var(--paper)'" onmouseout="this.style.background='transparent'">
+              <span style="font-size:16px;">👡</span>
+              <div>
+                <div style="font-weight:600;">Sandalias (OP ≥ 3750 con fecha)</div>
+                <div style="font-size:11px;color:var(--muted);">Solo modelos sandalias: pedido vs. entregado</div>
+              </div>
+            </button>
             <button onclick="descargarReporteExcelEmpaque({opMin:3384});_cerrarExcelMenu();" style="display:flex;width:100%;text-align:left;align-items:center;gap:8px;padding:9px 12px;border:none;background:transparent;border-radius:6px;cursor:pointer;font-size:13px;color:var(--ink);" onmouseover="this.style.background='var(--paper)'" onmouseout="this.style.background='transparent'">
               <span style="font-size:16px;">📋</span>
               <div>
@@ -4335,7 +4342,8 @@ function descargarReporteExcelEmpaque(opciones = {}) {
       const wb = _generarReporteExcelEmpaqueWorkbook(registros, opciones);
       const fechaHoy = new Date().toISOString().slice(0, 10);
       const opMin = opciones.opMin !== undefined ? opciones.opMin : 3354;
-      const nombreArchivo = `Reporte_Empaque_Pedido_vs_Entregado_${opMin}_${fechaHoy}.xlsx`;
+      const sufijo = opciones.soloSandalias ? '_Sandalias' : '';
+      const nombreArchivo = `Reporte_Empaque${sufijo}_Pedido_vs_Entregado_${opMin}_${fechaHoy}.xlsx`;
 
       _descargarWorkbook(wb, nombreArchivo);
     } catch (err) {
@@ -4382,13 +4390,17 @@ function _parseFechaPedido(f) {
 function _generarReporteExcelEmpaqueWorkbook(registrosRaw, opciones = {}) {
   const opMin = opciones.opMin !== undefined ? Number(opciones.opMin) : 3354;
   const soloConFecha = opciones.soloConFecha !== false;
+  const soloSandalias = !!opciones.soloSandalias;
+  const MODELOS_SANDALIAS = new Set(["ADELE", "ARIANA", "AYXA", "DANA", "DEMI", "FERGIE", "LANA", "MADONA", "RIHANNA", "SABRINA", "TAYLOR"]);
 
   const validos = (registrosRaw || []).filter(r => {
     const op = Number(r.op);
     const fp = (r.fechaPedido || "").trim();
+    const mod = (r.modelo || "").trim().toUpperCase();
     const opOk = isNaN(opMin) || op >= opMin;
     const fechaOk = !soloConFecha || (fp !== "" && fp !== "-");
-    return opOk && fechaOk;
+    const sandaliaOk = !soloSandalias || MODELOS_SANDALIAS.has(mod);
+    return opOk && fechaOk && sandaliaOk;
   });
 
   if (validos.length === 0) {
